@@ -34,7 +34,7 @@ export const runGentraceTests = async (
   settings: Settings,
   project: Omit<Project, 'data'>,
   graph: NodeGraph,
-  nativeApi: NativeApi,
+  nativeApi?: NativeApi,
 ) => {
   const gentraceApiKey = settings.pluginSettings?.gentrace?.gentraceApiKey as string | undefined;
 

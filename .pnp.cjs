@@ -44,6 +44,10 @@ const RAW_RUNTIME_STATE =
     {\
       "name": "@ironclad/trivet",\
       "reference": "workspace:packages/trivet"\
+    },\
+    {\
+      "name": "@ironclad/rivet-web-app",\
+      "reference": "workspace:packages/web-app"\
     }\
   ],\
   "enableTopLevelFallback": true,\
@@ -56,6 +60,7 @@ const RAW_RUNTIME_STATE =
     ["@ironclad/rivet-community", ["workspace:packages/community"]],\
     ["@ironclad/rivet-core", ["workspace:packages/core"]],\
     ["@ironclad/rivet-node", ["workspace:packages/node"]],\
+    ["@ironclad/rivet-web-app", ["workspace:packages/web-app"]],\
     ["@ironclad/trivet", ["workspace:packages/trivet"]],\
     ["docs", ["workspace:packages/docs"]]\
   ],\
@@ -7256,6 +7261,136 @@ const RAW_RUNTIME_STATE =
         "linkType": "SOFT"\
       }]\
     ]],\
+    ["@ironclad/rivet-web-app", [\
+      ["workspace:packages/web-app", {\
+        "packageLocation": "./packages/web-app/",\
+        "packageDependencies": [\
+          ["@ironclad/rivet-web-app", "workspace:packages/web-app"],\
+          ["@atlaskit/banner", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:12.1.18"],\
+          ["@atlaskit/button", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:16.11.0"],\
+          ["@atlaskit/checkbox", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:12.6.11"],\
+          ["@atlaskit/css-reset", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:6.6.1"],\
+          ["@atlaskit/dropdown-menu", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:12.1.4"],\
+          ["@atlaskit/form", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:8.11.13"],\
+          ["@atlaskit/icon", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:21.12.7"],\
+          ["@atlaskit/inline-edit", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:12.4.3"],\
+          ["@atlaskit/menu", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.1.1"],\
+          ["@atlaskit/modal-dialog", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:12.8.3"],\
+          ["@atlaskit/popup", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:1.11.2"],\
+          ["@atlaskit/portal", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.3.6"],\
+          ["@atlaskit/range", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:7.1.7"],\
+          ["@atlaskit/select", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:16.7.3"],\
+          ["@atlaskit/side-navigation", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:3.0.0"],\
+          ["@atlaskit/tabs", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:13.4.9"],\
+          ["@atlaskit/textarea", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.7.7"],\
+          ["@atlaskit/textfield", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.6.8"],\
+          ["@atlaskit/theme", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:12.6.2"],\
+          ["@atlaskit/toggle", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:12.6.11"],\
+          ["@atlaskit/tokens", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:1.28.0"],\
+          ["@dnd-kit/core", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:6.0.8"],\
+          ["@dnd-kit/sortable", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:7.0.2"],\
+          ["@emotion/eslint-plugin", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:11.11.0"],\
+          ["@emotion/react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:11.11.1"],\
+          ["@emotion/styled", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:11.11.0"],\
+          ["@floating-ui/react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:0.26.1"],\
+          ["@ironclad/rivet-core", "workspace:packages/core"],\
+          ["@ironclad/trivet", "workspace:packages/trivet"],\
+          ["@recoiljs/refine", "npm:0.1.1"],\
+          ["@swc/core", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:1.3.94"],\
+          ["@tanstack/react-query", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.4.3"],\
+          ["@types/filesystem", "npm:0.0.34"],\
+          ["@types/jsonpath-plus", "npm:5.0.4"],\
+          ["@types/lodash-es", "npm:4.17.10"],\
+          ["@types/marked", "npm:6.0.0"],\
+          ["@types/node", "npm:20.8.7"],\
+          ["@types/react", "npm:18.2.31"],\
+          ["@types/react-color", "npm:3.0.9"],\
+          ["@types/react-dom", "npm:18.2.14"],\
+          ["@types/react-transition-group", "npm:4.4.8"],\
+          ["@types/react-window", "npm:1.8.7"],\
+          ["@types/retry", "npm:0.12.4"],\
+          ["@types/semver", "npm:7.5.4"],\
+          ["@types/wicg-file-system-access", "npm:2023.10.2"],\
+          ["@types/ws", "npm:8.5.8"],\
+          ["@types/yargs", "npm:17.0.29"],\
+          ["@typescript-eslint/eslint-plugin", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:6.9.0"],\
+          ["@vitejs/plugin-react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.1.0"],\
+          ["ahooks", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:3.7.8"],\
+          ["axios", "npm:1.7.2"],\
+          ["chalk", "npm:5.3.0"],\
+          ["clsx", "npm:2.0.0"],\
+          ["core-js", "npm:3.33.1"],\
+          ["csv-parse", "npm:5.5.2"],\
+          ["csv-stringify", "npm:6.4.4"],\
+          ["emittery", "npm:1.0.1"],\
+          ["enquirer", "npm:2.4.1"],\
+          ["esbuild", "npm:0.19.5"],\
+          ["eslint", "npm:8.52.0"],\
+          ["eslint-config-react-app", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:7.0.1"],\
+          ["eslint-config-standard-with-typescript", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:39.1.1"],\
+          ["eslint-plugin-import", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.29.0"],\
+          ["eslint-plugin-n", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:16.2.0"],\
+          ["eslint-plugin-promise", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:6.1.1"],\
+          ["eslint-plugin-react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:7.33.2"],\
+          ["eslint-plugin-react-hooks", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.6.0"],\
+          ["execa", "npm:8.0.1"],\
+          ["fuse.js", "npm:6.6.2"],\
+          ["immer", "npm:10.0.3"],\
+          ["jsonpath-plus", "npm:7.2.0"],\
+          ["lodash-es", "npm:4.17.21"],\
+          ["majesticons", "npm:2.1.2"],\
+          ["marked", "npm:9.1.2"],\
+          ["minimatch", "npm:9.0.3"],\
+          ["monaco-editor", "npm:0.44.0"],\
+          ["nanoid", "npm:3.3.6"],\
+          ["openai", "npm:4.28.4"],\
+          ["p-queue", "npm:7.4.1"],\
+          ["p-retry", "npm:6.1.0"],\
+          ["pkg", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.8.1"],\
+          ["pnpm", "npm:8.9.2"],\
+          ["prettier", "npm:3.2.5"],\
+          ["pretty-bytes", "npm:6.1.1"],\
+          ["pretty-ms", "npm:8.0.0"],\
+          ["react", "npm:18.2.0"],\
+          ["react-collapsible", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.10.0"],\
+          ["react-color", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.19.3"],\
+          ["react-dnd", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:16.0.1"],\
+          ["react-dnd-html5-backend", "npm:16.0.1"],\
+          ["react-dom", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:18.2.0"],\
+          ["react-error-boundary", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.0.11"],\
+          ["react-hotkeys-hook", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.4.1"],\
+          ["react-refresh", "npm:0.14.0"],\
+          ["react-select", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.7.7"],\
+          ["react-toastify", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:9.1.3"],\
+          ["react-transition-group", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.4.5"],\
+          ["react-window", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:1.8.9"],\
+          ["recoil", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:0.7.7"],\
+          ["recoil-persist", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.1.0"],\
+          ["retry", "npm:0.13.1"],\
+          ["rollup", "npm:4.1.4"],\
+          ["rollup-plugin-visualizer", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.9.2"],\
+          ["safe-stable-stringify", "npm:2.4.3"],\
+          ["semver", "npm:7.5.4"],\
+          ["ts-dedent", "npm:2.2.0"],\
+          ["ts-node", "virtual:74fcc7b6256f60a89945acc6b1c62e6158616c0dcf2312663cfe08ceda598b7d943e5de97f39a415e4491198cfa92535d8e40310ec84839b8241ca342059e353#npm:10.9.1"],\
+          ["ts-pattern", "npm:5.0.5"],\
+          ["tsx", "npm:4.6.2"],\
+          ["type-fest", "npm:4.5.0"],\
+          ["typescript", "patch:typescript@npm%3A5.2.2#optional!builtin<compat/typescript>::version=5.2.2&hash=f3b441"],\
+          ["url-join", "npm:5.0.0"],\
+          ["use-async-effect", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.2.7"],\
+          ["vite", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.2.11"],\
+          ["vite-plugin-monaco-editor", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:1.1.0"],\
+          ["vite-plugin-svgr", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.1.0"],\
+          ["vite-plugin-top-level-await", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:1.3.1"],\
+          ["vite-tsconfig-paths", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.2.1"],\
+          ["ws", "virtual:74fcc7b6256f60a89945acc6b1c62e6158616c0dcf2312663cfe08ceda598b7d943e5de97f39a415e4491198cfa92535d8e40310ec84839b8241ca342059e353#npm:8.14.2"],\
+          ["yaml", "npm:2.3.3"],\
+          ["yargs", "npm:17.7.2"]\
+        ],\
+        "linkType": "SOFT"\
+      }]\
+    ]],\
     ["@ironclad/trivet", [\
       ["workspace:packages/trivet", {\
         "packageLocation": "./packages/trivet/",\
@@ -12504,6 +12639,16 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/axios-npm-1.5.0-35a845e191-128433020b.zip/node_modules/axios/",\
         "packageDependencies": [\
           ["axios", "npm:1.5.0"],\
+          ["follow-redirects", "virtual:35a845e191d5a8a7376e256c81e9e855732385142c5dc9e26f0b8393c2fb4673b81fed201d5f2c5ab96fb727142683ac03329eab760f2c4870779d4bda6abe8f#npm:1.15.6"],\
+          ["form-data", "npm:4.0.0"],\
+          ["proxy-from-env", "npm:1.1.0"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:1.7.2", {\
+        "packageLocation": "./.yarn/cache/axios-npm-1.7.2-c89264f6f7-6ae80dda97.zip/node_modules/axios/",\
+        "packageDependencies": [\
+          ["axios", "npm:1.7.2"],\
           ["follow-redirects", "virtual:35a845e191d5a8a7376e256c81e9e855732385142c5dc9e26f0b8393c2fb4673b81fed201d5f2c5ab96fb727142683ac03329eab760f2c4870779d4bda6abe8f#npm:1.15.6"],\
           ["form-data", "npm:4.0.0"],\
           ["proxy-from-env", "npm:1.1.0"]\

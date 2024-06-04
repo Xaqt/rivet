@@ -12,7 +12,6 @@ import { css } from '@emotion/react';
 import Popup from '@atlaskit/popup';
 import { MenuGroup, ButtonItem } from '@atlaskit/menu';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
-import { PluginInfoModal } from './PluginInfoModal';
 
 const styles = css`
   margin-top: 16px;
@@ -119,7 +118,6 @@ const PluginConfigurationItem: FC<{ spec: PluginLoadSpec; onDelete?: (spec: Plug
   const loadedPlugins = useDependsOnPlugins();
 
   const displayId = spec.type === 'package' ? spec.package : spec.id;
-  const loadedPlugin = loadedPlugins.find((p) => p.id === displayId);
   const pluginName = loadedPlugins.find((p) => p.id === displayId)?.name ?? displayId;
 
   return (
@@ -162,13 +160,6 @@ const PluginConfigurationItem: FC<{ spec: PluginLoadSpec; onDelete?: (spec: Plug
             <MoreMenuVerticalIcon />
           </button>
         )}
-      />
-      <PluginInfoModal
-        isOpen={infoModalOpen}
-        onClose={toggleInfoModal.setLeft}
-        pluginName={pluginName}
-        spec={spec}
-        loadedPlugin={loadedPlugin}
       />
     </li>
   );

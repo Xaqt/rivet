@@ -39,6 +39,7 @@ export function useLoadProject() {
 
       setLoadedProjectState({
         path: projectInfo.fsPath ?? '',
+        id: projectInfo.project.metadata.id,
         loaded: true,
       });
 

@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+// @ts-ignore
+import packageJSON from '../../../web-app/package.json' assert { type: 'json' };
 
 export function useCurrentVersion() {
-    const { data } = useQuery('currentVersion', () => fetchCurrentVersion());
-    return data;
+  return packageJSON.version;
 }

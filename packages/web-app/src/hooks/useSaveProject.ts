@@ -41,6 +41,7 @@ export function useSaveProject() {
       toast.success('Project saved');
       setLoadedProject({
         loaded: true,
+        id: newProject.metadata.id,
         path: loadedProject.path,
       });
     } catch (cause) {
@@ -74,6 +75,7 @@ export function useSaveProject() {
         toast.success('Project saved');
         setLoadedProject({
           loaded: true,
+          id: newProject.metadata.id,
           path: filePath,
         });
         setOpenedProjects((projects) => ({

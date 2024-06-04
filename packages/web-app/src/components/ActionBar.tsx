@@ -23,106 +23,105 @@ import { graphMetadataState } from '../state/graph';
 import { type GraphId } from '@ironclad/rivet-core';
 
 const styles = css`
-  position: fixed;
-  top: calc(20px + var(--project-selector-height));
-  right: 20px;
-  background: var(--grey-darker);
-  border-radius: 4px;
-  border: 1px solid var(--grey-dark);
-  height: 32px;
-  z-index: 50;
-  display: flex;
-  box-shadow: 3px 1px 10px rgba(0, 0, 0, 0.5);
-  justify-content: flex-end;
-  gap: 8px;
-
-  .run-button button,
-  .pause-button button,
-  .unload-recording-button button,
-  .run-test-button button,
-  .save-recording-button button,
-  .run-gentrace-button button,
-  .more-menu,
-  .remote-debugger-button button {
-    border: none;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
+    position: fixed;
+    top: calc(20px + var(--project-selector-height));
+    right: 20px;
+    background: var(--grey-darker);
+    border-radius: 4px;
+    border: 1px solid var(--grey-dark);
+    height: 32px;
+    z-index: 50;
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 0;
-    height: 32px;
-    border-radius: 5px;
-  }
+    box-shadow: 3px 1px 10px rgba(0, 0, 0, 0.5);
+    justify-content: flex-end;
+    gap: 8px;
 
-  .run-button button {
-    background-color: var(--success);
-    color: var(--grey-lightest);
-
-    &:hover {
-      background-color: var(--success-dark);
+    .run-button button,
+    .pause-button button,
+    .unload-recording-button button,
+    .run-test-button button,
+    .save-recording-button button,
+    .run-gentrace-button button,
+    .more-menu,
+    .remote-debugger-button button {
+        border: none;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+        height: 32px;
+        border-radius: 5px;
     }
-  }
 
-  .run-gentrace-button button,
-  .pause-button button,
-  .save-recording-button button {
-    background-color: rgba(255, 255, 255, 0.1);
+    .run-button button {
+        background-color: var(--success);
+        color: var(--grey-lightest);
 
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.2);
+        &:hover {
+            background-color: var(--success-dark);
+        }
     }
-  }
 
-  .unload-recording-button button {
-    background-color: var(--warning);
-    color: var(--grey-dark);
-  }
+    .run-gentrace-button button,
+    .pause-button button,
+    .save-recording-button button {
+        background-color: rgba(255, 255, 255, 0.1);
 
-  .run-button.running button {
-    background-color: var(--error);
-  }
-
-  .pause-button.paused button {
-    background-color: var(--warning);
-    color: var(--grey-dark);
-
-    &:hover {
-      background-color: var(--warning-dark);
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
     }
-  }
 
-  .run-test-button button {
-    background-color: var(--grey-darkish);
-    color: var(--grey-lightest);
-
-    &:hover {
-      background-color: var(--grey);
+    .unload-recording-button button {
+        background-color: var(--warning);
+        color: var(--grey-dark);
     }
-  }
 
-  .more-menu {
-    background-color: transparent;
-    font-size: 32px;
-    height: 32px;
-    line-height: 0;
-    padding: 0;
-    width: 32px;
-    height: 32px;
-
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.1);
+    .run-button.running button {
+        background-color: var(--error);
     }
-  }
 
-  .remote-debugger-button.active button {
-    background-color: var(--error);
-  }
+    .pause-button.paused button {
+        background-color: var(--warning);
+        color: var(--grey-dark);
 
-  .remote-debugger-button.reconnecting button {
-    background-color: var(--warning);
-    color: var(--grey-dark);
-  }
+        &:hover {
+            background-color: var(--warning-dark);
+        }
+    }
+
+    .run-test-button button {
+        background-color: var(--grey-darkish);
+        color: var(--grey-lightest);
+
+        &:hover {
+            background-color: var(--grey);
+        }
+    }
+
+    .more-menu {
+        background-color: transparent;
+        font-size: 32px;
+        height: 32px;
+        line-height: 0;
+        padding: 0;
+        width: 32px;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    }
+
+    .remote-debugger-button.active button {
+        background-color: var(--error);
+    }
+
+    .remote-debugger-button.reconnecting button {
+        background-color: var(--warning);
+        color: var(--grey-dark);
+    }
 `;
 
 export type ActionBarProps = {

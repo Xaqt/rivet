@@ -16,8 +16,6 @@ import { type SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import { SortableContext, horizontalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
 import { useLoadProjectWithFileBrowser } from '../hooks/useLoadProjectWithFileBrowser';
 import { newProjectModalOpenState } from '../state/ui';
-import DiscordLogo from '../assets/vendor_logos/discord-mark-white.svg?react';
-import { useOpenUrl } from '../hooks/useOpenUrl';
 import { keys } from '../../../core/src/utils/typeSafety';
 
 export const styles = css`
@@ -272,8 +270,6 @@ export const ProjectSelector: FC = () => {
     }
   };
 
-  const openDiscord = useOpenUrl('https://discord.gg/qT8B2gv9Mg');
-
   return (
     <div css={styles}>
       <div className="projects-container">
@@ -300,9 +296,6 @@ export const ProjectSelector: FC = () => {
         </button>
         <button className="open-project" onClick={loadProjectWithFileBrowser} title="Open Project">
           <FolderIcon />
-        </button>
-        <button className="get-help" onClick={openDiscord}>
-          <DiscordLogo /> Discord
         </button>
       </div>
     </div>

@@ -4,12 +4,6 @@ import { useRecoilState } from 'recoil';
 import { overlayOpenState } from '../../state/ui';
 import { ErrorBoundary } from 'react-error-boundary';
 import { SideNavigation, ButtonItem, Section } from '@atlaskit/side-navigation';
-import { match } from 'ts-pattern';
-import { useIsLoggedInToCommunity } from '../../hooks/useIsLoggedInToCommunity';
-import { MyProfilePage } from './MyProfilePage';
-import { MyTemplatesPage } from './MyTemplatesPage';
-import { NeedsLoginPage } from './NeedsLoginPage';
-import { CommunityTemplatesPage } from './CommunityTemplatesPage';
 
 const styles = css`
   position: fixed;
@@ -83,34 +77,7 @@ export const CommunityOverlay: FC = () => {
             <ButtonItem>Discord</ButtonItem>
           </Section>
         </SideNavigation>
-        <div className="selected-nav-area">
-          {match(selectedNav)
-            .with('community-templates', () => <CommunityTemplatesPage />)
-            .with('my-profile', () => (
-              <NeedsProfile>
-                <MyProfilePage />
-              </NeedsProfile>
-            ))
-            .with('my-templates', () => (
-              <NeedsProfile>
-                <MyTemplatesPage />
-              </NeedsProfile>
-            ))
-            .otherwise(() => `Unknown nav: ${selectedNav}`)}
-        </div>
       </div>
     </div>
   );
-};
-
-export const NeedsProfile: FC<{ children: React.ReactNode }> = ({ children }) => {
-  const isLoggedIn = useIsLoggedInToCommunity();
-
-  if (isLoggedIn === undefined) {
-    return null;
-  }
-
-  if (!isLoggedIn) return <NeedsLoginPage />;
-
-  return <>{children}</>;
 };

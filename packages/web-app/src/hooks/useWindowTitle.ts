@@ -1,25 +1,26 @@
-import { appWindow } from '@tauri-apps/api/window';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { projectState, loadedProjectState } from '../state/savedGraphs';
-import { useCurrentVersion } from './useCurrentVersion';
 
 export function useWindowTitle() {
   const project = useRecoilValue(projectState);
   const loadedProject = useRecoilValue(loadedProjectState);
+  const [title, setTitle] = useState<string>('');
 
   useEffect(() => {
     (async () => {
       try {
-        const currentVersion = useCurrentVersion();
-        await appWindow.setTitle(
-          `Rivet ${currentVersion} - ${project.metadata.title} (${
+        const _title = `Rivet - ${project.metadata.title} (${
             loadedProject?.path?.trim() ? loadedProject.path : 'Unsaved'
-          })`,
-        );
+          })`;
+        setTitle(_title)
       } catch (err) {
         console.warn(`Failed to set window title, likely not running in Tauri: ${err}`);
       }
     })();
   }, [loadedProject, project.metadata.title]);
+
+  return {
+    title
+  };
 }

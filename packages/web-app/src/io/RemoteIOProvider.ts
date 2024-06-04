@@ -14,11 +14,9 @@ import {
   deserializeTrivetData,
   serializeTrivetData,
 } from '@ironclad/trivet';
+import { workflowApi } from '../api/api-client';
 
 export class RemoteIOProvider implements IOProvider {
-  static isSupported(): boolean {
-    return true;
-  }
 
   async saveGraphData(graphData: NodeGraph): Promise<void> {
     const fileHandle = await window.showSaveFilePicker();
@@ -85,6 +83,10 @@ export class RemoteIOProvider implements IOProvider {
     await writable.close();
   }
 
+  async saveRecording(workflowId: string, serializedRecording: string): Promise<void> {
+    await workflowApi.saveRecording(workflowId, serializedRecording);
+  }
+
   async readFileAsString(callback: (data: string) => void): Promise<void> {
     const [fileHandle] = await window.showOpenFilePicker();
     const file = await fileHandle.getFile();
@@ -93,9 +95,10 @@ export class RemoteIOProvider implements IOProvider {
   }
 
   async readFileAsBinary(callback: (data: Uint8Array) => void): Promise<void> {
-    const [fileHandle] = await window.showOpenFilePicker();
-    const file = await fileHandle.getFile();
-    const arrayBuffer = await file.arrayBuffer();
-    callback(new Uint8Array(arrayBuffer));
+    // const [fileHandle] = await window.showOpenFilePicker();
+    // const file = await fileHandle.getFile();
+    // const arrayBuffer = await file.arrayBuffer();
+    // callback(new Uint8Array(arrayBuffer));
+    throw new Error('Not implemented')
   }
 }

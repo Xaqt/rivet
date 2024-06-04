@@ -1,36 +1,9 @@
-import { writeFile, readTextFile, exists } from '@tauri-apps/api/fs';
-import { type Project, deserializeDatasets, serializeDatasets } from '@ironclad/rivet-core';
-import { datasetProvider } from '../utils/globals/datasetProvider.js';
+import { type Project } from '@ironclad/rivet-core';
 
 export async function saveDatasetsFile(projectFilePath: string, project: Project) {
-  const dataPath = projectFilePath.replace('.rivet-project', '.rivet-data');
-  const datasets = await datasetProvider.exportDatasetsForProject(project.metadata.id);
-
-  if (datasets.length > 0 || (await exists(dataPath))) {
-    const serializedDatasets = serializeDatasets(datasets);
-
-    await writeFile({
-      contents: serializedDatasets,
-      path: dataPath,
-    });
-  }
+  throw new Error('Not implemented');
 }
 
 export async function loadDatasetsFile(projectFilePath: string, project: Project) {
-
-  const datasetsFilePath = projectFilePath.replace('.rivet-project', '.rivet-data');
-
-  const datasetsFileExists = await exists(datasetsFilePath);
-
-  // No data file, so just no datasets
-  if (!datasetsFileExists) {
-    await datasetProvider.importDatasetsForProject(project.metadata.id, []);
-    return;
-  }
-
-  const fileContents = await readTextFile(datasetsFilePath);
-
-  const datasets = deserializeDatasets(fileContents);
-
-  await datasetProvider.importDatasetsForProject(project.metadata.id, datasets);
+  throw new Error('Not implemented');
 }

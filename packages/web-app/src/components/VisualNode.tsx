@@ -40,7 +40,6 @@ import {
   type DraggingWireDef,
   draggingWireClosestPortState,
   draggingWireState,
-  isPinnedState,
   pinnedNodesState,
 } from '../state/graphBuilder';
 import { Tooltip } from './Tooltip';

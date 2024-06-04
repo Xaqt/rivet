@@ -21,7 +21,6 @@ import clsx from 'clsx';
 import { useLoadStaticData } from '../hooks/useLoadStaticData';
 import { DataStudioRenderer } from './dataStudio/DataStudio';
 import { StatusBar } from './StatusBar';
-import { PluginsOverlayRenderer } from './PluginsOverlay';
 import { ProjectSelector } from './ProjectSelector';
 import { NewProjectModalRenderer } from './NewProjectModal';
 import { useWindowTitle } from '../hooks/useWindowTitle';
@@ -70,7 +69,6 @@ export const RivetApp: FC = () => {
       <TrivetRenderer tryRunTests={tryRunTests} />
       <ChatViewerRenderer />
       <DataStudioRenderer />
-      <PluginsOverlayRenderer />
       <NewProjectModalRenderer />
       <CommunityOverlayRenderer />
       <HelpModal />

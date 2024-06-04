@@ -1,11 +1,11 @@
 import {
-  type DatasetRow,
+  type CombinedDataset,
+  type Dataset,
   type DatasetId,
   type DatasetMetadata,
   type DatasetProvider,
+  type DatasetRow,
   type ProjectId,
-  type Dataset,
-  type CombinedDataset,
 } from '@ironclad/rivet-core';
 import { cloneDeep } from 'lodash-es';
 
@@ -68,8 +68,7 @@ export class BrowserDatasetProvider implements DatasetProvider {
 
     const data = await Promise.all(
       metadata.map(async (meta) => {
-        const dataset = await toPromise<Dataset | undefined>(dataStore.get(meta.id));
-        return dataset;
+        return await toPromise<Dataset | undefined>(dataStore.get(meta.id));
       }),
     );
 

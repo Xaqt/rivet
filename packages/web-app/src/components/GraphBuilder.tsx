@@ -14,7 +14,6 @@ import { isNotNull } from '../utils/genericUtilFunctions.js';
 import { ErrorBoundary } from 'react-error-boundary';
 import { loadedRecordingState } from '../state/execution.js';
 import { useGraphHistoryNavigation } from '../hooks/useGraphHistoryNavigation';
-import { useProjectPlugins } from '../hooks/useProjectPlugins';
 import { entries } from '../../../core/src/utils/typeSafety';
 import { useGraphBuilderContextMenuHandler } from '../hooks/useGraphBuilderContextMenuHandler';
 import { NavigationBar } from './NavigationBar';
@@ -56,7 +55,7 @@ export const GraphBuilder: FC = () => {
   useDatasets(project.metadata.id);
 
   const historyNav = useGraphHistoryNavigation();
-  useProjectPlugins();
+  // useProjectPlugins();
 
   const nodesChanged = useStableCallback((newNodes: ChartNode[]) => {
     setNodes?.(newNodes);

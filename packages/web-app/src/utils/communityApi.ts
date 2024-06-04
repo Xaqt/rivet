@@ -1,4 +1,4 @@
-import { object, string, bool, mixed, array, type CheckerReturnType, number, dict } from '@recoiljs/refine';
+import { object, string, bool, array, type CheckerReturnType, number, dict } from '@recoiljs/refine';
 
 export const getProfileResponseChecker = object({
   user: object({

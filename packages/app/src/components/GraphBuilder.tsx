@@ -56,7 +56,7 @@ export const GraphBuilder: FC = () => {
   useDatasets(project.metadata.id);
 
   const historyNav = useGraphHistoryNavigation();
-  useProjectPlugins();
+  // useProjectPlugins();
 
   const nodesChanged = useStableCallback((newNodes: ChartNode[]) => {
     setNodes?.(newNodes);

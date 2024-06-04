@@ -1,7 +1,33 @@
 import axios, { type AxiosResponse } from 'axios';
+import { serializeTrivetData, type TrivetData } from '@ironclad/trivet';
+import { type Project, serializeProject } from '@ironclad/rivet-core';
+
+const getBaseUrl = () => {
+
+  function assumeNext(): string | undefined {
+    try {
+      return process?.env?.NEXT_PUBLIC_BASE_URL;
+    } catch {
+      return undefined
+    }
+  }
+
+  function assumeVite(): string | undefined {
+    try {
+      return import.meta?.env?.VITE_API_BASE_URL
+    } catch {
+      return undefined
+    }
+  }
+
+  // HACK: until it moves to the agent app
+  let url = assumeNext() || assumeVite();
+  console.log("base url", url);
+  return url;
+}
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BASE_URL,
+  baseURL: getBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },
@@ -63,8 +89,8 @@ api.interceptors.response.use(
 export const authApi = {
   login: async (username: string, password: string) => {
     const loginData = {
-      username: username,
-      password: password,
+      username,
+      password,
     };
     try {
       const response = await api.post('/auth/login', loginData);
@@ -117,4 +143,27 @@ export const authApi = {
   getAuthToken(): string {
     return localStorage.getItem('authToken')!;
   }
+};
+
+export const workflowApi = {
+  getWorkflowById: async (id: string) => {
+    throw new Error('Not Implemented');
+  },
+  
+  async saveProject(project: Project, testData: TrivetData): Promise<string | undefined> {
+    const data = serializeProject(project, {
+      trivet: serializeTrivetData(testData),
+    }) as string;
+
+    throw new Error('Not Implemented');
+  },
+
+  async saveRecording(projectId: string, recording: string) {
+    throw new Error('Not Implemented');
+  },
+
+  async saveTestData(projectId: string, testData: TrivetData) {
+    throw new Error('Not Implemented');
+  }
+
 };

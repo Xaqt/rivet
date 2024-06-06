@@ -74,12 +74,14 @@ export const projectGraphInfoState = selector({
 export const loadedProjectState = atom<{
   path: string;
   loaded: boolean;
+  saved?: boolean;
   id?: string,
 }>({
   key: 'loadedProjectState',
   default: {
     path: '',
     loaded: false,
+    saved: false,
   },
   effects: [persistAtom],
 });

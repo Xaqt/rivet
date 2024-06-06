@@ -6,7 +6,6 @@ import clsx from 'clsx';
 import { trivetState } from '../state/trivet.js';
 import { useRunMenuCommand } from '../hooks/useMenuCommands.js';
 import { isInTauri } from '../utils/tauri.js';
-import { LoadingSpinner } from './LoadingSpinner.js';
 import { overlayOpenState } from '../state/ui';
 import { sidebarOpenState } from '../state/graphBuilder';
 import { useFeatureFlag } from '../hooks/useFeatureFlag';
@@ -211,7 +210,6 @@ export const OverlayTabs: FC = () => {
               <button onMouseUp={() => runMenuCommand('open_project')}>Open Project...</button>
               <button onMouseUp={() => runMenuCommand('save_project_as')}>Save Project As...</button>
               <button onMouseUp={() => runMenuCommand('settings')}>Settings</button>
-              <button onMouseUp={() => runMenuCommand('export_graph')}>Export Graph</button>
               <button onMouseUp={() => runMenuCommand('import_graph')}>Import Graph</button>
             </div>
           </div>
@@ -227,88 +225,6 @@ export const OverlayTabs: FC = () => {
             }}
           >
             Canvas
-          </button>
-        </div>
-
-        <div className={clsx('menu-item plugins', { active: openOverlay === 'plugins' })}>
-          <button
-            className="dropdown-item"
-            onMouseDown={(e) => {
-              if (e.button === 0) {
-                setOpenOverlay((s) => (s === 'plugins' ? undefined : 'plugins'));
-              }
-            }}
-          >
-            Plugins
-          </button>
-        </div>
-
-        {communityEnabled && (
-          <div className={clsx('menu-item community', { active: openOverlay === 'community' })}>
-            <button
-              className="dropdown-item"
-              onMouseDown={(e) => {
-                if (e.button === 0) {
-                  setOpenOverlay((s) => (s === 'community' ? undefined : 'community'));
-                }
-              }}
-            >
-              Community
-            </button>
-          </div>
-        )}
-
-        <div className={clsx('menu-item prompt-designer-menu', { active: openOverlay === 'promptDesigner' })}>
-          <button
-            className="dropdown-item"
-            onMouseDown={(e) => {
-              if (e.button === 0) {
-                setOpenOverlay((s) => (s === 'promptDesigner' ? undefined : 'promptDesigner'));
-              }
-            }}
-          >
-            Prompt Designer
-          </button>
-        </div>
-        <div className={clsx('menu-item trivet-menu', { active: openOverlay === 'trivet' })}>
-          <button
-            className="dropdown-item"
-            onMouseDown={(e) => {
-              if (e.button === 0) {
-                setOpenOverlay((s) => (s === 'trivet' ? undefined : 'trivet'));
-              }
-            }}
-          >
-            Trivet Tests
-            {trivet.runningTests && (
-              <div className="spinner">
-                <LoadingSpinner />
-              </div>
-            )}
-          </button>
-        </div>
-        <div className={clsx('menu-item chat-viewer-menu', { active: openOverlay === 'chatViewer' })}>
-          <button
-            className="dropdown-item"
-            onMouseDown={(e) => {
-              if (e.button === 0) {
-                setOpenOverlay((s) => (s === 'chatViewer' ? undefined : 'chatViewer'));
-              }
-            }}
-          >
-            Chat Viewer
-          </button>
-        </div>
-        <div className={clsx('menu-item data-studio', { active: openOverlay === 'dataStudio' })}>
-          <button
-            className="dropdown-item"
-            onMouseDown={(e) => {
-              if (e.button === 0) {
-                setOpenOverlay((s) => (s === 'dataStudio' ? undefined : 'dataStudio'));
-              }
-            }}
-          >
-            Data Studio
           </button>
         </div>
       </div>

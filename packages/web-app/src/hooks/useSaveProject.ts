@@ -41,6 +41,7 @@ export function useSaveProject() {
       toast.success('Project saved');
       setLoadedProject({
         loaded: true,
+        saved: true,
         id: newProject.metadata.id,
         path: loadedProject.path,
       });

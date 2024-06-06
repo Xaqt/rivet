@@ -1,6 +1,5 @@
 import axios, { type AxiosResponse } from 'axios';
-import { serializeTrivetData, type TrivetData } from '@ironclad/trivet';
-import { type Project, serializeProject } from '@ironclad/rivet-core';
+import { type FindWorkflowsDto, type PagedWorkflowResponse, type UpdateWorkflowDto, type Workflow, type WorkflowCreateDto } from './types';
 
 const getBaseUrl = () => {
 
@@ -8,23 +7,23 @@ const getBaseUrl = () => {
     try {
       return process?.env?.NEXT_PUBLIC_BASE_URL;
     } catch {
-      return undefined
+      return undefined;
     }
   }
 
   function assumeVite(): string | undefined {
     try {
-      return import.meta?.env?.VITE_API_BASE_URL
+      return import.meta?.env?.API_BASE_URL;
     } catch {
-      return undefined
+      return undefined;
     }
   }
 
   // HACK: until it moves to the agent app
-  let url = assumeNext() || assumeVite();
+  const url = assumeNext() || assumeVite();
   console.log("base url", url);
   return url;
-}
+};
 
 const api = axios.create({
   baseURL: getBaseUrl(),
@@ -146,24 +145,58 @@ export const authApi = {
 };
 
 export const workflowApi = {
-  getWorkflowById: async (id: string) => {
-    throw new Error('Not Implemented');
+  find: async (workspaceId: string, criteria: FindWorkflowsDto): Promise<PagedWorkflowResponse> => {
+    criteria = criteria || {
+      page: 1,
+      page_size: 10,
+      order_by: 'created_at',
+      order: 'DESC'
+    };
+    criteria.workspace_id ??= workspaceId;
+    try {
+      const response = await api.get<PagedWorkflowResponse>(`/workspaces/${workspaceId}/reports`, {
+        params: criteria
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Find all workflows error', error);
+      throw error;
+    }
   },
-  
-  async saveProject(project: Project, testData: TrivetData): Promise<string | undefined> {
-    const data = serializeProject(project, {
-      trivet: serializeTrivetData(testData),
-    }) as string;
-
-    throw new Error('Not Implemented');
+  getById: async (workspaceId: string, workflowId: string): Promise<Workflow> => {
+    try {
+      const response = await api.get<Workflow>(`/${workspaceId}/workflows/${workflowId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Get workflow by id error', error);
+      throw error;
+    }
   },
-
-  async saveRecording(projectId: string, recording: string) {
-    throw new Error('Not Implemented');
+  create: async (workspaceId: string, body: WorkflowCreateDto): Promise<Workflow> => {
+    try {
+      const response = await api.post<Workflow>(`/${workspaceId}/workflows`, body);
+      return response.data;
+    } catch (error) {
+      console.error('Create workflow error', error);
+      throw error;
+    }
   },
-
-  async saveTestData(projectId: string, testData: TrivetData) {
-    throw new Error('Not Implemented');
-  }
-
+  delete: async (workspaceId: string, workflowId: string) => {
+    try {
+      const response = await api.delete(`/${workspaceId}/workflows/${workflowId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Delete workflow error', error);
+      throw error;
+    }
+  },
+  update: async (workspaceId: string, workflowId: string, body: UpdateWorkflowDto) => {
+    try {
+      const response = await api.patch<Workflow>(`/${workspaceId}/workflows/${workflowId}`, body);
+      return response.data;
+    } catch (error) {
+      console.error('Update workflow error', error);
+      throw error;
+    }
+  },
 };

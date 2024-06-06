@@ -17,7 +17,6 @@ import { ActionBarMoreMenu } from './ActionBarMoreMenu';
 import { CopyAsTestCaseModal } from './CopyAsTestCaseModal';
 import { useToggle } from 'ahooks';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
-import { GentraceInteractors } from './gentrace/GentraceInteractors';
 import { projectMetadataState } from '../state/savedGraphs';
 import { graphMetadataState } from '../state/graph';
 import { type GraphId } from '@ironclad/rivet-core';
@@ -152,9 +151,6 @@ export const ActionBar: FC<ActionBarProps> = ({ onRunGraph, onAbortGraph, onPaus
 
   const plugins = useDependsOnPlugins();
 
-  const gentracePlugin = plugins.find((plugin) => plugin.id === 'gentrace');
-  const isGentracePluginEnabled = !!gentracePlugin;
-
   const canRun = (remoteDebugger.started && !remoteDebugger.reconnecting) || selectedExecutor === 'browser';
   const hasMainGraph = projectMetadata.mainGraphId != null;
   const isMainGraph = hasMainGraph && graphMetadata?.id === projectMetadata.mainGraphId;
@@ -193,8 +189,6 @@ export const ActionBar: FC<ActionBarProps> = ({ onRunGraph, onAbortGraph, onPaus
           </button>
         </div>
       )}
-
-      {isGentracePluginEnabled && <GentraceInteractors />}
 
       {lastRecording && (
         <div className={clsx('save-recording-button')}>

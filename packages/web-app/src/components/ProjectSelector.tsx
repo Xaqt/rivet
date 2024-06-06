@@ -17,6 +17,7 @@ import { SortableContext, horizontalListSortingStrategy, useSortable, arrayMove 
 import { useLoadProjectWithFileBrowser } from '../hooks/useLoadProjectWithFileBrowser';
 import { newProjectModalOpenState } from '../state/ui';
 import { keys } from '../../../core/src/utils/typeSafety';
+import { useWindowTitle } from '../hooks/useWindowTitle';
 
 export const styles = css`
     position: absolute;
@@ -221,6 +222,7 @@ export const ProjectSelector: FC = () => {
   const loadProject = useLoadProject();
   const setNewProjectModalOpen = useSetRecoilState(newProjectModalOpenState);
   const loadProjectWithFileBrowser = useLoadProjectWithFileBrowser();
+  const { title, setTitle } = useWindowTitle();
 
   useSyncCurrentStateIntoOpenedProjects();
 
@@ -274,6 +276,7 @@ export const ProjectSelector: FC = () => {
     <div css={styles}>
       <div className="projects-container">
         <div className="projects">
+          <div>{title}</div>
           <DndContext onDragEnd={handleDragEnd}>
             <SortableContext items={sortedOpenedProjects} strategy={horizontalListSortingStrategy}>
               {sortedOpenedProjects.map((project) => {

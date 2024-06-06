@@ -63,7 +63,7 @@ const styles = css`
       width: 200px;
       height: 32px;
       font-size: 14px;
-      font-family: var(--font-family);
+      font-family: var(--font-family),sans-serif;
       font-weight: 500;
       box-shadow: 3px 1px 10px rgba(0, 0, 0, 0.4);
     }

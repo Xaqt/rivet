@@ -109,8 +109,18 @@ export function useWorkflows() {
     await execLoading(() => workflowApi.delete(workspaceId, workflowId));
   };
 
+  const addWorkflowLabels = async (flowId: string, labelIds: string[]) => {
+    return execLoading(() => workflowApi.addLabels(flowId, labelIds));
+  };
+
+  const removeWorkflowLabel = async (flowId: string, labelId: string) => {
+    return execLoading(() => workflowApi.removeLabel(flowId, labelId));
+  };
+
   return {
     workflows,
+    addWorkflowLabels,
+    removeWorkflowLabel,
     getWorkflowById,
     fetchWorkflows,
     createWorkflow,

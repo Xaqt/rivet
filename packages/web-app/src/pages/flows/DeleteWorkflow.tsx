@@ -14,9 +14,7 @@ export const DeleteWorkflow: React.FC<Props> = ({
   setOpenModal,
   workflow,
 }) => {
-  const { currentWorkspace } = useAuth();
-  const workspaceId = currentWorkspace?.workspace_id || '';
-  const { deleteWorkflow } = useWorkflows(workspaceId);
+  const { deleteWorkflow } = useWorkflows();
   const handleDelete = async () => {
     await deleteWorkflow(
       workflow?.id!,

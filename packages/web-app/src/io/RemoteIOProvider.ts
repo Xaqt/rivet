@@ -99,6 +99,6 @@ export class RemoteIOProvider implements IOProvider {
     // const file = await fileHandle.getFile();
     // const arrayBuffer = await file.arrayBuffer();
     // callback(new Uint8Array(arrayBuffer));
-    throw new Error('Not implemented')
+    throw new Error('Not implemented');
   }
 }

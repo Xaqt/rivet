@@ -484,6 +484,7 @@ export interface Workflow {
     created_by: string;
     created_at: Date;
     updated_at: Date;
+    labels: Label[];
 }
 
 export type WorkflowCreateDto = {

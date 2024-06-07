@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import type React from 'react';
+import { useState, useEffect } from 'react';
 import x_icon from '@/assets/x_icon.svg';
 import download_blue from '@/assets/download_blue.svg';
-import { formatDate, transformToUSFormat } from '@/components/utils';
 import calendarIcon from '@/assets/calendar_icon.svg';
-import { DesignedTags } from '@/components/TaskDetail/DesignedTags';
 import { type Workflow } from '../../api/types';
 import { useAuth } from '../../hooks/useAuth';
+import { getWorkflowTitle } from './utils';
+import { formatDate } from '../../utils/time';
+import { useWorkflows } from '../../hooks/useWorkflows';
+import { FlowTags } from './FlowTags';
 
 interface Props {
   workflow: Workflow | undefined;
@@ -22,22 +25,15 @@ export const WorkflowCard: React.FC<Props> = ({
   setOpenDeleteModal,
   setIsOpenAddLabelList,
 }) => {
-  const { removeLabelFromConversation } = useConversation();
+  const [title, setTitle] = useState(getWorkflowTitle(workflow));
+  const { removeWorkflowLabel } = useWorkflows();
   const { currentWorkspace } = useAuth();
 
   const handleRemoveLabel = async (labelId: string) => {
     if (!currentWorkspace || !workflow) return;
-    await removeLabelFromConversation(
-      currentWorkspace.workspace_id,
-      workflow?.conversation_id,
-      labelId
-    );
+    await removeWorkflowLabel(workflow?.id, labelId);
   };
 
-  const view =
-    workflow?.caller_info.call_direction === 'inbound'
-      ? workflow.caller_info.ANI
-      : workflow?.caller_info.dialed_number;
   return (
     <>
       <div className={'flex flex-col p-6 gap-6'}>
@@ -54,7 +50,7 @@ export const WorkflowCard: React.FC<Props> = ({
             />
           </div>
           <div className={'text-primary font-normal text-2xl'}>
-            {view ? transformToUSFormat(view) : '-'}
+            {title}
           </div>
         </div>
         <div className={'flex flex-col gap-4'}>
@@ -119,7 +115,7 @@ export const WorkflowCard: React.FC<Props> = ({
         </div>
 
         {workflow && (
-          <DesignedTags
+          <FlowTags
             limit={false}
             tags={workflow!.labels.map((el) => el.label_id)}
             openAddList={() => setIsOpenAddLabelList(true)}

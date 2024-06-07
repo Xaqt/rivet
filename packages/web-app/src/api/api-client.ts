@@ -1,5 +1,12 @@
 import axios, { type AxiosResponse } from 'axios';
-import { type FindWorkflowsDto, type PagedWorkflowResponse, type UpdateWorkflowDto, type Workflow, type WorkflowCreateDto } from './types';
+import {
+  type FindWorkflowsDto,
+  Label,
+  type PagedWorkflowResponse,
+  type UpdateWorkflowDto,
+  type Workflow,
+  type WorkflowCreateDto,
+} from './types';
 
 const getBaseUrl = () => {
 
@@ -144,6 +151,174 @@ export const authApi = {
   }
 };
 
+export const labelApi = {
+  getAllGroup: async (workspaceId: string) => {
+    try {
+      const response = await api.get(`/${workspaceId}/labels/groups`);
+      return response.data;
+    } catch (error) {
+      console.error('Get all label group', error);
+    }
+  },
+  getAllLabelsInGroup: async (workspaceId: string, groupId: string) => {
+    try {
+      const response = await api.get(
+        `/${workspaceId}/labels/groups/${groupId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Get all labels in group', error);
+    }
+  },
+  getAllLabels: async (workspaceId: string) => {
+    try {
+      const response = await api.get<Label[]>(`/${workspaceId}/labels`);
+      return response.data || [];
+    } catch (error) {
+      console.error('Get all labels', error);
+    }
+  },
+  createGroup: async (workspaceId: string, name: string) => {
+    try {
+      const response = await api.post(`/${workspaceId}/labels/groups`, {
+        name,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Create group error ', error);
+    }
+  },
+  createLabelAlone: async (
+    workspaceId: string,
+    name: string,
+    color: string
+  ) => {
+    try {
+      const response = await api.post(`/${workspaceId}/labels`, {
+        name,
+        color,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Create alone label error ', error);
+    }
+  },
+  createLabelInGroup: async (
+    workspaceId: string,
+    groupId: string,
+    name: string,
+    color: string
+  ) => {
+    try {
+      const response = await api.post(
+        `/${workspaceId}/labels/groups/${groupId}`,
+        { name, color }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Create label in group error ', error);
+    }
+  },
+  deleteGroup: async (
+    workspaceId: string,
+    groupId: string,
+    isDeleteLabels: boolean
+  ) => {
+    try {
+      const response = await api.delete(
+        `/${workspaceId}/labels/groups/${groupId}`,
+        { data: { delete_labels: isDeleteLabels } }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Delete group error ', error);
+    }
+  },
+  deleteLabel: async (workspaceId: string, labelId: string) => {
+    try {
+      const response = await api.delete(`/${workspaceId}/labels/${labelId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Delete label error ', error);
+    }
+  },
+  updateLabel: async (
+    workspaceId: string,
+    labelId: string,
+    groupId: string | null,
+    name: string,
+    color: string
+  ) => {
+    try {
+      const response = await api.patch(`/${workspaceId}/labels/${labelId}`, {
+        color,
+        name,
+        groupId,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Update label error', error);
+    }
+  },
+  updateGroup: async (workspaceId: string, groupId: string, name: string) => {
+    try {
+      const response = await api.patch(
+        `/${workspaceId}/labels/groups/${groupId}`,
+        { name }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Update label error', error);
+    }
+  },
+  moveLabelToAnotherGroup: async (
+    workspaceId: string,
+    labelId: string,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    new_group_id: string
+  ) => {
+    try {
+      const response = await api.patch(
+        `/${workspaceId}/labels/${labelId}/move`,
+        { new_group_id }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('move Label To Another Group error', error);
+    }
+  },
+  addToConversation: async (
+    workspaceId: string,
+    conversationId: string,
+    labelId: string
+  ) => {
+    try {
+      const response = await api.patch(
+        `/${workspaceId}/labels/conversation/${conversationId}`,
+        { labels: [labelId] }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('add label to conversation error', error);
+    }
+  },
+  removeFromConversation: async (
+    workspaceId: string,
+    conversationId: string,
+    labelId: string
+  ) => {
+    try {
+      const response = await api.delete(
+        `/${workspaceId}/labels/conversation/${conversationId}/remove`,
+        { data: { labelId } }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('add label to conversation error', error);
+    }
+  },
+};
+
 export const workflowApi = {
   find: async (workspaceId: string, criteria: FindWorkflowsDto): Promise<PagedWorkflowResponse> => {
     criteria = criteria || {
@@ -196,6 +371,69 @@ export const workflowApi = {
       return response.data;
     } catch (error) {
       console.error('Update workflow error', error);
+      throw error;
+    }
+  },
+  addLabels: async (flowId: string, labelIds: string[]) => {
+    try {
+      const response = await api.post(`/workflows/${flowId}/labels`, labelIds);
+      return response.data;
+    } catch (error) {
+      console.error('Add labels to workflow error', error);
+      throw error;
+    }
+  },
+  removeLabel: async (flowId: string, labelId: string) => {
+    try {
+      const response = await api.delete(`/workflows/${flowId}/labels/${labelId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Remove label from workflow error', error);
+      throw error;
+    }
+  },
+  saveRecording: async (workflowId: string, serializedRecording: string) => {
+    try {
+      const response = await api.post(`/workflows/${workflowId}/recording`, serializedRecording);
+      return response.data;
+    } catch (error) {
+      console.error('Save recording error', error);
+      throw error;
+    }
+  },
+  getRecording: async (workflowId: string) => {
+    try {
+      const response = await api.get(`/workflows/${workflowId}/recording`);
+      return response.data;
+    } catch (error) {
+      console.error('Get recording error', error);
+      throw error;
+    }
+  },
+  deleteRecording: async (workflowId: string, recordingId: string) => {
+    try {
+      const response = await api.delete(`/workflows/${workflowId}/recording/${recordingId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Delete recording error', error);
+      throw error;
+    }
+  },
+  getRun: async (workflowId: string, runId: string) => {
+    try {
+      const response = await api.get(`/workflows/${workflowId}/runs/${runId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Get run error', error);
+      throw error;
+    }
+  },
+  getRuns: async (workflowId: string) => {
+    try {
+      const response = await api.get(`/workflows/${workflowId}/runs`);
+      return response.data;
+    } catch (error) {
+      console.error('Get runs error', error);
       throw error;
     }
   },

@@ -17,6 +17,7 @@ export type MenuIds =
   | 'open_project'
   | 'save_project'
   | 'save_project_as'
+  | 'export_graph'
   | 'import_graph'
   | 'run'
   | 'load_recording'
@@ -70,6 +71,10 @@ export function useMenuCommands(
         })
         .with('save_project_as', () => {
           saveProjectAs();
+        })
+        .with('export_graph', () => {
+          // importGraph();
+          console.log('export_graph');
         })
         .with('import_graph', () => {
           importGraph();

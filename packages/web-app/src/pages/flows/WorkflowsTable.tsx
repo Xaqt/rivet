@@ -1,14 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import Image from 'next/image';
-import column_sort from '@/assets/column_sort.svg';
-import search_icon from '@/assets/search_icon_gray.svg';
-import play from '@/assets/play.svg';
-import subtitlesIcon from '@/assets/subtitles.svg';
+import column_sort from '@/assets/icons/column_sort.svg';
+import search_icon from '@/assets/icons/search_icon_gray.svg';
 import download from '@/assets/download.svg';
-import shortcut_icon from '@/assets/shortcut_icon_gray.svg';
-import folder_not_found from '@/assets/folder_not_found.svg';
+import shortcut_icon from '@/assets/icons/shortcut_icon_gray.svg';
+import folder_not_found from '@/assets/icons/folder_not_found.svg';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import {
   createColumnHelper,
   flexRender,
@@ -20,8 +18,6 @@ import {
 } from '@tanstack/react-table';
 import BulkActions from './BulkActions';
 import { UserIcon } from '@heroicons/react/20/solid';
-import CustomHoverCard from '@/components/TaskDetail/CustomHoverCard';
-import { ConversationElement } from '@/components/TaskDetail/ConversationElement';
 import refresh_icon from '@/assets/refresh_icon.svg';
 import { useAuth } from '../../hooks/useAuth';
 import { useWorkflows } from '../../hooks/useWorkflows';
@@ -33,6 +29,9 @@ import { Pagination } from '../../components/common/Pagination';
 import { DeleteWorkflow } from './DeleteWorkflow';
 import { DownloadWorkflow } from './DownloadWorkflow';
 import { formatDate } from '../../utils/time';
+import { useDebounce } from 'ahooks';
+import { WorkflowElement } from './WorkflowElement';
+import Button from '@atlaskit/button';
 
 const columnHelper = createColumnHelper<Workflow>();
 const WorkflowTable = () => {
@@ -46,17 +45,17 @@ const WorkflowTable = () => {
     pageSize,
     setPageSize,
     totalCount,
-    searchTerm,
-    setSearchTerm,
+    searchCriteria
   } = useWorkflows();
 
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
+  const [searchTerm, setSearchTerm] = useState<string>(searchCriteria.name || '');
+  const debouncedSearchTerm = useDebounce(searchTerm, { wait: 500 });
 
   const [selectedWorkflow, setSelectedWorkflow] =
     useState<Workflow>();
 
   const [sorting, setSorting] = useState<SortingState>([
-    { id: 'conversation_start_time', desc: true },
+    { id: 'name', desc: false },
   ]);
   const [clearTrigger, setClearTrigger] = useState(0);
 
@@ -90,7 +89,7 @@ const WorkflowTable = () => {
     setClearTrigger((prevState) => prevState + 1);
   };
 
-  const handleDownloadWorkflows = (
+  const handleDownloadWorkflow = (
     e: React.MouseEvent<HTMLImageElement, MouseEvent>,
     workflow: Workflow
   ) => {
@@ -127,7 +126,7 @@ const WorkflowTable = () => {
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('conversation_start_time', {
+      columnHelper.accessor('name', {
         header: ({ table }) => {
           return (
             <div className="flex -ml-2 flex-row items-center">
@@ -138,12 +137,12 @@ const WorkflowTable = () => {
                   onChange: table.getToggleAllRowsSelectedHandler(),
                 }}
               />
-              <div className="flex ml-2 min-w-[66px]">Date & Time</div>
+              <div className="flex ml-2 min-w-[66px]">Name</div>
             </div>
           );
         },
         cell: ({ getValue, row }) => {
-          const date = getValue();
+          const name = getValue();
           return (
             <div className="flex flex-row items-center space-x-2 truncate">
               <IndeterminateCheckbox
@@ -155,17 +154,17 @@ const WorkflowTable = () => {
                 }}
               />
 
-              <div className="">{formatDate(date)}</div>
+              <div className="">{name}</div>
             </div>
           );
         },
         footer: (info) => info.column.id,
       }),
-      columnHelper.accessor('queue.queue_name', {
+      columnHelper.accessor('description', {
         header: () => {
           return (
             <div className="flex flex-row items-center">
-              <div className="flex">Queue</div>
+              <div className="flex">Description</div>
             </div>
           );
         },
@@ -173,36 +172,18 @@ const WorkflowTable = () => {
           const response = getValue();
           return (
             <div className="flex flex-row items-center space-x-2 truncate ">
-              <div className="">{response ? response : '-'}</div>
+              <div className="">{response ?? '-'}</div>
             </div>
           );
         },
 
         footer: (info) => info.column.id,
       }),
-      columnHelper.accessor('caller_info.call_direction', {
+      columnHelper.accessor('created_by', {
         header: () => {
           return (
             <div className="flex flex-row items-center">
-              <div className="flex">Direction</div>
-            </div>
-          );
-        },
-        cell: ({ getValue }) => {
-          const response = getValue();
-          return (
-            <div className="flex flex-row items-center space-x-2 truncate">
-              <div>{response ? response : '-'}</div>
-            </div>
-          );
-        },
-        footer: (info) => info.column.id,
-      }),
-      columnHelper.accessor('agent', {
-        header: () => {
-          return (
-            <div className="flex flex-row items-center">
-              <div className="flex">Agent</div>
+              <div className="flex">Created By</div>
             </div>
           );
         },
@@ -225,8 +206,7 @@ const WorkflowTable = () => {
                 <UserIcon className="p-1 border border-gray-600 rounded-full w-[18px] h-[18px]" />
               )}
               <div className="">
-                {info && info.first_name ? info.first_name : '-'}{' '}
-                {info && info.last_name ? `${info.last_name[0]}.` : ''}
+                {info}
               </div>
             </div>
           );
@@ -234,74 +214,26 @@ const WorkflowTable = () => {
 
         footer: (info) => info.column.id,
       }),
-      columnHelper.accessor('caller_info.ANI', {
+      columnHelper.accessor('updated_at', {
         header: () => {
           return (
             <div className="flex flex-row items-center">
-              <div className="flex min-w-[100px] ">Customer Number</div>
+              <div className="flex min-w-[100px] ">Last Modified</div>
             </div>
           );
         },
         cell: (info) => {
           const data = info.row.original;
-          const view =
-            data.caller_info.call_direction === 'inbound'
-              ? data.caller_info.ANI
-              : data.caller_info.dialed_number;
           return (
             <div className="flex flex-row items-center space-x-2 truncate">
-              <div className="">{view ? transformToUSFormat(view) : '-'}</div>
+              <div className="">{formatDate(data.updated_at)}</div>
             </div>
           );
         },
 
         footer: (info) => info.column.id,
       }),
-      columnHelper.accessor('conversationTalkDuration', {
-        header: () => {
-          return (
-            <div className="flex flex-row items-center">
-              <div className="flex">Media</div>
-            </div>
-          );
-        },
-        cell: (info) => {
-          const data = info.row.original;
-          return (
-            <div className="flex flex-row min-w-[65px] items-center truncate ">
-              <div className="mr-1.5 min-w-[30px]">
-                {data.conversationTalkDuration
-                  ? transformDate(data.conversationTalkDuration, 'm-s')
-                  : transformDate(data.duration, 'm-s')}
-              </div>
-              {data && data.recording && data.recording.recording_id && (
-                <CustomHoverCard
-                  triger={
-                    <Image src={play} alt={'audio'} width={16} height={16} />
-                  }
-                  content={'Contains Audio'}
-                />
-              )}
-              {data && data.recording && data.recording.transcript_url && (
-                <CustomHoverCard
-                  triger={
-                    <Image
-                      src={subtitlesIcon}
-                      alt={'subtitles'}
-                      width={16}
-                      height={16}
-                    />
-                  }
-                  content={'Contains Transcription'}
-                />
-              )}
-            </div>
-          );
-        },
-
-        footer: (info) => info.column.id,
-      }),
-      columnHelper.accessor('disposition', {
+      columnHelper.accessor('id', {
         header: () => {
           return (
             <div className="flex flex-row items-center">
@@ -313,7 +245,7 @@ const WorkflowTable = () => {
           const response = getValue();
           return (
             <div className="flex flex-row items-center space-x-2 truncate">
-              <div className="">{response ? response : '-'}</div>
+              <div className="">Menu Here</div>
             </div>
           );
         },
@@ -342,19 +274,10 @@ const WorkflowTable = () => {
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
   });
-  useEffect(() => {
-    const timerId = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
 
-    return () => {
-      clearTimeout(timerId);
-    };
-  }, [searchTerm]);
-
-  const fetchWorkflowsWithFilter = async () => {
+  const fetchWorkflowsWithFilter = () => {
     if (currentWorkspace) {
-      await fetchWorkflows();
+      fetchWorkflows();
       setLoadCounter((prevCounter) => prevCounter + 1);
     }
   };
@@ -388,7 +311,7 @@ const WorkflowTable = () => {
       <LoadingSpinner />
     ) : (
       <div className="flex flex-col items-center justify-center min-h-screen rounded-lg h-96">
-        <Image
+        <img
           src={folder_not_found}
           alt="noFolderIcon"
           width={110}
@@ -412,13 +335,13 @@ const WorkflowTable = () => {
           <button
             className="flex items-center justify-center size-7 rounded-full h-7 bg-primary hover:bg-opacity-90"
             onClick={handleRefresh}>
-            <Image src={refresh_icon} alt="" height={14} />
+            <img src={refresh_icon} alt="" height={14} />
           </button>
           <div className="flex h-7">
             <BulkActions handleBulkAction={() => {}} />
           </div>
           <div className="relative w-52 bg-gray h-7">
-            <Image
+            <img
               src={search_icon}
               alt="searchIcon"
               height={13}
@@ -432,13 +355,23 @@ const WorkflowTable = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <Image
+            <img
               src={shortcut_icon}
               alt="shortcutIcon"
               height={18}
               width={18}
               className="absolute transform -translate-y-1/2 right-2 top-1/2"
             />
+          </div>
+          <div>
+            <Button>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
+                   stroke="currentColor" className="size-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              <img src={shortcut_icon} alt="plus plusicon" height={18} width={18} />
+              <span className="text-xs">Create Flow</span>
+            </Button>
           </div>
         </div>
       </div>
@@ -480,21 +413,21 @@ const WorkflowTable = () => {
                         </div>
                         {{
                           asc: (
-                            <Image
+                            <img
                               src={column_sort}
                               alt=""
                               className="w-2.5 h-2.5"
                             />
                           ),
                           desc: (
-                            <Image
+                            <img
                               src={column_sort}
                               alt=""
                               className="w-2.5 h-2.5"
                             />
                           ),
                         }[header.column.getIsSorted() as string] ?? (
-                          <Image
+                          <img
                             src={column_sort}
                             alt=""
                             className="w-2.5 h-2.5"
@@ -537,11 +470,11 @@ const WorkflowTable = () => {
                 ))}
                 <td className="py-2 p-2 text-sm font-light text-textDefault whitespace-nowrap">
                   <div className="flex flex-row justify-center min-w-[24px] cursor-pointer">
-                    <Image
+                    <img
                       src={download}
                       alt=""
                       onClick={(e) =>
-                        handleDownloadConversations(e, row.original)
+                        handleDownloadWorkflow(e, row.original)
                       }
                     />
                   </div>
@@ -573,8 +506,8 @@ const WorkflowTable = () => {
       </ModalLayout>
 
       <SidebarLayout open={openSidebar} setOpen={handleCloseSidebar}>
-        <ConversationElement
-          conversation={selectedWorkflow}
+        <WorkflowElement
+          workflow={selectedWorkflow}
           setOpenSidebar={setOpenSidebar}
           setOpenDownloadModal={setOpenDownloadModal}
           setOpenDeleteModal={setOpenDeleteModal}

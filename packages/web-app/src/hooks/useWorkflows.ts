@@ -1,16 +1,18 @@
 import { getError } from '@ironclad/rivet-core';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { workflowListState, workflowSearchCriteriaState } from '../state/workflows';
 import { workflowApi } from '../api/api-client';
 import { type FindWorkflowsDto, type Workflow, type WorkflowCreateDto } from '../api/types';
 import { useStableCallback } from './useStableCallback';
 import { useAuth } from './useAuth';
+import { flowState } from '../state/savedGraphs';
 
 export function useWorkflows() {
 
   const { currentWorkspace } = useAuth();
+  const [currentWorkflow, setCurrentWorkflow] = useRecoilState(flowState)
   const [workflows, updateWorkflows] = useRecoilState(workflowListState);
   const [loading, setLoading] = useState(false);
   const [searchCriteria, setSearchCriteria] = useRecoilState(workflowSearchCriteriaState);

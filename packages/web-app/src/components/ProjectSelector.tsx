@@ -17,7 +17,7 @@ import { SortableContext, horizontalListSortingStrategy, useSortable, arrayMove 
 import { useLoadProjectWithFileBrowser } from '../hooks/useLoadProjectWithFileBrowser';
 import { newProjectModalOpenState } from '../state/ui';
 import { keys } from '../../../core/src/utils/typeSafety';
-import { useWindowTitle } from '../hooks/useWindowTitle';
+import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 
 export const styles = css`
     position: absolute;
@@ -206,6 +206,7 @@ export const styles = css`
 `;
 
 export const ProjectSelector: FC = () => {
+  const [project, setProject] = useRecoilState(projectState);
   const setProjects = useSetRecoilState(projectsState);
   const [openedProjects, setOpenedProjects] = useRecoilState(openedProjectsState);
   const [openedProjectsSortedIds, setOpenedProjectsSortedIds] = useRecoilState(openedProjectsSortedIdsState);
@@ -222,7 +223,6 @@ export const ProjectSelector: FC = () => {
   const loadProject = useLoadProject();
   const setNewProjectModalOpen = useSetRecoilState(newProjectModalOpenState);
   const loadProjectWithFileBrowser = useLoadProjectWithFileBrowser();
-  const { title, setTitle } = useWindowTitle();
 
   useSyncCurrentStateIntoOpenedProjects();
 
@@ -272,11 +272,23 @@ export const ProjectSelector: FC = () => {
     }
   };
 
+  const handleNameChange = (newTitle: string) => {
+    // setProject({ ...project, metadata: { ...project.metadata, title: newValue } })}
+    // setTitle(newTitle);
+  }
+
   return (
     <div css={styles}>
       <div className="projects-container">
         <div className="projects">
-          <div>{title}</div>
+          <InlineEditableTextfield
+            key={`name-${project.metadata.id}`}
+            label="Project Name"
+            placeholder="Project Name"
+            readViewFitContainerWidth
+            defaultValue={project.metadata.title}
+            onConfirm={handleNameChange}
+          />
           <DndContext onDragEnd={handleDragEnd}>
             <SortableContext items={sortedOpenedProjects} strategy={horizontalListSortingStrategy}>
               {sortedOpenedProjects.map((project) => {

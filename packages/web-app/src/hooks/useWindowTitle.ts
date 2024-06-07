@@ -10,7 +10,7 @@ export function useWindowTitle() {
   useEffect(() => {
     (async () => {
       try {
-        const status = loadedProject?.saved ? '' : ' ( Unsaved )';
+        const status = loadedProject?.saved ? '' : ' (unsaved)';
         const _title = `${project.metadata.title}${status}`;
         setTitle(_title);
       } catch (err) {

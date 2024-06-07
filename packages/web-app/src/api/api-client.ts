@@ -152,9 +152,11 @@ export const authApi = {
 };
 
 export const labelApi = {
-  getAllGroup: async (workspaceId: string) => {
+  getAllGroups: async (workspaceId: string, with_labels = false) => {
     try {
-      const response = await api.get(`/${workspaceId}/labels/groups`);
+      const response = await api.get(`/${workspaceId}/labels/groups`, {
+        params: { with_labels },
+      });
       return response.data;
     } catch (error) {
       console.error('Get all label group', error);

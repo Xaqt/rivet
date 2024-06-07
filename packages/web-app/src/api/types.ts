@@ -1,5 +1,6 @@
 // ORGANIZATION
-import { type Project } from "@ironclad/rivet-core";
+import { DataId, type Project, ProjectId } from '@ironclad/rivet-core';
+import { nanoid } from 'nanoid/non-secure';
 
 export interface Organization {
   org_id: string;
@@ -259,6 +260,7 @@ export interface DocumentI {
 }
 
 export interface Label {
+  group_id?: string;
   label_id: string;
   name: string;
   color: string;
@@ -485,6 +487,72 @@ export interface Workflow {
     created_at: Date;
     updated_at: Date;
     labels: Label[];
+}
+
+const UNSAVED_ID: string = '__unsaved__' as DataId;
+
+export class WorkflowImpl implements Workflow {
+  created_at: Date;
+  created_by: string;
+  description: string;
+  id: string;
+  labels: Label[];
+  name: string;
+  project;
+  status: WorkflowStatus;
+  updated_at: Date;
+  workspace_id: string;
+
+  constructor(data: Workflow) {
+    this.created_at = data.created_at;
+    this.created_by = data.created_by;
+    this.description = data.description;
+    this.id = data.id;
+    this.labels = data.labels;
+    this.name = data.name;
+    this.project = data.project;
+    this.status = data.status;
+    this.updated_at = data.updated_at;
+    this.workspace_id = data.workspace_id;
+  }
+
+  static createDefault(workspaceId: string): Workflow {
+    const id = nanoid(16);
+    const name = 'Untitled Workflow';
+
+    return {
+      created_at: new Date(),
+      created_by: '',
+      description: '',
+      id,
+      labels: [],
+      name,
+      project: {
+        metadata: {
+          id: id as ProjectId,
+          description: '',
+          title: name,
+        },
+        graphs: {},
+        plugins: [],
+        data: {
+          [UNSAVED_ID]: 't',
+        },
+      },
+      status: WorkflowStatus.DRAFT,
+      updated_at: new Date(),
+      workspace_id: workspaceId,
+    };
+  }
+
+  isUnsaved(): boolean {
+    const value = this.project?.data?.[UNSAVED_ID as DataId];
+    return value === 't';
+  }
+
+  clearUnsaved(): void {
+    delete this.project.data?.[UNSAVED_ID as DataId];
+  }
 }
 
 export type WorkflowCreateDto = {

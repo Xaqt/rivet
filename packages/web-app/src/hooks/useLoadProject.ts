@@ -34,7 +34,7 @@ export function useLoadProject() {
       }
 
       if (projectInfo.project.data) {
-        setStaticData(projectInfo.project.data);
+        await setStaticData(projectInfo.project.data);
       }
 
       setLoadedProjectState({
@@ -43,25 +43,14 @@ export function useLoadProject() {
         loaded: true,
       });
 
-      if (projectInfo.fsPath) {
-        const { testData } = await ioProvider.loadProjectDataNoPrompt(projectInfo.fsPath);
-
-        setTrivetState({
-          testSuites: testData.testSuites,
-          selectedTestSuiteId: undefined,
-          editingTestCaseId: undefined,
-          recentTestResults: undefined,
-          runningTests: false,
-        });
-      } else {
-        setTrivetState({
-          testSuites: [],
-          selectedTestSuiteId: undefined,
-          editingTestCaseId: undefined,
-          recentTestResults: undefined,
-          runningTests: false,
-        });
-      }
+      // todo: !!!!
+      setTrivetState({
+        testSuites: [],
+        selectedTestSuiteId: undefined,
+        editingTestCaseId: undefined,
+        recentTestResults: undefined,
+        runningTests: false,
+      });
     } catch (err) {
       toast.error(`Failed to load project: ${getError(err).message}`);
     }

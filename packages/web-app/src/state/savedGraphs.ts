@@ -12,8 +12,17 @@ import {
 import { blankProject } from '../utils/blankProject.js';
 import { recoilPersist } from 'recoil-persist';
 import { entries, values } from '../../../core/src/utils/typeSafety';
+import { Workflow, WorkflowImpl } from '../api/types';
 
 const { persistAtom } = recoilPersist({ key: 'project' });
+
+const { persistAtom: flowPersistAtom } = recoilPersist({ key: 'currentFlow' });
+
+export const flowState = atom<Workflow>({
+  key: 'flowState',
+  default: WorkflowImpl.createDefault(''),
+  effects: [flowPersistAtom],
+});
 
 // What's the data of the last loaded project?
 export const projectState = atom<Omit<Project, 'data'>>({
@@ -135,6 +144,7 @@ export const projectPluginsState = selector({
 });
 
 export type OpenedProjectInfo = {
+  workflow?: Workflow,
   project: Project;
   fsPath?: string | null;
   id?: ProjectId,

@@ -60,10 +60,6 @@ export class RemoteIOProvider implements IOProvider {
     callback({ project, testData, path: fileHandle.name });
   }
 
-  async loadProjectDataNoPrompt(path: string): Promise<{ project: Project; testData: TrivetData }> {
-    throw new Error('Function not supported in the browser');
-  }
-
   async loadRecordingData(callback: (data: { recorder: ExecutionRecorder; path: string }) => void): Promise<void> {
     const [fileHandle] = await window.showOpenFilePicker();
     const file = await fileHandle.getFile();

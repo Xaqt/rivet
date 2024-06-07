@@ -1,5 +1,5 @@
 import { atom } from 'recoil';
-import { type ExecutionRecorder } from '@ironclad/rivet-core';
+import { type ExecutionRecorder, Recording } from '@ironclad/rivet-core';
 import { recoilPersist } from 'recoil-persist';
 import { defaultExecutorState } from './settings';
 
@@ -39,6 +39,7 @@ export const remoteDebuggerState = atom<RemoteDebuggerState>({
 
 export const loadedRecordingState = atom<{
   path: string;
+  recording?: Recording,
   recorder: ExecutionRecorder;
 } | null>({
   key: 'loadedRecording',

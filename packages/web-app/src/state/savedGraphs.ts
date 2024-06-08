@@ -14,14 +14,16 @@ import { recoilPersist } from 'recoil-persist';
 import { entries, values } from '../../../core/src/utils/typeSafety';
 import { Workflow, WorkflowImpl } from '../api/types';
 
-const { persistAtom } = recoilPersist({ key: 'project' });
+const { persistAtom } = recoilPersist({ key: 'flows' });
 
-const { persistAtom: flowPersistAtom } = recoilPersist({ key: 'currentFlow' });
+export const UNSAVED_PATH_KEY = '__unsaved__';
+
+const genId = (): string => nanoid(16);
 
 export const flowState = atom<Workflow>({
   key: 'flowState',
-  default: WorkflowImpl.createDefault(''),
-  effects: [flowPersistAtom],
+  default: new WorkflowImpl(),
+  effects: [persistAtom],
 });
 
 // What's the data of the last loaded project?
@@ -29,7 +31,7 @@ export const projectState = atom<Omit<Project, 'data'>>({
   key: 'projectState',
   default: {
     metadata: {
-      id: nanoid() as ProjectId,
+      id: genId() as ProjectId,
       description: '',
       title: 'Untitled Project',
     },
@@ -112,12 +114,12 @@ export const savedGraphsState = selector<NodeGraph[]>({
       for (const graph of newValue) {
         if (graph.metadata == null) {
           graph.metadata = {
-            id: nanoid() as GraphId,
+            id: genId() as GraphId,
             name: 'Untitled Graph',
             description: '',
           };
         } else if (graph.metadata.id == null) {
-          graph.metadata.id = nanoid() as GraphId;
+          graph.metadata.id = genId() as GraphId;
         }
 
         draft.graphs[graph.metadata!.id!] = graph;
@@ -144,11 +146,11 @@ export const projectPluginsState = selector({
 });
 
 export type OpenedProjectInfo = {
-  workflow?: Workflow,
-  project: Project;
-  fsPath?: string | null;
-  id?: ProjectId,
+  fsPath?: string | null,
+  id?: ProjectId;
   openedGraph?: GraphId;
+  project: Project,
+  workflow?: Workflow;
 };
 
 export type OpenedProjectsInfo = {

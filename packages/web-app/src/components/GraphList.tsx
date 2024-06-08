@@ -31,6 +31,7 @@ import { runningGraphsState } from '../state/dataFlow.js';
 import { useDuplicateGraph } from '../hooks/useDuplicateGraph.js';
 import { useContextMenu } from '../hooks/useContextMenu.js';
 import Portal from '@atlaskit/portal';
+import EditLineIcon from 'majesticons/line/edit-pen-2-line.svg?react';
 import ArrowRightIcon from 'majesticons/line/arrow-right-line.svg?react';
 import ArrowDownIcon from 'majesticons/line/arrow-down-line.svg?react';
 import MenuLineIcon from 'majesticons/line/menu-line.svg?react';

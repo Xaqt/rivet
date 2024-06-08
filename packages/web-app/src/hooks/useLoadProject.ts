@@ -2,7 +2,6 @@ import { useSetRecoilState } from 'recoil';
 import { type OpenedProjectInfo, loadedProjectState, projectState } from '../state/savedGraphs.js';
 import { emptyNodeGraph, getError } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph.js';
-import { ioProvider } from '../utils/globals.js';
 import { trivetState } from '../state/trivet.js';
 import { useSetStaticData } from './useSetStaticData';
 import { toast } from 'react-toastify';

@@ -1,8 +1,9 @@
 import { css } from '@emotion/react';
-import { useMemo, type FC } from 'react';
+import React, { useMemo, type FC } from 'react';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { type ProjectId } from '@ironclad/rivet-core';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import LeftIcon from 'majesticons/line/chevron-left-line.svg?react';
 import CloseIcon from 'majesticons/line/multiply-line.svg?react';
 import BlankFileIcon from 'majesticons/line/file-line.svg?react';
 import FileIcon from 'majesticons/line/file-plus-line.svg?react';
@@ -221,6 +222,7 @@ export const ProjectSelector: FC = () => {
   }, [openedProjectsSortedIds, openedProjects]);
 
   const loadProject = useLoadProject();
+
   const setNewProjectModalOpen = useSetRecoilState(newProjectModalOpenState);
   const loadProjectWithFileBrowser = useLoadProjectWithFileBrowser();
 
@@ -280,7 +282,11 @@ export const ProjectSelector: FC = () => {
   return (
     <div css={styles}>
       <div className="projects-container">
+        <button>
+          <LeftIcon/>
+        </button>
         <div className="projects">
+          <span>*</span>
           <InlineEditableTextfield
             key={`name-${project.metadata.id}`}
             label="Project Name"

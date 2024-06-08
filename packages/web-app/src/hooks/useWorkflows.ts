@@ -88,27 +88,39 @@ export function useWorkflows() {
   }, [pageIndex, pageSize, workspaceId]);
 
   const getWorkflowById = async (id: string) => {
-    return execLoading(() => workflowApi.getById(workspaceId, id), false);
+    return execLoading(() => workflowApi.getById(id), false);
   };
 
-  const updateWorkflow = async (id: string, workflow: Partial<Workflow>) => {
-    return execLoading(async () => {
-      const res = await workflowApi.update(workspaceId, id, workflow);
+  const updateWorkflow = async<Workflow>(id: string, workflow: Partial<Workflow>) => {
+    setLoading(true);
+    try {
+      const res = await workflowApi.update(id, workflow);
       const index = workflows.findIndex((w) => w.id === id);
       if (index >= 0) {
         workflows[index] = res;
         updateWorkflows([...workflows]);
       }
       return res;
-    });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const createWorkflow = async (workflow: WorkflowCreateDto) => {
-    return execLoading(() => workflowApi.create(workspaceId, workflow));
+  const createWorkflow = async (workflow: WorkflowCreateDto, reload = false) => {
+    setLoading(true);
+    try {
+      const res = await workflowApi.create(workspaceId, workflow);
+      if (reload) {
+        reloadWorkflows();
+      }
+      return res;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const deleteWorkflow = async (workflowId: string) => {
-    await execLoading(() => workflowApi.delete(workspaceId, workflowId));
+    await execLoading(() => workflowApi.delete(workflowId));
   };
 
   const addWorkflowLabels = async (flowId: string, labelIds: string[]) => {

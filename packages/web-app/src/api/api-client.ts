@@ -331,7 +331,7 @@ export const workflowApi = {
     };
     criteria.workspace_id ??= workspaceId;
     try {
-      const response = await api.get<PagedWorkflowResponse>(`/workspaces/${workspaceId}/reports`, {
+      const response = await api.get<PagedWorkflowResponse>(`/workflows`, {
         params: criteria
       });
       return response.data;
@@ -340,9 +340,9 @@ export const workflowApi = {
       throw error;
     }
   },
-  getById: async (workspaceId: string, workflowId: string): Promise<Workflow> => {
+  getById: async (workflowId: string): Promise<Workflow> => {
     try {
-      const response = await api.get<Workflow>(`/${workspaceId}/workflows/${workflowId}`);
+      const response = await api.get<Workflow>(`/workflows/${workflowId}`);
       return response.data;
     } catch (error) {
       console.error('Get workflow by id error', error);
@@ -358,18 +358,18 @@ export const workflowApi = {
       throw error;
     }
   },
-  delete: async (workspaceId: string, workflowId: string) => {
+  delete: async (workflowId: string) => {
     try {
-      const response = await api.delete(`/${workspaceId}/workflows/${workflowId}`);
+      const response = await api.delete(`/workflows/${workflowId}`);
       return response.data;
     } catch (error) {
       console.error('Delete workflow error', error);
       throw error;
     }
   },
-  update: async (workspaceId: string, workflowId: string, body: UpdateWorkflowDto) => {
+  update: async (workflowId: string, body: UpdateWorkflowDto) => {
     try {
-      const response = await api.patch<Workflow>(`/${workspaceId}/workflows/${workflowId}`, body);
+      const response = await api.patch<Workflow>(`/workflows/${workflowId}`, body);
       return response.data;
     } catch (error) {
       console.error('Update workflow error', error);

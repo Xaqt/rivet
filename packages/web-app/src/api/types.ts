@@ -498,51 +498,55 @@ export class WorkflowImpl implements Workflow {
   id: string;
   labels: Label[];
   name: string;
-  project;
+  project: Project;
   status: WorkflowStatus;
   updated_at: Date;
   workspace_id: string;
+  loaded: boolean;
+  saved: boolean;
 
-  constructor(data: Workflow) {
-    this.created_at = data.created_at;
-    this.created_by = data.created_by;
-    this.description = data.description;
-    this.id = data.id;
-    this.labels = data.labels;
-    this.name = data.name;
-    this.project = data.project;
-    this.status = data.status;
-    this.updated_at = data.updated_at;
-    this.workspace_id = data.workspace_id;
+  constructor() {
+    const id = nanoid(16);
+    const title = 'Untitled Workflow';
+    this.created_at = new Date();
+    this.created_by = '';
+    this.description = '';
+    this.id = id;
+    this.labels = [];
+    this.name = 'Untitled Workflow';
+    this.project = {
+      metadata: {
+        id: id as ProjectId,
+        description: '',
+        title: title,
+      },
+      graphs: {},
+      plugins: [],
+      data: {},
+    };
+    this.status = WorkflowStatus.DRAFT;
+    this.updated_at = new Date();
+    this.workspace_id = '';
+    this.saved = false;
+    this.loaded = false;
   }
 
-  static createDefault(workspaceId: string): Workflow {
-    const id = nanoid(16);
-    const name = 'Untitled Workflow';
-
-    return {
-      created_at: new Date(),
-      created_by: '',
-      description: '',
-      id,
-      labels: [],
-      name,
-      project: {
-        metadata: {
-          id: id as ProjectId,
-          description: '',
-          title: name,
-        },
-        graphs: {},
-        plugins: [],
-        data: {
-          [UNSAVED_ID]: 't',
-        },
-      },
-      status: WorkflowStatus.DRAFT,
-      updated_at: new Date(),
-      workspace_id: workspaceId,
-    };
+  static copy(data: Workflow) {
+    const flow = new WorkflowImpl();
+    flow.created_at = data.created_at;
+    flow.created_by = data.created_by;
+    flow.description = data.description;
+    flow.id = data.id;
+    flow.labels = data.labels;
+    flow.name = data.name;
+    // todo
+    flow.project = data.project;
+    flow.status = data.status;
+    flow.updated_at = data.updated_at;
+    flow.workspace_id = data.workspace_id;
+    flow.saved = false;
+    flow.loaded = false;
+    return flow;
   }
 
   isUnsaved(): boolean {

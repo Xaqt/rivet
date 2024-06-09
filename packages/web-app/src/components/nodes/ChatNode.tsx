@@ -2,7 +2,6 @@ import { type FC } from 'react';
 import { css } from '@emotion/react';
 import { RenderDataValue } from '../RenderDataValue.js';
 import {
-  type ChatNode,
   type Outputs,
   type PortId,
   coerceTypeOptional,

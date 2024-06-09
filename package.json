@@ -53,6 +53,7 @@
     "yarn": "3.5.0"
   },
   "dependencies": {
+    "@atlaskit/page-header": "^10.6.0",
     "@ironclad/rivet-core": "workspace:^",
     "@ironclad/rivet-node": "workspace:^"
   },

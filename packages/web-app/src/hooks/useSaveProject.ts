@@ -24,7 +24,7 @@ export function useSaveProject() {
       return updateFlow();
     }
 
-    const savedGraph = saveGraph(); // TODO stupid react rerendering... project will still be stale and not have this graph
+    const savedGraph = saveGraph(); // TODO stupid react re-rendering... project will still be stale and not have this graph
 
     const newProject = produce(project, (draft) => {
       draft.graphs[savedGraph.metadata!.id!] = savedGraph;
@@ -61,7 +61,7 @@ export function useSaveProject() {
   }
 
   async function updateFlow() {
-    const savedGraph = saveGraph(); // TODO stupid react rerendering... project will still be stale and not have this graph
+    const savedGraph = saveGraph(); // TODO stupid react re-rendering... project will still be stale and not have this graph
 
     const newProject = produce(project, (draft) => {
       draft.graphs[savedGraph.metadata!.id!] = savedGraph;

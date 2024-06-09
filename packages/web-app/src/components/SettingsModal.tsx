@@ -2,8 +2,6 @@ import { type FC, useState } from 'react';
 import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import {
   checkForUpdatesState,
-  defaultExecutorState,
-  executorOptions,
   preservePortTextCaseState,
   previousDataPerNodeToKeepState,
   recordExecutionsState,
@@ -51,7 +49,7 @@ const modalBody = css`
   }
 `;
 
-type Pages = 'general' | 'openai' | 'plugins' | 'updates';
+type Pages = 'general' | 'openai' | 'plugins';
 
 const buttonsContainer = css`
   > button span {
@@ -91,9 +89,6 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
                       <ButtonItem isSelected={page === 'plugins'} onClick={() => setPage('plugins')}>
                         Plugins
                       </ButtonItem>
-                      <ButtonItem isSelected={page === 'updates'} onClick={() => setPage('updates')}>
-                        Updates
-                      </ButtonItem>
                     </div>
                   </NavigationContent>
                 </SideNavigation>
@@ -103,7 +98,6 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
                   .with('general', () => <GeneralSettingsPage />)
                   .with('openai', () => <OpenAiSettingsPage />)
                   .with('plugins', () => <PluginsSettingsPage />)
-                  .with('updates', () => <UpdatesSettingsPage />)
                   .exhaustive()}
               </main>
             </div>
@@ -118,7 +112,6 @@ export const GeneralSettingsPage: FC = () => {
   const [settings, setSettings] = useRecoilState(settingsState);
   const [theme, setTheme] = useRecoilState(themeState);
   const [recordExecutions, setRecordExecutions] = useRecoilState(recordExecutionsState);
-  const [defaultExecutor, setDefaultExecutor] = useRecoilState(defaultExecutorState);
   const [previousDataPerNodeToKeep, setPreviousDataPerNodeToKeep] = useRecoilState(previousDataPerNodeToKeepState);
   const [zoomSensitivity, setZoomSensitivity] = useRecoilState(zoomSensitivityState);
   const [preservePortTextCase, setPreservePortTextCase] = useRecoilState(preservePortTextCaseState);
@@ -185,26 +178,6 @@ export const GeneralSettingsPage: FC = () => {
               />
             </div>
             <HelperMessage>Disabling may help performance when dealing with very large data values</HelperMessage>
-          </>
-        )}
-      </Field>
-      <Field name="defaultExecutor">
-        {() => (
-          <>
-            <Label htmlFor="defaultExecutor" testId="defaultExecutor">
-              Default executor
-            </Label>
-            <div className="toggle-field">
-              <Select
-                value={executorOptions.find((o) => o.value === defaultExecutor)}
-                onChange={(e) => setDefaultExecutor(e!.value)}
-                options={executorOptions}
-              />
-            </div>
-            <HelperMessage>
-              The default executor to use when starting the application. The browser executor is more stable, but the
-              node executor is required for some features and plugins.
-            </HelperMessage>
           </>
         )}
       </Field>

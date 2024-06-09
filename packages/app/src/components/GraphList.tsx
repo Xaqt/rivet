@@ -591,6 +591,14 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo((
                       setShowContextMenu(false);
                     }}
                   >
+                    Edit Graph
+                  </DropdownItem>
+                  <DropdownItem
+                    onClick={() => {
+                      startRename(selectedFolderNameForContextMenu!);
+                      setShowContextMenu(false);
+                    }}
+                  >
                     Rename Graph
                   </DropdownItem>
                   <DropdownItem

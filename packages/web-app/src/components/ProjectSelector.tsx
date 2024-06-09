@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import React, { useMemo, type FC } from 'react';
+import React, { useMemo, type FC, useState } from 'react';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { type ProjectId } from '@ironclad/rivet-core';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -8,6 +8,10 @@ import CloseIcon from 'majesticons/line/multiply-line.svg?react';
 import BlankFileIcon from 'majesticons/line/file-line.svg?react';
 import FileIcon from 'majesticons/line/file-plus-line.svg?react';
 import FolderIcon from 'majesticons/line/folder-line.svg?react';
+import DeleteIcon from 'majesticons/line/delete-bin-line.svg?react';
+import SettingsCogIcon from 'majesticons/line/settings-cog-line.svg?react';
+import DuplicateIcon from 'majesticons/line/image-multiple-line.svg?react';
+import EditorMoreIcon from '@atlaskit/icon/glyph/editor/more'
 import { openedProjectsSortedIdsState, openedProjectsState, projectState, projectsState } from '../state/savedGraphs';
 import clsx from 'clsx';
 import { useLoadProject } from '../hooks/useLoadProject';
@@ -19,6 +23,10 @@ import { useLoadProjectWithFileBrowser } from '../hooks/useLoadProjectWithFileBr
 import { newProjectModalOpenState } from '../state/ui';
 import { keys } from '../../../core/src/utils/typeSafety';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
+import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
+import { useStableCallback } from '../hooks/useStableCallback';
+import { IconButton } from '@atlaskit/button/new';
+
 
 export const styles = css`
     position: absolute;
@@ -33,7 +41,7 @@ export const styles = css`
     border-bottom: 1px solid var(--grey);
 
     display: flex;
-    align-items: space-between;
+    justify-content: space-between;
 
     .projects-container {
         display: flex;
@@ -211,6 +219,7 @@ export const ProjectSelector: FC = () => {
   const setProjects = useSetRecoilState(projectsState);
   const [openedProjects, setOpenedProjects] = useRecoilState(openedProjectsState);
   const [openedProjectsSortedIds, setOpenedProjectsSortedIds] = useRecoilState(openedProjectsSortedIdsState);
+  const [title, setTitle] = useState(project?.metadata.title);
 
   const sortedOpenedProjects = useMemo(() => {
     return openedProjectsSortedIds
@@ -274,10 +283,47 @@ export const ProjectSelector: FC = () => {
     }
   };
 
+  const validateName = (value: string) => {
+    if (value?.length <= 6) {
+      return 'Please enter a name longer than 6 characters';
+    }
+    return undefined;
+  };
+
   const handleNameChange = (newTitle: string) => {
     // setProject({ ...project, metadata: { ...project.metadata, title: newValue } })}
-    // setTitle(newTitle);
+    setTitle(newTitle);
   }
+
+  const openNewProjectModal = useStableCallback(() => setNewProjectModalOpen(true));
+
+  function handleNewProject(e: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>) {
+    e.stopPropagation();
+    openNewProjectModal();
+  }
+
+  const ProjectDropdownMenu = () => {
+    return (
+      <DropdownMenu<HTMLButtonElement>
+        trigger={({ triggerRef, ...props }) => (
+          <button {...props} ref={triggerRef}>
+            <SettingsCogIcon />
+          </button>
+        )}
+        shouldFlip={true}
+        shouldRenderToParent>
+        <DropdownItemGroup>
+          <DropdownItem elemBefore={<FileIcon/>} onClick={handleNewProject}>New Project</DropdownItem>
+          <DropdownItem>Share</DropdownItem>
+          <DropdownItem elemBefore={<DuplicateIcon/>}>Duplicate</DropdownItem>
+          <DropdownItem>Import</DropdownItem>
+          <DropdownItem>Export</DropdownItem>
+          <DropdownItem elemBefore={<DeleteIcon />}>Delete</DropdownItem>
+          <DropdownItem>Report</DropdownItem>
+        </DropdownItemGroup>
+      </DropdownMenu>
+    );
+  };
 
   return (
     <div css={styles}>
@@ -286,13 +332,12 @@ export const ProjectSelector: FC = () => {
           <LeftIcon/>
         </button>
         <div className="projects">
-          <span>*</span>
           <InlineEditableTextfield
-            key={`name-${project.metadata.id}`}
-            label="Project Name"
-            placeholder="Project Name"
+            key="inline-project-edit"
+            placeholder="Flow Name"
             readViewFitContainerWidth
-            defaultValue={project.metadata.title}
+            defaultValue={title}
+            validate={validateName}
             onConfirm={handleNameChange}
           />
           <DndContext onDragEnd={handleDragEnd}>
@@ -312,12 +357,9 @@ export const ProjectSelector: FC = () => {
         </div>
       </div>
       <div className="actions">
-        <button className="new-project" onClick={() => setNewProjectModalOpen(true)} title="New Project">
-          <FileIcon />
-        </button>
-        <button className="open-project" onClick={loadProjectWithFileBrowser} title="Open Project">
-          <FolderIcon />
-        </button>
+        <div className="open-project">
+          <ProjectDropdownMenu />
+        </div>
       </div>
     </div>
   );

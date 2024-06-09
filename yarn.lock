@@ -328,7 +328,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@atlaskit/button@npm:^17.17.0":
+"@atlaskit/button@npm:^17.17.0, @atlaskit/button@npm:^17.17.1":
   version: 17.17.1
   resolution: "@atlaskit/button@npm:17.17.1"
   dependencies:
@@ -883,6 +883,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@atlaskit/page-header@npm:^10.6.0":
+  version: 10.6.0
+  resolution: "@atlaskit/page-header@npm:10.6.0"
+  dependencies:
+    "@atlaskit/platform-feature-flags": "npm:^0.2.5"
+    "@atlaskit/primitives": "npm:^6.2.0"
+    "@atlaskit/theme": "npm:^12.8.0"
+    "@atlaskit/tokens": "npm:^1.48.0"
+    "@babel/runtime": "npm:^7.0.0"
+    "@emotion/react": "npm:^11.7.1"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ~18.2.0
+    react-dom: ^16.8.0
+  checksum: c911f7a735eead944eb6d7d4529e5ba98405af9d52f657ec46fa221fa3e8ef76df4404e95c37ec36fd6863a50dfd5ea3e1bb5e7d2cd16c37fb1f984ebe49f6aa
+  languageName: node
+  linkType: hard
+
 "@atlaskit/platform-feature-flags@npm:^0.2.0, @atlaskit/platform-feature-flags@npm:^0.2.2":
   version: 0.2.4
   resolution: "@atlaskit/platform-feature-flags@npm:0.2.4"
@@ -1030,7 +1047,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@atlaskit/primitives@npm:^6.0.0, @atlaskit/primitives@npm:^6.1.0, @atlaskit/primitives@npm:^6.3.0, @atlaskit/primitives@npm:^6.4.0, @atlaskit/primitives@npm:^6.5.0":
+"@atlaskit/primitives@npm:^6.0.0, @atlaskit/primitives@npm:^6.1.0, @atlaskit/primitives@npm:^6.2.0, @atlaskit/primitives@npm:^6.3.0, @atlaskit/primitives@npm:^6.4.0, @atlaskit/primitives@npm:^6.5.0":
   version: 6.5.0
   resolution: "@atlaskit/primitives@npm:6.5.0"
   dependencies:
@@ -1229,6 +1246,18 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ~18.2.0
   checksum: d2a2474b0e622afb76176d49f4e6b296ce98abe0cca3c5e7fd8c08eb923aaa8cf51092556afceb906f746c4954dcc622b04434d9c489e5f2d3b4ddd02077d893
+  languageName: node
+  linkType: hard
+
+"@atlaskit/tag-group@npm:^10.3.0":
+  version: 10.3.0
+  resolution: "@atlaskit/tag-group@npm:10.3.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.0.0"
+    "@emotion/react": "npm:^11.7.1"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ~18.2.0
+  checksum: 2f2913782f89b0b3c42d1623f29290c85810e3f11726354b827f79ea3f583f1c334a17a7d4a5102316bc3406a93a2bab59b7cbe832651ed1a3247a3ae21b8790
   languageName: node
   linkType: hard
 
@@ -4982,7 +5011,7 @@ __metadata:
   resolution: "@ironclad/rivet-web-app@workspace:packages/web-app"
   dependencies:
     "@atlaskit/banner": "npm:^12.1.18"
-    "@atlaskit/button": "npm:^16.11.0"
+    "@atlaskit/button": "npm:^17.17.1"
     "@atlaskit/checkbox": "npm:^12.6.11"
     "@atlaskit/css-reset": "npm:^6.6.1"
     "@atlaskit/dropdown-menu": "npm:^12.11.0"
@@ -4991,12 +5020,14 @@ __metadata:
     "@atlaskit/inline-edit": "npm:^13.4.0"
     "@atlaskit/menu": "npm:^2.4.0"
     "@atlaskit/modal-dialog": "npm:^12.13.4"
+    "@atlaskit/page-header": "npm:^10.6.0"
     "@atlaskit/popup": "npm:^1.17.2"
     "@atlaskit/portal": "npm:^4.5.0"
     "@atlaskit/range": "npm:^7.1.7"
     "@atlaskit/select": "npm:^17.10.2"
     "@atlaskit/side-navigation": "npm:^3.2.0"
     "@atlaskit/tabs": "npm:^16.1.1"
+    "@atlaskit/tag-group": "npm:^10.3.0"
     "@atlaskit/textarea": "npm:^5.4.0"
     "@atlaskit/textfield": "npm:^6.3.1"
     "@atlaskit/theme": "npm:^12.6.2"
@@ -5116,6 +5147,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ironclad/rivet@workspace:."
   dependencies:
+    "@atlaskit/page-header": "npm:^10.6.0"
     "@ironclad/rivet-core": "workspace:^"
     "@ironclad/rivet-node": "workspace:^"
     "@octokit/rest": "npm:^20.0.2"

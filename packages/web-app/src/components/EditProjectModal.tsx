@@ -1,4 +1,4 @@
-import { type FC, useEffect, useState, Fragment } from 'react';
+import { type FC, useState, Fragment } from 'react';
 import Modal, { ModalBody, ModalFooter, ModalHeader, ModalTitle, ModalTransition } from '@atlaskit/modal-dialog';
 import Form, { ErrorMessage, Field, FormFooter, FormHeader, HelperMessage, RequiredAsterisk } from '@atlaskit/form';
 import Button from '@atlaskit/button/loading-button';
@@ -16,10 +16,6 @@ const styles = css`
             width: 100%;
         }
     }
-
-    .question pre {
-        white-space: pre-wrap;
-    }
 `;
 
 type EditProjectModalProps = {
@@ -30,15 +26,11 @@ type EditProjectModalProps = {
   onClose?: () => void;
 };
 
-let isUsernameUsed: boolean = false;
 
 export const EditProjectModal: FC<EditProjectModalProps> =
   ({ open, onSubmit, name, description, onClose }) => {
-  const [fieldValue, setFieldValue] = useState('');
   const [fieldHasError, setFieldHasError] = useState(false);
-  const [selectHasError, setSelectHasError] = useState(false);
   const [errorMessageText, setErrorMessageText] = useState('');
-  const [messageId, setMessageId] = useState('');
 
   const errorMessages = {
     shortName: 'Please enter a name longer than 4 characters',
@@ -47,39 +39,9 @@ export const EditProjectModal: FC<EditProjectModalProps> =
     selectError: 'Please select a color',
   };
 
-  const handleBlurEvent = () => {
-    isUsernameUsed = checkUserName(fieldValue);
-    if (fieldValue.length >= 5 && !isUsernameUsed) {
-      setFieldHasError(false);
-      setErrorMessageText('IS_VALID');
-    } else {
-      setFieldHasError(true);
-      if (fieldValue.length <= 5) {
-        setErrorMessageText('TOO_SHORT');
-      } else if (isUsernameUsed) {
-        setErrorMessageText('IN_USE');
-      }
-    }
-  };
-
-
   const handleSubmit = () => {
     // onSubmit(results);
   };
-
-  useEffect(() => {
-    switch (errorMessageText) {
-      case 'IS_VALID':
-        setMessageId('-valid');
-        break;
-      case 'TOO_SHORT':
-      case 'IN_USE':
-        setMessageId('-error');
-        break;
-      default:
-        setMessageId('-error');
-    }
-  }, [errorMessageText]);
 
   return (
     <ModalTransition>
@@ -109,9 +71,6 @@ export const EditProjectModal: FC<EditProjectModalProps> =
                       {({ fieldProps, error }) => (
                         <Fragment>
                           <TextField {...fieldProps} value={name}/>
-                          {!error && (
-                            <HelperMessage>Try 'jsmith' or 'mchan'</HelperMessage>
-                          )}
                           {error && (
                             <ErrorMessage testId="userSubmissionError">
                               {error}

@@ -1,5 +1,4 @@
 import Portal from '@atlaskit/portal';
-import Select from '@atlaskit/select';
 import { css } from '@emotion/react';
 import { type FC, useRef } from 'react';
 import { useSetRecoilState, useRecoilState } from 'recoil';
@@ -10,11 +9,9 @@ import { debuggerPanelOpenState, helpModalOpenState } from '../state/ui';
 import { settingsModalOpenState } from './SettingsModal';
 import LinkIcon from 'majesticons/line/link-circle-line.svg?react';
 import GearIcon from 'majesticons/line/settings-cog-line.svg?react';
-import CpuIcon from 'majesticons/line/cpu-line.svg?react';
 import ForwardCircleIcon from 'majesticons/line/forward-circle-line.svg?react';
 import CopyIcon from 'majesticons/line/clipboard-plus-line.svg?react';
 import { executorOptions } from '../state/settings';
-import QuestionIcon from 'majesticons/line/question-circle-line.svg?react';
 
 const moreMenuStyles = css`
   background-color: var(--grey-darkish);
@@ -109,26 +106,6 @@ export const ActionBarMoreMenu: FC<{
       <Portal zIndex={1000}>
         <div ref={dropdownTarget} />
       </Portal>
-
-      <div className="menu-item executor">
-        <label htmlFor="select-executor" className="executor-title">
-          <CpuIcon /> Executor:
-        </label>
-        {isActuallyRemoteDebugging ? (
-          <span className="select-executor-remote">Remote</span>
-        ) : (
-          <Select
-            id="select-executor"
-            appearance="subtle"
-            options={executorOptions}
-            value={selectedExecutorOption}
-            onChange={(selected) => setSelectedExecutor(selected!.value)}
-            isSearchable={false}
-            isClearable={false}
-            menuPortalTarget={dropdownTarget.current}
-          />
-        )}
-      </div>
       <div className="menu-item menu-item-button remote-debugger" onClick={openDebuggerPanel}>
         <LinkIcon /> Remote Debugger
       </div>
@@ -140,9 +117,6 @@ export const ActionBarMoreMenu: FC<{
       </div>
       <div className="menu-item menu-item-button settings" onClick={openSettings}>
         <GearIcon /> Settings
-      </div>
-      <div className="menu-item menu-item-button help" onClick={openHelp}>
-        <QuestionIcon /> Help
       </div>
     </div>
   );

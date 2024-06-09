@@ -7,7 +7,6 @@ import { useLoadRecording } from '../hooks/useLoadRecording';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
 import { selectedExecutorState } from '../state/execution';
 import { debuggerPanelOpenState, helpModalOpenState } from '../state/ui';
-import { isInTauri } from '../utils/tauri';
 import { settingsModalOpenState } from './SettingsModal';
 import LinkIcon from 'majesticons/line/link-circle-line.svg?react';
 import GearIcon from 'majesticons/line/settings-cog-line.svg?react';
@@ -143,9 +142,6 @@ export const ActionBarMoreMenu: FC<{
       </div>
       <div className="menu-item menu-item-button settings" onClick={openSettings}>
         <GearIcon /> Settings
-      </div>
-      <div className="menu-item menu-item-button help" onClick={openHelp}>
-        <QuestionIcon /> Help
       </div>
     </div>
   );

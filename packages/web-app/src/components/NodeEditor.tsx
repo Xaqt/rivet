@@ -26,7 +26,7 @@ import Popup from '@atlaskit/popup';
 import { orderBy } from 'lodash-es';
 import { nanoid } from 'nanoid/non-secure';
 import { ErrorBoundary } from 'react-error-boundary';
-import { projectDataState, projectState } from '../state/savedGraphs';
+import { projectState } from '../state/savedGraphs';
 import { useSetStaticData } from '../hooks/useSetStaticData';
 import { DefaultNodeEditor } from './editors/DefaultNodeEditor';
 import { NodeColorPicker } from './NodeColorPicker';
@@ -53,206 +53,205 @@ export const NodeEditorRenderer: FC = () => {
 };
 
 const Container = styled.div`
-  position: absolute;
-  top: calc(32px + var(--project-selector-height));
-  // tabpanel the parent has a padding of 8px on the left and right, so just move it over a bit...
-  right: -8px;
-  bottom: 0;
-  width: 45%;
-  max-width: 1000px;
-  min-width: 500px;
-
-  .panel-container {
-    display: flex;
-    flex-direction: column;
-    color: var(--foreground);
-    background-color: var(--grey-dark-bluish-seethrough);
-    backdrop-filter: blur(2px);
-    font-family: 'Roboto Mono', monospace;
-    width: 100%;
-    box-shadow: -4px 0 3px rgba(0, 0, 0, 0.1);
-    border-left: 1px solid var(--grey);
-  }
-
-  .panel {
-    display: flex;
-    flex-grow: 1;
-    flex-direction: column;
-    padding: 8px 16px 16px;
-    overflow: auto;
-  }
-
-  .tabs,
-  .tabs > div {
-    height: 100%;
-    width: 100%;
-  }
-
-  .header {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-
-  .close-button {
     position: absolute;
-    right: 20px;
-    top: 20px;
-    background-color: var(--primary);
-    border: none;
-    color: var(--foreground-on-primary);
-    cursor: pointer;
-    font-size: 20px;
-    padding: 5px 10px;
-    border: 2px solid var(--grey-dark);
-    font-size: 14px;
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+    top: calc(32px + var(--project-selector-height));
+    // tabpanel the parent has a padding of 8px on the left and right, so just move it over a bit...
+    right: -8px;
+    bottom: 0;
+    width: 45%;
+    max-width: 1000px;
+    min-width: 500px;
 
-  .node-name {
-    padding: 5px 10px;
-    resize: none;
-    width: 100%;
-  }
-
-  .description-field {
-    min-height: 50px;
-    padding: 10px;
-    width: 100%;
-  }
-
-  .input-field {
-    font-family: 'Roboto Mono', monospace;
-    font-size: 14px;
-    background-color: var(--grey-dark);
-    border: 1px solid var(--grey);
-    color: var(--foreground);
-  }
-
-  .input-field:focus {
-    outline: none;
-    border-color: var(--primary);
-  }
-
-  .section-node {
-    flex: 1 0 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .section-node-content {
-    flex: 1 0 auto;
-    min-height: 300px;
-    position: relative;
-    display: flex;
-  }
-
-  .bottom-spacer {
-    height: 300px;
-  }
-
-  .unknown-node {
-    color: var(--primary-text);
-  }
-
-  .split-controls {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    gap: 8px;
-
-    > label {
-      margin: 0;
+    .panel-container {
+        display: flex;
+        flex-direction: column;
+        color: var(--foreground);
+        background-color: var(--grey-dark-bluish-seethrough);
+        backdrop-filter: blur(2px);
+        font-family: 'Roboto Mono', monospace;
+        width: 100%;
+        box-shadow: -4px 0 3px rgba(0, 0, 0, 0.1);
+        border-left: 1px solid var(--grey);
     }
-  }
 
-  .split-controls-toggle > div {
-    margin: 0;
-    display: flex;
-    align-items: center;
-  }
-
-  .variants {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-  }
-
-  .variant-select {
-    min-width: 150px;
-  }
-
-  .variant-buttons {
-    display: flex;
-    align-items: center;
-  }
-
-  .section-footer {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    height: 24px;
-    background-color: rgba(0, 0, 0, 0.1);
-
-    .node-id {
-      font-size: 12px;
-      color: var(--foreground-muted);
-      font-family: 'Roboto Mono', monospace;
-      padding: 0 16px;
-      line-height: 24px;
-      cursor: pointer;
+    .panel {
+        display: flex;
+        flex-grow: 1;
+        flex-direction: column;
+        padding: 8px 16px 16px;
+        overflow: auto;
     }
-  }
 
-  .section-global-controls {
-    display: grid;
-    grid-template-columns: auto 1fr 1fr;
-    row-gap: 8px;
-    column-gap: 16px;
-    margin-bottom: 16px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--grey-lightish);
-
-    form {
-      margin: 0;
+    .tabs,
+    .tabs > div {
+        height: 100%;
+        width: 100%;
     }
-  }
 
-  .split-max {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    > label {
-      color: var(--foreground);
-      font-size: 12px;
-
-      display: flex;
-      align-items: center;
-      color: rgb(159, 173, 188);
-      font-weight: 600;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Fira Sans', 'Droid Sans',
-        'Helvetica Neue', sans-serif;
+    .header {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-bottom: 20px;
     }
-  }
 
-  .node-color-picker {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: center;
-    padding-top: 4px;
-  }
+    .close-button {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        background-color: var(--primary);
+        color: var(--foreground-on-primary);
+        cursor: pointer;
+        font-size: 20px;
+        padding: 5px 10px;
+        border: 2px solid var(--grey-dark);
+        font-size: 14px;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .node-name {
+        padding: 5px 10px;
+        resize: none;
+        width: 100%;
+    }
+
+    .description-field {
+        min-height: 50px;
+        padding: 10px;
+        width: 100%;
+    }
+
+    .input-field {
+        font-family: 'Roboto Mono', monospace;
+        font-size: 14px;
+        background-color: var(--grey-dark);
+        border: 1px solid var(--grey);
+        color: var(--foreground);
+    }
+
+    .input-field:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+
+    .section-node {
+        flex: 1 0 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .section-node-content {
+        flex: 1 0 auto;
+        min-height: 300px;
+        position: relative;
+        display: flex;
+    }
+
+    .bottom-spacer {
+        height: 300px;
+    }
+
+    .unknown-node {
+        color: var(--primary-text);
+    }
+
+    .split-controls {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        gap: 8px;
+
+        > label {
+            margin: 0;
+        }
+    }
+
+    .split-controls-toggle > div {
+        margin: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .variants {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .variant-select {
+        min-width: 150px;
+    }
+
+    .variant-buttons {
+        display: flex;
+        align-items: center;
+    }
+
+    .section-footer {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        height: 24px;
+        background-color: rgba(0, 0, 0, 0.1);
+
+        .node-id {
+            font-size: 12px;
+            color: var(--foreground-muted);
+            font-family: 'Roboto Mono', monospace;
+            padding: 0 16px;
+            line-height: 24px;
+            cursor: pointer;
+        }
+    }
+
+    .section-global-controls {
+        display: grid;
+        grid-template-columns: auto 1fr 1fr;
+        row-gap: 8px;
+        column-gap: 16px;
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--grey-lightish);
+
+        form {
+            margin: 0;
+        }
+    }
+
+    .split-max {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        > label {
+            color: var(--foreground);
+            font-size: 12px;
+
+            display: flex;
+            align-items: center;
+            color: rgb(159, 173, 188);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Fira Sans', 'Droid Sans',
+            'Helvetica Neue', sans-serif;
+        }
+    }
+
+    .node-color-picker {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+        padding-top: 4px;
+    }
 `;
 
 type NodeEditorProps = { selectedNode: ChartNode; onDeselect: () => void };

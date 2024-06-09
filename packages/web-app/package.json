@@ -45,6 +45,7 @@
     "@atlaskit/page-header": "^10.6.0",
     "@atlaskit/popup": "^1.17.2",
     "@atlaskit/portal": "^4.5.0",
+    "@atlaskit/primitives": "^6.5.0",
     "@atlaskit/range": "^7.1.7",
     "@atlaskit/select": "^17.10.2",
     "@atlaskit/side-navigation": "^3.2.0",

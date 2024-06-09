@@ -1,12 +1,10 @@
 import { type FC, useState } from 'react';
-import { atom, useRecoilState, useRecoilValue } from 'recoil';
+import { atom, useRecoilState } from 'recoil';
 import {
-  checkForUpdatesState,
   preservePortTextCaseState,
   previousDataPerNodeToKeepState,
   recordExecutionsState,
   settingsState,
-  skippedMaxVersionState,
   themeState,
   themes,
   zoomSensitivityState,
@@ -458,52 +456,6 @@ export const PluginsSettingsPage: FC = () => {
           </section>
         );
       })}
-    </div>
-  );
-};
-
-export const UpdatesSettingsPage: FC = () => {
-  const [checkForUpdates, setCheckForUpdates] = useRecoilState(checkForUpdatesState);
-  const [currentVersion, setCurrentVersion] = useState('1.0');
-
-  const skippedMaxVersion = useRecoilValue(skippedMaxVersionState);
-
-  return (
-    <div css={fields}>
-      <p>
-        You are currently on <strong>Rivet {currentVersion}</strong>
-      </p>
-      <Field name="check-for-updates">
-        {() => (
-          <>
-            <Label htmlFor="check-for-updates" testId="check-for-updates">
-              Check for updates on startup
-            </Label>
-            <div className="toggle-field">
-              <Toggle
-                id="check-for-updates"
-                isChecked={checkForUpdates}
-                onChange={(e) => {
-                  setCheckForUpdates(e.target.checked);
-                }}
-              />
-            </div>
-            <HelperMessage>Automatically check for updates on startup</HelperMessage>
-          </>
-        )}
-      </Field>
-      {skippedMaxVersion && (
-        <Field name="skipped-update-version">
-          {() => (
-            <>
-              <Label htmlFor="skipped-update-version" testId="skipped-update-version">
-                Skipped update version
-              </Label>
-              <div>You have skipped version {skippedMaxVersion}. You may update by clicking the button above.</div>
-            </>
-          )}
-        </Field>
-      )}
     </div>
   );
 };

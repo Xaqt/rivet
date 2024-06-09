@@ -10,12 +10,14 @@ import { helpModalOpenState, newProjectModalOpenState } from '../state/ui';
 import { useToggleRemoteDebugger } from '../components/DebuggerConnectPanel';
 import { lastRunDataByNodeState } from '../state/dataFlow';
 import { useImportGraph } from './useImportGraph';
+import { toast } from 'react-toastify';
 
 export type MenuIds =
   | 'settings'
   | 'new_project'
   | 'open_project'
   | 'save_project'
+  | 'duplicate_project'
   | 'save_project_as'
   | 'export_graph'
   | 'import_graph'
@@ -68,6 +70,9 @@ export function useMenuCommands(
         })
         .with('save_project', () => {
           saveProject();
+        })
+        .with('duplicate_project', () => {
+          toast.error('Not implemented yet');
         })
         .with('save_project_as', () => {
           saveProjectAs();

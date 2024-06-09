@@ -1,7 +1,12 @@
 import { css } from '@emotion/react';
-import React, { useMemo, type FC, useState } from 'react';
+import React, { useMemo, type FC, useState, Fragment } from 'react';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { type ProjectId } from '@ironclad/rivet-core';
+import ButtonGroup from '@atlaskit/button/button-group';
+import Button from '@atlaskit/button/new';
+import { Box, Inline, xcss } from '@atlaskit/primitives';
+import Select from '@atlaskit/select';
+import TextField from '@atlaskit/textfield';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import LeftIcon from 'majesticons/line/chevron-left-line.svg?react';
 import CloseIcon from 'majesticons/line/multiply-line.svg?react';
@@ -26,6 +31,9 @@ import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { IconButton } from '@atlaskit/button/new';
+import { MenuIds, useRunMenuCommand } from '../hooks/useMenuCommands';
+import { sidebarOpenState } from '../state/graphBuilder';
+import PageHeader from '@atlaskit/page-header';
 
 
 export const styles = css`
@@ -88,24 +96,6 @@ export const styles = css`
             }
         }
 
-        .get-help {
-            display: flex;
-            white-space: nowrap;
-            padding: 4px 8px;
-            background: var(--grey-darkish);
-            border-radius: 12px;
-            min-width: 80px;
-            flex-shrink: 0;
-            height: 28px;
-            align-items: center;
-            gap: 6px;
-
-            svg {
-                width: 16px;
-                height: 16px;
-                fill: #5865f2;
-            }
-        }
     }
 
     .draggableProject {
@@ -214,12 +204,46 @@ export const styles = css`
     }
 `;
 
+const selectContainerStyles = xcss({
+  flex: '0 0 200px',
+  marginInlineStart: 'space.100',
+});
+
+const flexBoxStyles = xcss({
+  flex: '0 0 200px',
+});
+
+const barContent = (
+  <Inline>
+    <Box xcss={flexBoxStyles}>
+      <TextField isCompact placeholder="Filter" aria-label="Filter" />
+    </Box>
+    <Box xcss={selectContainerStyles}>
+      <Select
+        spacing="compact"
+        placeholder="Choose an option"
+        aria-label="Choose an option"
+      />
+    </Box>
+  </Inline>
+);
+
+
 export const ProjectSelector: FC = () => {
   const [project, setProject] = useRecoilState(projectState);
   const setProjects = useSetRecoilState(projectsState);
   const [openedProjects, setOpenedProjects] = useRecoilState(openedProjectsState);
   const [openedProjectsSortedIds, setOpenedProjectsSortedIds] = useRecoilState(openedProjectsSortedIdsState);
   const [title, setTitle] = useState(project?.metadata.title);
+  const runMenuCommandImpl = useRunMenuCommand();
+
+  const [fileMenuOpen, setFileMenuOpen] = useState(false);
+  const sidebarOpen = useRecoilValue(sidebarOpenState);
+
+  const runMenuCommand: typeof runMenuCommandImpl = (command) => {
+    setFileMenuOpen(false);
+    runMenuCommandImpl(command);
+  };
 
   const sortedOpenedProjects = useMemo(() => {
     return openedProjectsSortedIds
@@ -303,6 +327,14 @@ export const ProjectSelector: FC = () => {
   }
 
   const ProjectDropdownMenu = () => {
+    function getHandler(cmd: MenuIds) {
+      const handler = (e: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>) => {
+        runMenuCommand(cmd);
+        e.preventDefault();
+      }
+      return handler;
+    }
+
     return (
       <DropdownMenu<HTMLButtonElement>
         trigger={({ triggerRef, ...props }) => (
@@ -325,43 +357,60 @@ export const ProjectSelector: FC = () => {
     );
   };
 
-  return (
-    <div css={styles}>
-      <div className="projects-container">
+  const actionsContent = (
+    <ButtonGroup label="Content actions">
+      <Button appearance="primary">Edit page</Button>
+      <Button>Share</Button>
+      <ProjectDropdownMenu />
+    </ButtonGroup>
+  );
+
+  const FlowPageHeader = () => {
+    return (
+      <PageHeader actions={actionsContent}>
         <button>
-          <LeftIcon/>
+          <LeftIcon />
         </button>
-        <div className="projects">
-          <InlineEditableTextfield
-            key="inline-project-edit"
-            placeholder="Flow Name"
-            readViewFitContainerWidth
-            defaultValue={title}
-            validate={validateName}
-            onConfirm={handleNameChange}
-          />
-          <DndContext onDragEnd={handleDragEnd}>
-            <SortableContext items={sortedOpenedProjects} strategy={horizontalListSortingStrategy}>
-              {sortedOpenedProjects.map((project) => {
-                return (
-                  <SortableProject
-                    key={project.id}
-                    projectId={project.project.project.metadata.id}
-                    onCloseProject={() => handleCloseProject(project.project.project.metadata.id)}
-                    onSelectProject={() => handleSelectProject(project.project.project.metadata.id)}
-                  />
-                );
-              })}
-            </SortableContext>
-          </DndContext>
+
+        <InlineEditableTextfield
+          key="inline-project-edit"
+          placeholder="Flow Name"
+          readViewFitContainerWidth
+          defaultValue={title}
+          validate={validateName}
+          onConfirm={handleNameChange}
+        />
+      </PageHeader>
+    );
+  };
+
+  return (
+    <Fragment>
+      <FlowPageHeader />
+      <div css={styles}>
+        <div className="projects-container">
+          <button>
+            <LeftIcon />
+          </button>
+          <div className="projects">
+            <DndContext onDragEnd={handleDragEnd}>
+              <SortableContext items={sortedOpenedProjects} strategy={horizontalListSortingStrategy}>
+                {sortedOpenedProjects.map((project) => {
+                  return (
+                    <SortableProject
+                      key={project.id}
+                      projectId={project.project.project.metadata.id}
+                      onCloseProject={() => handleCloseProject(project.project.project.metadata.id)}
+                      onSelectProject={() => handleSelectProject(project.project.project.metadata.id)}
+                    />
+                  );
+                })}
+              </SortableContext>
+            </DndContext>
+          </div>
         </div>
       </div>
-      <div className="actions">
-        <div className="open-project">
-          <ProjectDropdownMenu />
-        </div>
-      </div>
-    </div>
+    </Fragment>
   );
 };
 

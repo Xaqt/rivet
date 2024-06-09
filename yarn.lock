@@ -1031,23 +1031,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@atlaskit/primitives@npm:^1.6.0":
-  version: 1.6.7
-  resolution: "@atlaskit/primitives@npm:1.6.7"
-  dependencies:
-    "@atlaskit/tokens": "npm:^1.27.0"
-    "@babel/runtime": "npm:^7.0.0"
-    "@emotion/react": "npm:^11.7.1"
-    "@emotion/serialize": "npm:^1.1.0"
-    bind-event-listener: "npm:^2.1.1"
-    tiny-invariant: "npm:^1.2.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 42d96f2d6a7901258e70838bcdfb04a936b425133972f77b73e7454b6f35653739b6514aa3a952a01a4530bb19ada6af69faf7bd653d0eb87ae39937101e8d2a
-  languageName: node
-  linkType: hard
-
-"@atlaskit/primitives@npm:^6.0.0, @atlaskit/primitives@npm:^6.1.0, @atlaskit/primitives@npm:^6.2.0, @atlaskit/primitives@npm:^6.3.0, @atlaskit/primitives@npm:^6.4.0, @atlaskit/primitives@npm:^6.5.0":
+"@atlaskit/primitives@npm:6.5.0, @atlaskit/primitives@npm:^6.0.0, @atlaskit/primitives@npm:^6.1.0, @atlaskit/primitives@npm:^6.2.0, @atlaskit/primitives@npm:^6.3.0, @atlaskit/primitives@npm:^6.4.0, @atlaskit/primitives@npm:^6.5.0":
   version: 6.5.0
   resolution: "@atlaskit/primitives@npm:6.5.0"
   dependencies:
@@ -1066,6 +1050,22 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: b9602caac5f2ef8069ab612159cd1a616b273d1af65ab1524584ce1910054937c3186e9c3d20decd68fdf68da6fbf9d638a9bfde2e8ec9b889069ebd3c9a83b3
+  languageName: node
+  linkType: hard
+
+"@atlaskit/primitives@npm:^1.6.0":
+  version: 1.6.7
+  resolution: "@atlaskit/primitives@npm:1.6.7"
+  dependencies:
+    "@atlaskit/tokens": "npm:^1.27.0"
+    "@babel/runtime": "npm:^7.0.0"
+    "@emotion/react": "npm:^11.7.1"
+    "@emotion/serialize": "npm:^1.1.0"
+    bind-event-listener: "npm:^2.1.1"
+    tiny-invariant: "npm:^1.2.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 42d96f2d6a7901258e70838bcdfb04a936b425133972f77b73e7454b6f35653739b6514aa3a952a01a4530bb19ada6af69faf7bd653d0eb87ae39937101e8d2a
   languageName: node
   linkType: hard
 
@@ -5023,6 +5023,7 @@ __metadata:
     "@atlaskit/page-header": "npm:^10.6.0"
     "@atlaskit/popup": "npm:^1.17.2"
     "@atlaskit/portal": "npm:^4.5.0"
+    "@atlaskit/primitives": "npm:6.5.0"
     "@atlaskit/range": "npm:^7.1.7"
     "@atlaskit/select": "npm:^17.10.2"
     "@atlaskit/side-navigation": "npm:^3.2.0"

@@ -1,6 +1,5 @@
 import { useWindowsHotkeysFix } from '../hooks/useWindowsHotkeysFix';
 import { GraphBuilder } from './GraphBuilder.js';
-import { OverlayTabs } from './OverlayTabs.js';
 import { type FC } from 'react';
 import { css } from '@emotion/react';
 import { SettingsModal } from './SettingsModal.js';
@@ -24,7 +23,6 @@ import { ProjectSelector } from './ProjectSelector';
 import { NewProjectModalRenderer } from './NewProjectModal';
 import { useWindowTitle } from '../hooks/useWindowTitle';
 import { CommunityOverlayRenderer } from './community/CommunityOverlay';
-import { HelpModal } from './HelpModal';
 
 const styles = css`
   overflow: hidden;
@@ -51,7 +49,6 @@ export const RivetApp: FC = () => {
   return (
     <div className={clsx('app', theme ? `theme-${theme}` : 'theme-default')} css={styles}>
       <ProjectSelector />
-      <OverlayTabs />
       <ActionBar
         onRunGraph={tryRunGraph}
         onRunTests={tryRunTests}
@@ -69,7 +66,6 @@ export const RivetApp: FC = () => {
       <DataStudioRenderer />
       <NewProjectModalRenderer />
       <CommunityOverlayRenderer />
-      <HelpModal />
       <ToastContainer enableMultiContainer position="bottom-right" hideProgressBar newestOnTop />
       <ToastContainer
         enableMultiContainer

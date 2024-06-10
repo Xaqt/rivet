@@ -1,115 +1,106 @@
-import { type FC, useState, Fragment } from 'react';
-import Modal, { ModalBody, ModalFooter, ModalHeader, ModalTitle, ModalTransition } from '@atlaskit/modal-dialog';
-import Form, { ErrorMessage, Field, FormFooter, FormHeader, HelperMessage, RequiredAsterisk } from '@atlaskit/form';
-import Button from '@atlaskit/button/loading-button';
-import TextArea from '@atlaskit/textarea';
-import { css } from '@emotion/react';
+import { useState, type FC, type FormEvent } from 'react';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { editProjectModalOpenState } from '../state/ui';
+import Modal, { ModalTransition, ModalBody, ModalHeader, ModalTitle, ModalFooter } from '@atlaskit/modal-dialog';
+import { Field } from '@atlaskit/form';
 import TextField from '@atlaskit/textfield';
+import Button from '@atlaskit/button';
+import Textarea from '@atlaskit/textarea';
+import { projectState } from '../state/savedGraphs';
+import { MainGraphSelect } from './common/MainGraphSelect';
+import { type GraphId } from '@ironclad/rivet-core';
 
-const styles = css`
-    .editor {
-        min-height: 400px;
-        display: flex;
-        resize: vertical;
+export const EditProjectModalRenderer: FC = () => {
+  const [editProjectModalOpen] = useRecoilState(editProjectModalOpenState);
 
-        > div {
-            width: 100%;
-        }
-    }
-`;
-
-type EditProjectModalProps = {
-  open: boolean;
-  name?: string;
-  description?: string;
-  onSubmit: (name: string, description?: string) => void;
-  onClose?: () => void;
+  return <ModalTransition>{editProjectModalOpen && <EditProjectModal />}</ModalTransition>;
 };
 
+export const EditProjectModal: FC = () => {
+  const [project, setProject] = useRecoilState(projectState);
+  const [projectName, setProjectName] = useState<string>(project?.metadata?.title);
+  const [projectDescription, setProjectDescription] = useState<string>(project?.metadata?.description || '');
+  const [mainGraphId, setMainGraphId] = useState<GraphId | undefined>(project?.metadata?.mainGraphId);
 
-export const EditProjectModal: FC<EditProjectModalProps> =
-  ({ open, onSubmit, name, description, onClose }) => {
-  const [fieldHasError, setFieldHasError] = useState(false);
-  const [errorMessageText, setErrorMessageText] = useState('');
+  const setEditProjectModalOpen = useSetRecoilState(editProjectModalOpenState);
 
-  const errorMessages = {
-    shortName: 'Please enter a name longer than 4 characters',
-    validName: 'Nice one, this name is available',
-    usernameInUse: 'This flow name is already taken, try entering another one',
-    selectError: 'Please select a color',
+  const closeModal = () => setEditProjectModalOpen(false);
+
+  const updateProject = () => {
+    // todo: validate fields.
+    // setFlow
+    setProject({
+      ...project,
+      metadata: {
+        ...project.metadata,
+        title: projectName,
+        description: projectDescription,
+        mainGraphId,
+      },
+    });
+    closeModal();
   };
 
-  const handleSubmit = () => {
-    // onSubmit(results);
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    updateProject();
   };
+
+  function validateName(value: string) {
+    if (!value.length) {
+      return 'Project Name is required';
+    }
+    if (value.length < 6) {
+      return 'Project Name is required to be at least 6 characters long';
+    }
+    return undefined;
+  }
 
   return (
-    <ModalTransition>
-      {open && (
-        <Modal width="x-large" onClose={onClose}>
-          <ModalHeader>
-            <ModalTitle>Edit Flow</ModalTitle>
-          </ModalHeader>
-          <ModalBody>
-            <div css={styles}>
-              <Form onSubmit={handleSubmit}>
-                {({ formProps, submitting }) => (
-                  <form noValidate {...formProps}>
-                    <FormHeader title="Edit Flow">
-                      <p aria-hidden="true">
-                        Required fields are marked with an asterisk{' '}
-                        <RequiredAsterisk />
-                      </p>
-                    </FormHeader>
-                    <Field
-                      aria-required={true}
-                      name="name"
-                      label="name"
-                      defaultValue=""
-                      isRequired
-                    >
-                      {({ fieldProps, error }) => (
-                        <Fragment>
-                          <TextField {...fieldProps} value={name}/>
-                          {error && (
-                            <ErrorMessage testId="userSubmissionError">
-                              {error}
-                            </ErrorMessage>
-                          )}
-                        </Fragment>
-                      )}
-                    </Field>
-                    <Field<string, HTMLTextAreaElement> name="description" label="Description" defaultValue="">
-                      {({ fieldProps, error }) => (
-                        <Fragment>
-                          <TextArea placeholder="Description" {...fieldProps} value={description} />
-                          {!error && (
-                            <HelperMessage>Must contain @ symbol</HelperMessage>
-                          )}
-                          {error && <ErrorMessage>{error}</ErrorMessage>}
-                        </Fragment>
-                      )}
-                    </Field>
-                    <FormFooter>
-                      <Button
-                        appearance="primary"
-                        type="submit"
-                        isLoading={submitting}
-                      >
-                        Create account
-                      </Button>
-                    </FormFooter>
-                  </form>
-                )}
-              </Form>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button onClick={onClose}>Close</Button>
-            <Button onClick={handleSubmit}>Submit</Button>
-          </ModalFooter>
-        </Modal>
-      )}
-    </ModalTransition>
+    <Modal onClose={closeModal} width="large">
+      <ModalHeader>
+        <ModalTitle>Edit Project</ModalTitle>
+      </ModalHeader>
+      <ModalBody>
+        <form onSubmit={handleSubmit}>
+          <Field name="projectName" label="Project Name">
+            {() => (
+              <TextField
+                name="projectName"
+                value={projectName}
+                isRequired={true}
+                onChange={(e) => setProjectName((e.target as HTMLInputElement).value)}
+                placeholder="Project Name"
+                autoComplete="off"
+              />
+            )}
+          </Field>
+          <Field name="projectDescription" label="Project Description (optional)">
+            {() => (
+              <Textarea
+                name="projectDescription"
+                placeholder="Project Description"
+                autoComplete="off"
+                value={projectDescription}
+                onChange={(e) => setProjectDescription((e.target as HTMLTextAreaElement).value)}
+              />
+            )}
+          </Field>
+          <Field label="Main Graph" name="mainGraph">
+            {() => (
+              <MainGraphSelect onMainGraphChange={setMainGraphId} placeholder="Main Graph" />
+            )}
+          </Field>
+        </form>
+      </ModalBody>
+      <ModalFooter>
+        <Button appearance="subtle" onClick={closeModal}>
+          Cancel
+        </Button>
+        <Button appearance="primary" onClick={updateProject}>
+          Submit
+        </Button>
+      </ModalFooter>
+    </Modal>
   );
 };

@@ -23,10 +23,25 @@ export const newProjectModalOpenState = atom({
   default: false,
 });
 
+export const editProjectModalOpenState = atom({
+  key: 'editProjectModalOpenState',
+  default: false,
+});
+
 export const expandedFoldersState = atom<Record<string, boolean>>({
   key: 'expandedFoldersState',
   default: {},
   effects: [persistAtom],
+});
+
+export const downloadFlowModalOpenState = atom<boolean>({
+  key: 'downloadFlowModalOpenState',
+  default: false,
+});
+
+export const deleteFlowModalOpenState = atom<boolean>({
+  key: 'deleteFlowModalOpenState',
+  default: false,
 });
 
 export const helpModalOpenState = atom<boolean>({
@@ -39,10 +54,6 @@ export const projectSavedState = atom<boolean>({
   default: false,
 });
 
-const { persistAtom: workflowFilterStateAtom } = recoilPersist({
-  key: 'workflowFilterState'
-});
-
 export const workflowFilterState = atom<WorkflowsFilter>({
   key: 'workflowFilterState',
   default: {
@@ -52,5 +63,5 @@ export const workflowFilterState = atom<WorkflowsFilter>({
     order_by: WorkflowSortFields.name,
     order: 'ASC'
   },
-  effects: [workflowFilterStateAtom],
+  effects: [persistAtom],
 });

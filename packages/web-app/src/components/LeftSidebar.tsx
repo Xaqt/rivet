@@ -8,7 +8,6 @@ import { type GraphId } from '@ironclad/rivet-core';
 import { sidebarOpenState } from '../state/graphBuilder.js';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import { GraphList } from './GraphList.js';
-import { ProjectInfoSidebarTab } from './ProjectInfoSidebarTab';
 import { GraphInfoSidebarTab } from './GraphInfoSidebarTab';
 
 const styles = css`
@@ -89,7 +88,6 @@ export const LeftSidebar: FC<{
           <TabList>
             <Tab>Graphs</Tab>
             <Tab>Graph Info</Tab>
-            <Tab>Project</Tab>
           </TabList>
           <TabPanel>
             <div className="panel" data-contextmenutype="graph-list">
@@ -99,11 +97,6 @@ export const LeftSidebar: FC<{
           <TabPanel>
             <div className="panel">
               <GraphInfoSidebarTab />
-            </div>
-          </TabPanel>
-          <TabPanel>
-            <div className="panel">
-              <ProjectInfoSidebarTab />
             </div>
           </TabPanel>
         </Tabs>

@@ -32,8 +32,11 @@ import { formatDate } from '../../utils/time';
 import { useDebounce } from 'ahooks';
 import { WorkflowElement } from './WorkflowElement';
 import Button from '@atlaskit/button';
+import Tag, { SimpleTag } from '@atlaskit/tag';
+import TagGroup from '@atlaskit/tag-group';
 
 const columnHelper = createColumnHelper<Workflow>();
+
 const WorkflowTable = () => {
   const { currentWorkspace } = useAuth();
   const {
@@ -233,19 +236,23 @@ const WorkflowTable = () => {
 
         footer: (info) => info.column.id,
       }),
-      columnHelper.accessor('id', {
+      columnHelper.accessor('labels', {
         header: () => {
           return (
             <div className="flex flex-row items-center">
-              <div className="flex">Disposition</div>
+              <div className="flex">Labels</div>
             </div>
           );
         },
         cell: ({ getValue }) => {
-          const response = getValue();
+          const response = getValue() || [];
           return (
             <div className="flex flex-row items-center space-x-2 truncate">
-              <div className="">Menu Here</div>
+              <TagGroup>
+                {
+                  response.map((item, key) => <SimpleTag key={key} appearance="rounded" text={item.name} />)
+                }
+              </TagGroup>
             </div>
           );
         },

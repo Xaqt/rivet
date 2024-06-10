@@ -17,12 +17,9 @@ import { useRecoilValue } from 'recoil';
 import { themeState } from '../state/settings';
 import clsx from 'clsx';
 import { useLoadStaticData } from '../hooks/useLoadStaticData';
-import { DataStudioRenderer } from './dataStudio/DataStudio';
 import { StatusBar } from './StatusBar';
 import { ProjectSelector } from './ProjectSelector';
 import { NewProjectModalRenderer } from './NewProjectModal';
-import { useWindowTitle } from '../hooks/useWindowTitle';
-import { CommunityOverlayRenderer } from './community/CommunityOverlay';
 
 const styles = css`
   overflow: hidden;
@@ -44,8 +41,6 @@ export const RivetApp: FC = () => {
 
   useWindowsHotkeysFix();
 
-  useWindowTitle();
-
   return (
     <div className={clsx('app', theme ? `theme-${theme}` : 'theme-default')} css={styles}>
       <ProjectSelector />
@@ -63,9 +58,7 @@ export const RivetApp: FC = () => {
       <SettingsModal />
       <TrivetRenderer tryRunTests={tryRunTests} />
       <ChatViewerRenderer />
-      <DataStudioRenderer />
       <NewProjectModalRenderer />
-      <CommunityOverlayRenderer />
       <ToastContainer enableMultiContainer position="bottom-right" hideProgressBar newestOnTop />
       <ToastContainer
         enableMultiContainer

@@ -1,7 +1,7 @@
 import axios, { type AxiosResponse } from 'axios';
 import {
   type FindWorkflowsDto,
-  Label,
+  type Label,
   type PagedWorkflowResponse,
   type UpdateWorkflowDto,
   type Workflow,
@@ -152,10 +152,10 @@ export const authApi = {
 };
 
 export const labelApi = {
-  getAllGroups: async (workspaceId: string, with_labels = false) => {
+  getAllGroups: async (workspaceId: string, withLabels = false) => {
     try {
       const response = await api.get(`/${workspaceId}/labels/groups`, {
-        params: { with_labels },
+        params: { with_labels: withLabels },
       });
       return response.data;
     } catch (error) {

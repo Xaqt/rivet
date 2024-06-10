@@ -1,9 +1,8 @@
 import { css } from '@emotion/react';
-import React, { useMemo, type FC, useState, Fragment } from 'react';
+import type React from 'react';
+import { useMemo, type FC, useState, Fragment } from 'react';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { type ProjectId } from '@ironclad/rivet-core';
-import ButtonGroup from '@atlaskit/button/button-group';
-import Button from '@atlaskit/button/new';
 import { Box, Inline, xcss } from '@atlaskit/primitives';
 import Select from '@atlaskit/select';
 import TextField from '@atlaskit/textfield';
@@ -11,13 +10,20 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import LeftIcon from 'majesticons/line/chevron-left-line.svg?react';
 import CloseIcon from 'majesticons/line/multiply-line.svg?react';
 import BlankFileIcon from 'majesticons/line/file-line.svg?react';
-import FileIcon from 'majesticons/line/file-plus-line.svg?react';
-import FolderIcon from 'majesticons/line/folder-line.svg?react';
-import DeleteIcon from 'majesticons/line/delete-bin-line.svg?react';
 import SettingsCogIcon from 'majesticons/line/settings-cog-line.svg?react';
-import DuplicateIcon from 'majesticons/line/image-multiple-line.svg?react';
-import EditorMoreIcon from '@atlaskit/icon/glyph/editor/more'
-import { openedProjectsSortedIdsState, openedProjectsState, projectState, projectsState } from '../state/savedGraphs';
+import ExportIcon from '@atlaskit/icon/glyph/export';
+import CopyIcon from '@atlaskit/icon/glyph/copy';
+import TrashIcon from '@atlaskit/icon/glyph/trash';
+import PlusIcon from '@atlaskit/icon/glyph/add';
+import EditIcon from '@atlaskit/icon/glyph/edit';
+
+import {
+  openedProjectsSortedIdsState,
+  openedProjectsState,
+  projectState,
+  projectsState,
+  savedGraphsState,
+} from '../state/savedGraphs';
 import clsx from 'clsx';
 import { useLoadProject } from '../hooks/useLoadProject';
 import { useSyncCurrentStateIntoOpenedProjects } from '../hooks/useSyncCurrentStateIntoOpenedProjects';
@@ -25,16 +31,15 @@ import { produce } from 'immer';
 import { type SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import { SortableContext, horizontalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
 import { useLoadProjectWithFileBrowser } from '../hooks/useLoadProjectWithFileBrowser';
-import { newProjectModalOpenState } from '../state/ui';
+import { editProjectModalOpenState, newProjectModalOpenState } from '../state/ui';
 import { keys } from '../../../core/src/utils/typeSafety';
-import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { IconButton } from '@atlaskit/button/new';
-import { MenuIds, useRunMenuCommand } from '../hooks/useMenuCommands';
+import { type MenuIds, useRunMenuCommand } from '../hooks/useMenuCommands';
 import { sidebarOpenState } from '../state/graphBuilder';
-import PageHeader from '@atlaskit/page-header';
-
+import { Field } from '@atlaskit/form';
+import { EditProjectModalRenderer } from './EditProjectModal';
 
 export const styles = css`
     position: absolute;
@@ -65,6 +70,30 @@ export const styles = css`
         gap: 1px;
         padding-right: 1px;
         width: 100%;
+    }
+    
+    .project-inputs {
+        margin-right: auto;
+        gap: 5px;
+        display: flex;
+        align-items: center;
+        padding-right: 10px;
+        min-width: 320px;
+    }
+    
+    .title-name {
+        padding-left: 10px;
+        font-size: 16px;
+        color: var(--grey-light);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    span.title-name {
+        flex: 1;
+        min-width: 220px;
+    }
     }
 
     > .actions {
@@ -204,41 +233,28 @@ export const styles = css`
     }
 `;
 
-const selectContainerStyles = xcss({
-  flex: '0 0 200px',
-  marginInlineStart: 'space.100',
-});
-
-const flexBoxStyles = xcss({
-  flex: '0 0 200px',
-});
-
-const barContent = (
-  <Inline>
-    <Box xcss={flexBoxStyles}>
-      <TextField isCompact placeholder="Filter" aria-label="Filter" />
-    </Box>
-    <Box xcss={selectContainerStyles}>
-      <Select
-        spacing="compact"
-        placeholder="Choose an option"
-        aria-label="Choose an option"
-      />
-    </Box>
-  </Inline>
-);
-
-
 export const ProjectSelector: FC = () => {
   const [project, setProject] = useRecoilState(projectState);
+  const [savedGraphs, setSavedGraphs] = useRecoilState(savedGraphsState);
   const setProjects = useSetRecoilState(projectsState);
   const [openedProjects, setOpenedProjects] = useRecoilState(openedProjectsState);
   const [openedProjectsSortedIds, setOpenedProjectsSortedIds] = useRecoilState(openedProjectsSortedIdsState);
   const [title, setTitle] = useState(project?.metadata.title);
+  const setEditProjectModalOpen = useSetRecoilState(editProjectModalOpenState);
   const runMenuCommandImpl = useRunMenuCommand();
 
   const [fileMenuOpen, setFileMenuOpen] = useState(false);
   const sidebarOpen = useRecoilValue(sidebarOpenState);
+
+  const graphOptions = useMemo(
+    () => [
+      { label: '(None)', value: undefined },
+      ...savedGraphs.map((g) => ({ label: g.metadata!.name, value: g.metadata!.id })),
+    ],
+    [savedGraphs],
+  );
+
+  const selectedMainGraph = graphOptions.find((g) => g.value === project.metadata.mainGraphId);
 
   const runMenuCommand: typeof runMenuCommandImpl = (command) => {
     setFileMenuOpen(false);
@@ -317,13 +333,18 @@ export const ProjectSelector: FC = () => {
   const handleNameChange = (newTitle: string) => {
     // setProject({ ...project, metadata: { ...project.metadata, title: newValue } })}
     setTitle(newTitle);
-  }
+  };
 
   const openNewProjectModal = useStableCallback(() => setNewProjectModalOpen(true));
 
-  function handleNewProject(e: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>) {
+  function handleNewFlow(e: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>) {
     e.stopPropagation();
     openNewProjectModal();
+  }
+
+  function handleEditFlow(e: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>) {
+    e.stopPropagation();
+    setEditProjectModalOpen(true);
   }
 
   const ProjectDropdownMenu = () => {
@@ -331,7 +352,7 @@ export const ProjectSelector: FC = () => {
       const handler = (e: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>) => {
         runMenuCommand(cmd);
         e.preventDefault();
-      }
+      };
       return handler;
     }
 
@@ -345,53 +366,29 @@ export const ProjectSelector: FC = () => {
         shouldFlip={true}
         shouldRenderToParent>
         <DropdownItemGroup>
-          <DropdownItem elemBefore={<FileIcon/>} onClick={handleNewProject}>New Project</DropdownItem>
-          <DropdownItem>Share</DropdownItem>
-          <DropdownItem elemBefore={<DuplicateIcon/>}>Duplicate</DropdownItem>
+          <DropdownItem elemBefore={<PlusIcon label="new"/>} onClick={handleNewFlow}>New Flow</DropdownItem>
+          <DropdownItem elemBefore={<CopyIcon label="duplicate"/>}>Duplicate</DropdownItem>
           <DropdownItem>Import</DropdownItem>
-          <DropdownItem>Export</DropdownItem>
-          <DropdownItem elemBefore={<DeleteIcon />}>Delete</DropdownItem>
-          <DropdownItem>Report</DropdownItem>
+          <DropdownItem elemBefore={<ExportIcon label="export"/>}>Export</DropdownItem>
+          <DropdownItem elemBefore={<TrashIcon label="delete" />}>Delete</DropdownItem>
         </DropdownItemGroup>
       </DropdownMenu>
     );
   };
 
-  const actionsContent = (
-    <ButtonGroup label="Content actions">
-      <Button appearance="primary">Edit page</Button>
-      <Button>Share</Button>
-      <ProjectDropdownMenu />
-    </ButtonGroup>
-  );
-
-  const FlowPageHeader = () => {
-    return (
-      <PageHeader actions={actionsContent}>
+  return (
+    <Fragment>
+      <div css={styles}>
         <button>
           <LeftIcon />
         </button>
-
-        <InlineEditableTextfield
-          key="inline-project-edit"
-          placeholder="Flow Name"
-          readViewFitContainerWidth
-          defaultValue={title}
-          validate={validateName}
-          onConfirm={handleNameChange}
-        />
-      </PageHeader>
-    );
-  };
-
-  return (
-    <Fragment>
-      <FlowPageHeader />
-      <div css={styles}>
-        <div className="projects-container">
-          <button>
-            <LeftIcon />
+        <div className="project-inputs">
+          <span className="title-name">{title}</span>
+          <button onClick={handleEditFlow}>
+            <EditIcon label="edit" />
           </button>
+        </div>
+        <div className="projects-container">
           <div className="projects">
             <DndContext onDragEnd={handleDragEnd}>
               <SortableContext items={sortedOpenedProjects} strategy={horizontalListSortingStrategy}>
@@ -408,8 +405,10 @@ export const ProjectSelector: FC = () => {
               </SortableContext>
             </DndContext>
           </div>
+          <ProjectDropdownMenu/>
         </div>
       </div>
+      <EditProjectModalRenderer />
     </Fragment>
   );
 };

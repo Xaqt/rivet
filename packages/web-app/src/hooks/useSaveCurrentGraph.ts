@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid/non-secure';
 import { type GraphId } from '@ironclad/rivet-core';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { graphState } from '../state/graph.js';
-import { savedGraphsState } from '../state/savedGraphs.js';
+import { genId, savedGraphsState } from '../state/savedGraphs.js';
 
 export function useSaveCurrentGraph() {
   const [graphData, setGraphData] = useRecoilState(graphState);
@@ -13,7 +13,7 @@ export function useSaveCurrentGraph() {
     const currentGraph = produce(graphData, (draft) => {
       if (!draft.metadata) {
         draft.metadata = {
-          id: nanoid() as GraphId,
+          id: genId<GraphId>(),
           name: 'Untitled',
           description: '',
         };

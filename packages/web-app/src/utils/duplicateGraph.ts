@@ -1,13 +1,13 @@
 import { type GraphId, type NodeGraph, type NodeId } from '@ironclad/rivet-core';
 import { produce } from 'immer';
-import { nanoid } from 'nanoid/non-secure';
+import { genId } from '../state/savedGraphs';
 
 export function duplicateGraph(graph: NodeGraph) {
   let duplicatedGraph: NodeGraph = produce(graph, (draft) => ({
     ...draft,
     metadata: {
       ...draft.metadata,
-      id: nanoid() as GraphId,
+      id: genId<GraphId>(),
       name: `${draft.metadata?.name} (Copy)`,
     },
   }));
@@ -16,7 +16,7 @@ export function duplicateGraph(graph: NodeGraph) {
     // Generate new IDs for all nodes and update connections
     for (const node of draft.nodes) {
       const oldId = node.id;
-      node.id = nanoid() as NodeId;
+      node.id = genId<NodeId>();
 
       for (const connection of draft.connections) {
         if (connection.inputNodeId === oldId) {

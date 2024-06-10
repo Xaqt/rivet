@@ -1,5 +1,5 @@
 import type React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import x_icon from '@/assets/x_icon.svg';
 import download_blue from '@/assets/download_blue.svg';
 import calendarIcon from '@/assets/calendar_icon.svg';

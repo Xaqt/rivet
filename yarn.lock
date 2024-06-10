@@ -1031,7 +1031,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@atlaskit/primitives@npm:6.5.0, @atlaskit/primitives@npm:^6.0.0, @atlaskit/primitives@npm:^6.1.0, @atlaskit/primitives@npm:^6.2.0, @atlaskit/primitives@npm:^6.3.0, @atlaskit/primitives@npm:^6.4.0, @atlaskit/primitives@npm:^6.5.0":
+"@atlaskit/primitives@npm:^1.6.0":
+  version: 1.6.7
+  resolution: "@atlaskit/primitives@npm:1.6.7"
+  dependencies:
+    "@atlaskit/tokens": "npm:^1.27.0"
+    "@babel/runtime": "npm:^7.0.0"
+    "@emotion/react": "npm:^11.7.1"
+    "@emotion/serialize": "npm:^1.1.0"
+    bind-event-listener: "npm:^2.1.1"
+    tiny-invariant: "npm:^1.2.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 42d96f2d6a7901258e70838bcdfb04a936b425133972f77b73e7454b6f35653739b6514aa3a952a01a4530bb19ada6af69faf7bd653d0eb87ae39937101e8d2a
+  languageName: node
+  linkType: hard
+
+"@atlaskit/primitives@npm:^6.0.0, @atlaskit/primitives@npm:^6.1.0, @atlaskit/primitives@npm:^6.2.0, @atlaskit/primitives@npm:^6.3.0, @atlaskit/primitives@npm:^6.4.0, @atlaskit/primitives@npm:^6.5.0":
   version: 6.5.0
   resolution: "@atlaskit/primitives@npm:6.5.0"
   dependencies:
@@ -1050,22 +1066,6 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: b9602caac5f2ef8069ab612159cd1a616b273d1af65ab1524584ce1910054937c3186e9c3d20decd68fdf68da6fbf9d638a9bfde2e8ec9b889069ebd3c9a83b3
-  languageName: node
-  linkType: hard
-
-"@atlaskit/primitives@npm:^1.6.0":
-  version: 1.6.7
-  resolution: "@atlaskit/primitives@npm:1.6.7"
-  dependencies:
-    "@atlaskit/tokens": "npm:^1.27.0"
-    "@babel/runtime": "npm:^7.0.0"
-    "@emotion/react": "npm:^11.7.1"
-    "@emotion/serialize": "npm:^1.1.0"
-    bind-event-listener: "npm:^2.1.1"
-    tiny-invariant: "npm:^1.2.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 42d96f2d6a7901258e70838bcdfb04a936b425133972f77b73e7454b6f35653739b6514aa3a952a01a4530bb19ada6af69faf7bd653d0eb87ae39937101e8d2a
   languageName: node
   linkType: hard
 
@@ -1258,6 +1258,25 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ~18.2.0
   checksum: 2f2913782f89b0b3c42d1623f29290c85810e3f11726354b827f79ea3f583f1c334a17a7d4a5102316bc3406a93a2bab59b7cbe832651ed1a3247a3ae21b8790
+  languageName: node
+  linkType: hard
+
+"@atlaskit/tag@npm:^12.2.2":
+  version: 12.2.2
+  resolution: "@atlaskit/tag@npm:12.2.2"
+  dependencies:
+    "@atlaskit/analytics-next": "npm:^9.3.0"
+    "@atlaskit/ds-lib": "npm:^2.3.0"
+    "@atlaskit/icon": "npm:^22.3.0"
+    "@atlaskit/motion": "npm:^1.6.0"
+    "@atlaskit/primitives": "npm:^6.3.0"
+    "@atlaskit/theme": "npm:^12.8.0"
+    "@atlaskit/tokens": "npm:^1.49.0"
+    "@babel/runtime": "npm:^7.0.0"
+    "@emotion/react": "npm:^11.7.1"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ~18.2.0
+  checksum: 1ae3236c31115e47357fdf80a4684fb8dce7012888262b86b7b6d400c0ac6871fc22bb6ea39567bc83066f1f8de4cd7709afcd1352ca1a1c7fd46bee538f3c34
   languageName: node
   linkType: hard
 
@@ -5023,11 +5042,12 @@ __metadata:
     "@atlaskit/page-header": "npm:^10.6.0"
     "@atlaskit/popup": "npm:^1.17.2"
     "@atlaskit/portal": "npm:^4.5.0"
-    "@atlaskit/primitives": "npm:6.5.0"
+    "@atlaskit/primitives": "npm:^6.5.0"
     "@atlaskit/range": "npm:^7.1.7"
     "@atlaskit/select": "npm:^17.10.2"
     "@atlaskit/side-navigation": "npm:^3.2.0"
     "@atlaskit/tabs": "npm:^16.1.1"
+    "@atlaskit/tag": "npm:^12.2.2"
     "@atlaskit/tag-group": "npm:^10.3.0"
     "@atlaskit/textarea": "npm:^5.4.0"
     "@atlaskit/textfield": "npm:^6.3.1"
@@ -5127,9 +5147,9 @@ __metadata:
     semver: "npm:^7.5.4"
     ts-dedent: "npm:^2.2.0"
     ts-node: "npm:^10.9.1"
-    ts-pattern: "npm:^5.0.5"
+    ts-pattern: "npm:^5.1.2"
     tsx: "npm:^4.6.2"
-    type-fest: "npm:^4.5.0"
+    type-fest: "npm:^4.20.0"
     typescript: "npm:^5.4.5"
     url-join: "npm:^5.0.0"
     use-async-effect: "npm:^2.2.7"
@@ -21525,6 +21545,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ts-pattern@npm:^5.1.2":
+  version: 5.1.2
+  resolution: "ts-pattern@npm:5.1.2"
+  checksum: 3c7215bab48d54bcf2a20214145ec53b28bb9f07ce592524d4ea1e3a76481bc1478338aed0119495962e83182be63491fa03682a2381118a243396f6b33df11a
+  languageName: node
+  linkType: hard
+
 "tsconfck@npm:^2.1.0":
   version: 2.1.1
   resolution: "tsconfck@npm:2.1.1"
@@ -21652,6 +21679,13 @@ __metadata:
   version: 2.19.0
   resolution: "type-fest@npm:2.19.0"
   checksum: 7bf9e8fdf34f92c8bb364c0af14ca875fac7e0183f2985498b77be129dc1b3b1ad0a6b3281580f19e48c6105c037fb966ad9934520c69c6434d17fd0af4eed78
+  languageName: node
+  linkType: hard
+
+"type-fest@npm:^4.20.0":
+  version: 4.20.0
+  resolution: "type-fest@npm:4.20.0"
+  checksum: df037c11f6393312f27825ea6eb2c8cd62b1ba21c31144bed41854648ba2a18dcb8c68a930607c7227dd531b42006cc7c7a60f7f034668d1c92c205523ae1ea2
   languageName: node
   linkType: hard
 

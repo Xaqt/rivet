@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useSaveProject } from './useSaveProject.js';
+import { useSaveFlow } from './useSaveFlow.js';
 import { match } from 'ts-pattern';
 import { useLoadProjectWithFileBrowser } from './useLoadProjectWithFileBrowser.js';
 import { useRecoilState, useSetRecoilState } from 'recoil';
@@ -46,7 +46,7 @@ export function useMenuCommands(
   } = {},
 ) {
   const [graphData, setGraphData] = useRecoilState(graphState);
-  const { saveProject, saveProjectAs } = useSaveProject();
+  const { saveFlow, updateFlow } = useSaveFlow();
   const setNewProjectModalOpen = useSetRecoilState(newProjectModalOpenState);
   const loadProject = useLoadProjectWithFileBrowser();
   const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
@@ -69,13 +69,14 @@ export function useMenuCommands(
           loadProject();
         })
         .with('save_project', () => {
-          saveProject();
+          saveFlow();
         })
         .with('duplicate_project', () => {
           toast.error('Not implemented yet');
         })
         .with('save_project_as', () => {
-          saveProjectAs();
+          // saveProjectAs();
+          toast.error('Not implemented yet');
         })
         .with('export_graph', () => {
           // importGraph();
@@ -110,8 +111,7 @@ export function useMenuCommands(
       handlerState.handler = prevHandler;
     };
   }, [
-    saveProject,
-    saveProjectAs,
+    saveFlow,
     loadProject,
     setSettingsOpen,
     graphData,

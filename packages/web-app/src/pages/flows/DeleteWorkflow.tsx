@@ -1,6 +1,5 @@
 import x_icon from "@/assets/x_icon.svg";
 import type React from "react";
-import { useAuth } from '../../hooks/useAuth';
 import { type Workflow } from '../../api/types';
 import { useWorkflows } from '../../hooks/useWorkflows';
 import { formatDate } from '../../utils/time';

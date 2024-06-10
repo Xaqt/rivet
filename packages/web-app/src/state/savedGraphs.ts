@@ -9,16 +9,25 @@ import {
   type ProjectId,
   type DataValue,
 } from '@ironclad/rivet-core';
-import { blankProject } from '../utils/blankProject.js';
 import { recoilPersist } from 'recoil-persist';
 import { entries, values } from '../../../core/src/utils/typeSafety';
-import { Workflow, WorkflowImpl } from '../api/types';
+import { type Workflow, WorkflowImpl } from '../api/types';
 
 const { persistAtom } = recoilPersist({ key: 'flows' });
 
-export const UNSAVED_PATH_KEY = '__unsaved__';
+export const genId = <T>(): T => nanoid(16) as T;
 
-const genId = (): string => nanoid(16);
+const newProject = (): Project => {
+  return {
+    graphs: {},
+    metadata: {
+      id: genId<ProjectId>(),
+      title: 'Untitled Project',
+      description: '',
+    },
+    plugins: [],
+  };
+};
 
 export const flowState = atom<Workflow>({
   key: 'flowState',
@@ -27,17 +36,24 @@ export const flowState = atom<Workflow>({
 });
 
 // What's the data of the last loaded project?
-export const projectState = atom<Omit<Project, 'data'>>({
+export const projectState = selector({
   key: 'projectState',
-  default: {
-    metadata: {
-      id: genId() as ProjectId,
-      description: '',
-      title: 'Untitled Project',
-    },
-    graphs: {},
-    plugins: [],
+  get: ({ get }) => {
+    return get(flowState).project;
   },
+  set: ({ set }, newValue) => {
+    set(flowState, (oldValue) => {
+      return {
+        ...oldValue,
+        project: newValue instanceof DefaultValue ? newProject() : newValue,
+      };
+    });
+  },
+});
+
+export const openedGraphState = atom<string | undefined>({
+  key: 'openedGraphState',
+  default: undefined,
   effects: [persistAtom],
 });
 
@@ -55,7 +71,7 @@ export const projectMetadataState = selector({
     set(projectState, (oldValue) => {
       return {
         ...oldValue,
-        metadata: newValue instanceof DefaultValue ? blankProject().metadata : newValue,
+        metadata: newValue instanceof DefaultValue ? newProject().metadata : newValue,
       };
     });
   },
@@ -114,7 +130,7 @@ export const savedGraphsState = selector<NodeGraph[]>({
       for (const graph of newValue) {
         if (graph.metadata == null) {
           graph.metadata = {
-            id: genId() as GraphId,
+            id: genId<GraphId>(),
             name: 'Untitled Graph',
             description: '',
           };
@@ -139,7 +155,7 @@ export const projectPluginsState = selector({
     set(projectState, (oldValue) => {
       return {
         ...oldValue,
-        plugins: newValue instanceof DefaultValue ? blankProject().plugins : newValue,
+        plugins: newValue instanceof DefaultValue ? newProject().plugins : newValue,
       };
     });
   },

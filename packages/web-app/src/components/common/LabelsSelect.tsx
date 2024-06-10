@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { GroupWithLabels, type Label } from '../../api/types';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { type GroupWithLabels, type Label } from '../../api/types';
 import { useAuth } from '../../hooks/useAuth';
 import { labelApi } from '../../api/api-client';
-import Select from '@atlaskit/select';
+import Select, { type ActionMeta } from '@atlaskit/select';
 
-interface Props {
+type SelectProps = Parameters<typeof Select>[0];
+
+type LabelsSelectProps = Partial<SelectProps> & {
   tags: string[];
   limit?: number | boolean;
   handleRemoveLabel?: (labelId: string) => Promise<void>;
+  onLabelsChange?: (labels: string[]) => void;
 }
 
 type SingleOption = {
@@ -24,17 +28,19 @@ type SelectOption = SingleOption | GroupOption;
 
 const isGroupOption = (option: SelectOption): option is GroupOption => {
   return Array.isArray((option as GroupOption).options);
-}
+};
 
 const isSingleOption = (option: SelectOption): option is SingleOption => {
   return !isGroupOption(option);
-}
+};
 
-export const LabelsSelect: React.FC<Props> = ({
+export const LabelsSelect: React.FC<LabelsSelectProps> = ({
   tags,
   limit = 3,
-  handleRemoveLabel = (): Promise<void> => { return Promise.resolve(); }
-}) => {
+  handleRemoveLabel = (): Promise<void> => { return Promise.resolve(); },
+  onLabelsChange = (): void => {},
+  ...props
+}: LabelsSelectProps) => {
   const { currentWorkspace } = useAuth();
   const [labelGroups, setLabelGroups] = useState<GroupWithLabels[]>([]);
   const [labelsWithoutGroup, setLabelsWithoutGroup] = useState<Label[]>([]);
@@ -42,26 +48,6 @@ export const LabelsSelect: React.FC<Props> = ({
   const [allLabels, setAllLabels] = useState<Label[]>([]);
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>([]);
-  
-  useEffect(() => {
-    if (currentWorkspace) {
-      setLoading(true);
-      const { workspace_id } = currentWorkspace;
-      Promise.all([
-        labelApi.getAllGroups(workspace_id),
-        labelApi.getAllLabels(workspace_id),
-      ]).then(([groups, allLabels]) => {
-        allLabels = allLabels || [];
-        setLabelGroups(groups);
-        const groupSet = new Set(groups.map((group: { group_id: string; }) => group.group_id));
-        const withoutGroup = allLabels.filter(label => !groupSet.has(label.group_id));
-        setLabelsWithoutGroup(withoutGroup);
-      }).finally(() => setLoading(false));
-    } else {
-      setAllLabels([]);
-      setLabelsWithoutGroup([]);
-    }
-  }, [currentWorkspace]);
 
   useEffect(() => {
     const opts: SelectOption[] = labelGroups.map(group => ({
@@ -96,21 +82,39 @@ export const LabelsSelect: React.FC<Props> = ({
     });
     setSelectedOptions(filteredOptions);
   }, [options, tags]);
-  
-  const handleRemove = (labelId: string) => {
-    setLoading(true);
-    handleRemoveLabel(labelId).finally(() => setLoading(false));
+
+  useEffect(() => {
+    if (currentWorkspace) {
+      setLoading(true);
+      const workspaceId = currentWorkspace.workspace_id;
+      Promise.all([
+        labelApi.getAllGroups(workspaceId),
+        labelApi.getAllLabels(workspaceId),
+      ]).then(([groups, allLabels]) => {
+        allLabels = allLabels || [];
+        setLabelGroups(groups);
+        const groupSet = new Set(groups.map((group: { group_id: string; }) => group.group_id));
+        const withoutGroup = allLabels.filter(label => !groupSet.has(label.group_id));
+        setLabelsWithoutGroup(withoutGroup);
+      }).finally(() => setLoading(false));
+    } else {
+      setAllLabels([]);
+      setLabelsWithoutGroup([]);
+    }
+  }, [currentWorkspace]);
+
+  const handleChange = (newValue: unknown, actionMeta: ActionMeta<unknown>) => {
+    console.log(newValue);
   };
 
   return (
       <Select
-        inputId="grouped-options-example"
-        // eslint-disable-next-line @atlaskit/ui-styling-standard/no-classname-prop -- Ignored via go/DSP-18766
-        className="single-select"
-        classNamePrefix="react-select"
-        options={options}
-        isMulti
         placeholder="Labels"
+        {...props}
+        isLoading={loading}
+        options={options}
+        onChange={handleChange}
+        isMulti
         value={selectedOptions}
       />
   );

@@ -1,4 +1,3 @@
-import x_icon from '@/assets/icons/x_icon.svg';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
@@ -6,6 +5,7 @@ import { type Workflow } from '../../api/types';
 import { useWorkflows } from '../../hooks/useWorkflows';
 import { kebabCase } from 'lodash-es';
 import { exportTextToFile } from '../../io/utils';
+import CrossIcon from '@atlaskit/icon/glyph/cross';
 
 interface Props {
   setOpenModal: (isOpen: boolean) => void;
@@ -57,14 +57,7 @@ export const DownloadWorkflow: React.FC<Props> = ({
     <div className={'flex flex-col gap-4'}>
       <span className={'flex justify-between items-center'}>
         <span className={'text-xl'}>Download Flow</span>
-        <img
-          src={x_icon}
-          alt={'x-icon'}
-          width={13}
-          height={13}
-          onClick={() => setOpenModal(false)}
-          className="object-cover object-center h-full w-[13px] cursor-pointer"
-        />
+        <CrossIcon label={'close'} />
       </span>
       <span className={'w-[325px] text-xs font-normal'}>
         Download the workflow with <br />{' '}

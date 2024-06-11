@@ -37,6 +37,8 @@
     "@atlaskit/checkbox": "^12.6.11",
     "@atlaskit/css-reset": "^6.6.1",
     "@atlaskit/dropdown-menu": "^12.11.0",
+    "@atlaskit/dynamic-table": "^14.17.1",
+    "@atlaskit/empty-state": "^7.8.0",
     "@atlaskit/form": "^10.3.0",
     "@atlaskit/icon": "^22.3.1",
     "@atlaskit/inline-edit": "^13.4.0",

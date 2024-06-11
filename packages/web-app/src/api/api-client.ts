@@ -4,9 +4,11 @@ import {
   type Label,
   type PagedWorkflowResponse,
   type UpdateWorkflowDto,
+  type User,
   type Workflow,
   type WorkflowCreateDto,
 } from './types';
+import { getEnvVar } from '../utils/tauri';
 
 const getBaseUrl = () => {
 
@@ -20,12 +22,19 @@ const getBaseUrl = () => {
 
   function assumeVite(): string | undefined {
     try {
-      return import.meta?.env?.API_BASE_URL;
+      return import.meta?.env?.VITE_API_BASE_URL;
     } catch {
       return undefined;
     }
   }
 
+  try {
+    if (process) {
+      console.log("process.env", process.env);
+    }
+  } catch {}
+
+  console.log("import.meta.env", import.meta.env);
   // HACK: until it moves to the agent app
   const url = assumeNext() || assumeVite();
   console.log("base url", url);
@@ -57,7 +66,27 @@ api.interceptors.request.use(
   }
 );
 
+function getAxiosError(response: any) {
+  if (response?.data?.error) {
+    return response.data.message;
+  }
+  return response.statusText;
+}
+
+function processResponse<T = any>(response: AxiosResponse): T {
+  if (response.status >= 200 && response.status < 300) {
+    return response.data as T;
+  }
+  throw new Error(getAxiosError(response));
+}
+
 let isTokenRefreshing = false;
+
+function gotoLogin() {
+  // const [_, setOpen] = useRecoilState(loginDialogOpenState);
+  // setOpen(true);
+  window.location.href = '/login/sign-in';
+}
 
 api.interceptors.response.use(
   (response: AxiosResponse) => {
@@ -66,25 +95,39 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    if (error?.code === 'ERR_NETWORK') {
+      console.log('Network error');
+      return Promise.reject(error);
+    }
+
     if (
       error.response.status === 401 &&
       !originalRequest._retry &&
       !isTokenRefreshing
     ) {
+      isTokenRefreshing = true;
       try {
         originalRequest._retry = true;
-        isTokenRefreshing = true;
 
         const refreshToken = localStorage.getItem('refreshToken');
+        if (!refreshToken || refreshToken === 'undefined') {
+          isTokenRefreshing = false;
+          console.log('no refresh token. Going to login');
+          await authApi.login(undefined, undefined, false);
+          return;
+        }
 
         console.log('original request', originalRequest);
 
         await authApi.refreshToken(refreshToken!);
         isTokenRefreshing = false;
+
         return api(originalRequest);
       } catch (refreshError) {
         console.error('Token refresh error', refreshError);
-        window.location.href = '/login/sign-in';
+        gotoLogin();
+      } finally {
+        isTokenRefreshing = false;
       }
     }
 
@@ -92,19 +135,29 @@ api.interceptors.response.use(
   }
 );
 
+const DEFAULT_USERNAME = 'collie.clayton@gmail.com';
+const DEFAULT_PASSWORD = 'ChangePass123!';
+
 export const authApi = {
-  login: async (username: string, password: string) => {
+  login: async (username?: string, password?: string, intercept = true) => {
+    // TESTING: REMOVE
+    username = username?.length ? username : getEnvVar('VITE_USERNAME') ?? DEFAULT_USERNAME;
+    password = password?.length ? password : getEnvVar('VITE_PASSWORD') ?? DEFAULT_PASSWORD;
+
     const loginData = {
       username,
       password,
     };
     try {
-      const response = await api.post('/auth/login', loginData);
-      localStorage.setItem('authToken', response.data.accessToken);
-      localStorage.setItem('refreshToken', response.data.refreshToken);
+      const response = await api.post('/auth/login', loginData,
+        !intercept ? { validateStatus: null } : undefined).then(processResponse);
+      const { accessToken, refreshToken } = response;
+      console.log('login response', response);
 
-      if (response.data && response.data.accessToken) {
-        const accessToken = response.data.accessToken;
+      localStorage.setItem('authToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+
+      if (accessToken) {
         api.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
       }
     } catch (error) {
@@ -112,16 +165,19 @@ export const authApi = {
       throw error;
     }
   },
+  isLoggedIn: () => {
+    const token = localStorage.getItem('authToken');
+    return token?.length && token !== 'undefined';
+  },
   refreshToken: async (refreshToken: string) => {
     try {
       const response = await api.post('/auth/refresh', {
         refreshToken,
         withCredentials: true,
-      });
-
-      if (response.data && response.data.accessToken) {
-        const accessToken = response.data.accessToken;
-        localStorage.setItem('authToken', response.data.accessToken);
+      }).then(processResponse);
+      const accessToken = response.accessToken;
+      if (accessToken) {
+        localStorage.setItem('authToken', accessToken);
         api.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
       }
     } catch (error) {
@@ -130,20 +186,20 @@ export const authApi = {
       throw error;
     }
   },
-  getCurrentUser: async (tryAgain = false) => {
-    tryAgain = !tryAgain;
+  getCurrentUser: async (tryAgain = false): Promise<User | undefined> => {
     try {
-      const response = await api.get('/users/me');
-      console.log('original current user response: ', response.data);
-      return response.data;
+      const response = await api.get('/users/me').then(processResponse);
+      console.log('original current user response: ', response);
+      return response;
     } catch (error) {
+      console.error('Get current user error', error);
       if (tryAgain) {
         console.log('trying again to get current user');
-        await authApi.getCurrentUser(true);
+        return authApi.getCurrentUser(false);
       } else {
-        window.location.href = '/login/sign-in';
+        gotoLogin();
+        return undefined;
       }
-      console.error('Get current user error', error);
     }
   },
   getAuthToken(): string {
@@ -330,33 +386,17 @@ export const workflowApi = {
       order: 'DESC'
     };
     criteria.workspace_id ??= workspaceId;
-    try {
-      const response = await api.get<PagedWorkflowResponse>(`/workflows`, {
-        params: criteria
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Find all workflows error', error);
-      throw error;
-    }
+    return api.get<PagedWorkflowResponse>(`/workflows`, {
+      params: criteria
+    }).then(processResponse<PagedWorkflowResponse>);
   },
   getById: async (workflowId: string): Promise<Workflow> => {
-    try {
-      const response = await api.get<Workflow>(`/workflows/${workflowId}`);
-      return response.data;
-    } catch (error) {
-      console.error('Get workflow by id error', error);
-      throw error;
-    }
+      return api.get<Workflow>(`/workflows/${workflowId}`)
+        .then(processResponse<Workflow>);
   },
   create: async (workspaceId: string, body: WorkflowCreateDto): Promise<Workflow> => {
-    try {
-      const response = await api.post<Workflow>(`/${workspaceId}/workflows`, body);
-      return response.data;
-    } catch (error) {
-      console.error('Create workflow error', error);
-      throw error;
-    }
+      return await api.post<Workflow>(`/${workspaceId}/workflows`, body)
+        .then(processResponse<Workflow>);
   },
   delete: async (workflowId: string) => {
     try {
@@ -368,13 +408,8 @@ export const workflowApi = {
     }
   },
   update: async (workflowId: string, body: UpdateWorkflowDto) => {
-    try {
-      const response = await api.patch<Workflow>(`/workflows/${workflowId}`, body);
-      return response.data;
-    } catch (error) {
-      console.error('Update workflow error', error);
-      throw error;
-    }
+     return api.patch<Workflow>(`/workflows/${workflowId}`, body)
+        .then(processResponse<Workflow>);
   },
   addLabels: async (flowId: string, labelIds: string[]) => {
     try {

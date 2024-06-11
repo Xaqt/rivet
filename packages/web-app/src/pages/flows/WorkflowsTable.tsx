@@ -1,12 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import column_sort from '@/assets/icons/column_sort.svg';
-import search_icon from '@/assets/icons/search_icon_gray.svg';
-import download from '@/assets/download.svg';
-import shortcut_icon from '@/assets/icons/shortcut_icon_gray.svg';
-import folder_not_found from '@/assets/icons/folder_not_found.svg';
-import { PlusIcon } from '@heroicons/react/24/outline';
+import DownloadIcon from '@atlaskit/icon/core/download';
+import ShortcutIcon from '@atlaskit/icon/core/shortcut';
 import {
   createColumnHelper,
   flexRender,
@@ -18,7 +14,6 @@ import {
 } from '@tanstack/react-table';
 import BulkActions from './BulkActions';
 import { UserIcon } from '@heroicons/react/20/solid';
-import refresh_icon from '@/assets/refresh_icon.svg';
 import { useAuth } from '../../hooks/useAuth';
 import { useWorkflows } from '../../hooks/useWorkflows';
 import { type Workflow, WorkflowStatus } from '../../api/types';
@@ -32,13 +27,19 @@ import { formatDate } from '../../utils/time';
 import { useDebounce } from 'ahooks';
 import { WorkflowElement } from './WorkflowElement';
 import Button from '@atlaskit/button';
-import Tag, { SimpleTag } from '@atlaskit/tag';
+import { SimpleTag } from '@atlaskit/tag';
 import TagGroup from '@atlaskit/tag-group';
+import EmptyState from '@atlaskit/empty-state';
+import ChevronUpIcon from 'majesticons/line/chevron-up-line.svg?react';
+import ChevronUpDownIcon from '../../assets/icons/chevron-up-down-icon';
+import RefreshIcon from '@atlaskit/icon/glyph/refresh';
+import { useRecoilValue } from 'recoil';
+import { workspaceState } from '../../state/auth';
 
 const columnHelper = createColumnHelper<Workflow>();
 
 const WorkflowTable = () => {
-  const { currentWorkspace } = useAuth();
+  const currentWorkspace = useRecoilValue(workspaceState);
   const {
     workflows,
     loading,
@@ -93,7 +94,7 @@ const WorkflowTable = () => {
   };
 
   const handleDownloadWorkflow = (
-    e: React.MouseEvent<HTMLImageElement, MouseEvent>,
+    e: React.MouseEvent,
     workflow: Workflow
   ) => {
     e.stopPropagation();
@@ -126,6 +127,41 @@ const WorkflowTable = () => {
       />
     );
   }
+
+  // applied as rows in the form
+  const rows = workflows.map((flow: Workflow, index: number) => ({
+    key: `row-${flow.id}`,
+    cells: [
+      {
+        key: `name-${flow.id}`,
+        content: flow.name,
+      },
+      {
+        key: `desc-${flow.id}`,
+        content: flow.description,
+      },
+      {
+        key: `tags-${flow.id}`,
+        content: (
+          <div className="flex flex-row items-center space-x-2 truncate">
+            <TagGroup>
+              {
+                flow.labels?.map((item, key) => <ShortcutIcon key={key} label={item.name}/>)
+              }
+            </TagGroup>
+          </div>
+        )
+      },
+      {
+        key: `createdBy-${flow.id}`,
+        content: flow.created_by,
+      },
+      {
+        key: `updatedAt-${flow.id}`,
+        content: formatDate(flow.updated_at),
+      }
+    ]
+  }));
 
   const columns = useMemo(
     () => [
@@ -250,7 +286,7 @@ const WorkflowTable = () => {
             <div className="flex flex-row items-center space-x-2 truncate">
               <TagGroup>
                 {
-                  response.map((item, key) => <SimpleTag key={key} appearance="rounded" text={item.name} />)
+                  response.map((item, key) => <ShortcutIcon key={key} label={item.name}/>)
                 }
               </TagGroup>
             </div>
@@ -318,16 +354,12 @@ const WorkflowTable = () => {
       <LoadingSpinner />
     ) : (
       <div className="flex flex-col items-center justify-center min-h-screen rounded-lg h-96">
-        <img
-          src={folder_not_found}
-          alt="noFolderIcon"
-          width={110}
-          height={110}
+        <EmptyState
+          header="No Flows Found"
+          description="Go ahead and add one now."
+          headingLevel={2}
+          primaryAction={<Button appearance="primary">Add Flow</Button>}
         />
-        <p className="m-3 text-xs font-semibold text-center text-gray-700 w-60">
-          Workflows
-          <br />
-        </p>{' '}
       </div>
     )
   ) : (
@@ -342,32 +374,18 @@ const WorkflowTable = () => {
           <button
             className="flex items-center justify-center size-7 rounded-full h-7 bg-primary hover:bg-opacity-90"
             onClick={handleRefresh}>
-            <img src={refresh_icon} alt="" height={14} />
+            <RefreshIcon label="refresh"/>
           </button>
           <div className="flex h-7">
             <BulkActions handleBulkAction={() => {}} />
           </div>
           <div className="relative w-52 bg-gray h-7">
-            <img
-              src={search_icon}
-              alt="searchIcon"
-              height={13}
-              width={13}
-              className="absolute transform -translate-y-1/2 left-2 top-1/2"
-            />
             <input
               type="text"
               className="w-full pt-2 pl-6 pr-10 text-xs placeholder-gray-400 bg-gray-100 border border-transparent rounded-full shadow-sm outline-none h-7"
               placeholder="Workflow Name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <img
-              src={shortcut_icon}
-              alt="shortcutIcon"
-              height={18}
-              width={18}
-              className="absolute transform -translate-y-1/2 right-2 top-1/2"
             />
           </div>
           <div>
@@ -376,7 +394,7 @@ const WorkflowTable = () => {
                    stroke="currentColor" className="size-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
               </svg>
-              <img src={shortcut_icon} alt="plus plusicon" height={18} width={18} />
+              <ShortcutIcon label="shortcut"/>
               <span className="text-xs">Create Flow</span>
             </Button>
           </div>
@@ -420,25 +438,13 @@ const WorkflowTable = () => {
                         </div>
                         {{
                           asc: (
-                            <img
-                              src={column_sort}
-                              alt=""
-                              className="w-2.5 h-2.5"
-                            />
+                            <ChevronUpDownIcon/>
                           ),
                           desc: (
-                            <img
-                              src={column_sort}
-                              alt=""
-                              className="w-2.5 h-2.5"
-                            />
+                            <ChevronUpIcon label={"desc"}/>
                           ),
                         }[header.column.getIsSorted() as string] ?? (
-                          <img
-                            src={column_sort}
-                            alt=""
-                            className="w-2.5 h-2.5"
-                          />
+                          <ChevronUpDownIcon />
                         )}
                       </div>
                     )}
@@ -477,13 +483,11 @@ const WorkflowTable = () => {
                 ))}
                 <td className="py-2 p-2 text-sm font-light text-textDefault whitespace-nowrap">
                   <div className="flex flex-row justify-center min-w-[24px] cursor-pointer">
-                    <img
-                      src={download}
-                      alt=""
-                      onClick={(e) =>
-                        handleDownloadWorkflow(e, row.original)
-                      }
-                    />
+                    <span onClick={(e) =>
+                      handleDownloadWorkflow(e, row.original)
+                    }>
+                        <DownloadIcon label="download"/>
+                    </span>
                   </div>
                 </td>
               </tr>

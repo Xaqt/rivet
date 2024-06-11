@@ -3,9 +3,6 @@ import type React from 'react';
 import { useMemo, type FC, useState, Fragment } from 'react';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { type ProjectId } from '@ironclad/rivet-core';
-import { Box, Inline, xcss } from '@atlaskit/primitives';
-import Select from '@atlaskit/select';
-import TextField from '@atlaskit/textfield';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import LeftIcon from 'majesticons/line/chevron-left-line.svg?react';
 import CloseIcon from 'majesticons/line/multiply-line.svg?react';
@@ -22,7 +19,7 @@ import {
   openedProjectsState,
   projectState,
   projectsState,
-  savedGraphsState,
+  loadedProjectState,
 } from '../state/savedGraphs';
 import clsx from 'clsx';
 import { useLoadProject } from '../hooks/useLoadProject';
@@ -31,15 +28,14 @@ import { produce } from 'immer';
 import { type SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import { SortableContext, horizontalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
 import { useLoadProjectWithFileBrowser } from '../hooks/useLoadProjectWithFileBrowser';
-import { editProjectModalOpenState, newProjectModalOpenState } from '../state/ui';
+import { editProjectModalOpenState, newProjectModalOpenState, overlayOpenState } from '../state/ui';
 import { keys } from '../../../core/src/utils/typeSafety';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 import { useStableCallback } from '../hooks/useStableCallback';
-import { IconButton } from '@atlaskit/button/new';
 import { type MenuIds, useRunMenuCommand } from '../hooks/useMenuCommands';
-import { sidebarOpenState } from '../state/graphBuilder';
-import { Field } from '@atlaskit/form';
 import { EditProjectModalRenderer } from './EditProjectModal';
+import { Asterisk } from '../assets/icons/asterisk';
+import { SaveIcon } from '../assets/icons/save-icon';
 
 export const styles = css`
     position: absolute;
@@ -94,7 +90,6 @@ export const styles = css`
         flex: 1;
         min-width: 220px;
     }
-    }
 
     > .actions {
         display: flex;
@@ -114,10 +109,6 @@ export const styles = css`
             width: 32px;
             height: 32px;
             justify-content: center;
-
-            &:hover {
-                background-color: rgba(255, 255, 255, 0.2);
-            }
 
             svg {
                 width: 16px;
@@ -235,26 +226,17 @@ export const styles = css`
 
 export const ProjectSelector: FC = () => {
   const [project, setProject] = useRecoilState(projectState);
-  const [savedGraphs, setSavedGraphs] = useRecoilState(savedGraphsState);
   const setProjects = useSetRecoilState(projectsState);
   const [openedProjects, setOpenedProjects] = useRecoilState(openedProjectsState);
   const [openedProjectsSortedIds, setOpenedProjectsSortedIds] = useRecoilState(openedProjectsSortedIdsState);
   const [title, setTitle] = useState(project?.metadata.title);
+  const loadedState = useRecoilValue(loadedProjectState);
   const setEditProjectModalOpen = useSetRecoilState(editProjectModalOpenState);
+  const [, setOpenOverlay] = useRecoilState(overlayOpenState);
+
   const runMenuCommandImpl = useRunMenuCommand();
 
   const [fileMenuOpen, setFileMenuOpen] = useState(false);
-  const sidebarOpen = useRecoilValue(sidebarOpenState);
-
-  const graphOptions = useMemo(
-    () => [
-      { label: '(None)', value: undefined },
-      ...savedGraphs.map((g) => ({ label: g.metadata!.name, value: g.metadata!.id })),
-    ],
-    [savedGraphs],
-  );
-
-  const selectedMainGraph = graphOptions.find((g) => g.value === project.metadata.mainGraphId);
 
   const runMenuCommand: typeof runMenuCommandImpl = (command) => {
     setFileMenuOpen(false);
@@ -276,6 +258,10 @@ export const ProjectSelector: FC = () => {
   const loadProjectWithFileBrowser = useLoadProjectWithFileBrowser();
 
   useSyncCurrentStateIntoOpenedProjects();
+
+  function gotoList() {
+    setOpenOverlay('flowList');
+  }
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (over && active.id !== over.id) {
@@ -330,11 +316,6 @@ export const ProjectSelector: FC = () => {
     return undefined;
   };
 
-  const handleNameChange = (newTitle: string) => {
-    // setProject({ ...project, metadata: { ...project.metadata, title: newValue } })}
-    setTitle(newTitle);
-  };
-
   const openNewProjectModal = useStableCallback(() => setNewProjectModalOpen(true));
 
   function handleNewFlow(e: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>) {
@@ -379,10 +360,11 @@ export const ProjectSelector: FC = () => {
   return (
     <Fragment>
       <div css={styles}>
-        <button>
+        <button onClick={gotoList}>
           <LeftIcon />
         </button>
         <div className="project-inputs">
+          {!loadedState.saved && <Asterisk />}
           <span className="title-name">{title}</span>
           <button onClick={handleEditFlow}>
             <EditIcon label="edit" />
@@ -405,7 +387,8 @@ export const ProjectSelector: FC = () => {
               </SortableContext>
             </DndContext>
           </div>
-          <ProjectDropdownMenu/>
+          <SaveIcon />
+          <ProjectDropdownMenu />
         </div>
       </div>
       <EditProjectModalRenderer />

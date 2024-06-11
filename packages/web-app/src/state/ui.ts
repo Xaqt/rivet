@@ -6,6 +6,11 @@ const { persistAtom } = recoilPersist({
   key: 'ui',
 });
 
+export const loginDialogOpenState = atom({
+  key: 'loginDialogOpenState',
+  default: false,
+});
+
 export const debuggerPanelOpenState = atom({
   key: 'debuggerPanelOpenState',
   default: false,

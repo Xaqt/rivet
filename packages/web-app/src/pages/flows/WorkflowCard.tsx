@@ -1,14 +1,14 @@
 import type React from 'react';
 import { useState } from 'react';
-import x_icon from '@/assets/x_icon.svg';
-import download_blue from '@/assets/download_blue.svg';
-import calendarIcon from '@/assets/calendar_icon.svg';
+import CrossIcon from '@atlaskit/icon/glyph/cross';
+import CalendarIcon from '@atlaskit/icon/core/calendar';
 import { type Workflow } from '../../api/types';
 import { useAuth } from '../../hooks/useAuth';
 import { getWorkflowTitle } from './utils';
 import { formatDate } from '../../utils/time';
 import { useWorkflows } from '../../hooks/useWorkflows';
 import { FlowTags } from './FlowTags';
+import DownloadIcon from '@atlaskit/icon/core/download';
 
 interface Props {
   workflow: Workflow | undefined;
@@ -39,15 +39,8 @@ export const WorkflowCard: React.FC<Props> = ({
       <div className={'flex flex-col p-6 gap-6'}>
         <div className={'flex flex-col'}>
           <div className={'flex justify-between items-center'}>
-            <div className={'font-light text-2xl'}>A voice call with</div>
-            <img
-              src={x_icon}
-              alt={'x-icon'}
-              width={13}
-              height={13}
-              onClick={() => setOpenSidebar(false)}
-              className="object-cover object-center cursor-pointer"
-            />
+            <div className={'font-light text-2xl'}>Flow</div>
+            <CrossIcon label={'close'}/>
           </div>
           <div className={'text-primary font-normal text-2xl'}>
             {title}
@@ -83,24 +76,13 @@ export const WorkflowCard: React.FC<Props> = ({
           </div>
           <div className={'flex justify-between items-center'}>
             <div className={'flex items-center gap-1'}>
-              <img
-                src={calendarIcon}
-                alt="created at"
-                width={18}
-                height={18}
-              />
+              <CalendarIcon label="calendar" />
               <div className={'text-xs text-textDefault font-normal'}>
                 {formatDate(workflow?.created_at)}
               </div>
             </div>
             <div className={'flex gap-4'}>
-              <img
-                src={download_blue}
-                alt="download"
-                width={11}
-                className={'cursor-pointer'}
-                onClick={() => setOpenDownloadModal(true)}
-              />
+              <DownloadIcon label="download" />
             </div>
           </div>
           <div

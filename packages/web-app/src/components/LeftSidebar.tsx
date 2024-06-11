@@ -87,16 +87,10 @@ export const LeftSidebar: FC<{
         <Tabs id="sidebar-tabs">
           <TabList>
             <Tab>Graphs</Tab>
-            <Tab>Graph Info</Tab>
           </TabList>
           <TabPanel>
             <div className="panel" data-contextmenutype="graph-list">
               <GraphList onRunGraph={onRunGraph} />
-            </div>
-          </TabPanel>
-          <TabPanel>
-            <div className="panel">
-              <GraphInfoSidebarTab />
             </div>
           </TabPanel>
         </Tabs>

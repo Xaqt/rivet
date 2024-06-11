@@ -1,4 +1,4 @@
-import x_icon from "@/assets/x_icon.svg";
+import CrossIcon from '@atlaskit/icon/glyph/cross';
 import type React from "react";
 import { type Workflow } from '../../api/types';
 import { useWorkflows } from '../../hooks/useWorkflows';
@@ -25,14 +25,7 @@ export const DeleteWorkflow: React.FC<Props> = ({
     <div className={"flex flex-col gap-4"}>
       <span className={"flex justify-between items-center"}>
         <span className={"text-xl"}>Delete Workflow</span>
-        <img
-          src={x_icon}
-          alt={"x-icon"}
-          width={13}
-          height={13}
-          onClick={() => setOpenModal(false)}
-          className="object-cover object-center h-full w-[13px] cursor-pointer"
-        />
+        <CrossIcon label={"close"} />
       </span>
       <span className={"w-[325px] text-xs font-normal"}>
         Are you sure you want to delete the workflow with <br />{" "}

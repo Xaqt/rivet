@@ -1,18 +1,16 @@
 import { getError } from '@ironclad/rivet-core';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { workflowListState, workflowSearchCriteriaState } from '../state/workflows';
 import { workflowApi } from '../api/api-client';
 import { type FindWorkflowsDto, type Workflow, type WorkflowCreateDto } from '../api/types';
 import { useStableCallback } from './useStableCallback';
 import { useAuth } from './useAuth';
-import { flowState } from '../state/savedGraphs';
 
 export function useWorkflows() {
 
   const { currentWorkspace } = useAuth();
-  const [currentWorkflow, setCurrentWorkflow] = useRecoilState(flowState)
   const [workflows, updateWorkflows] = useRecoilState(workflowListState);
   const [loading, setLoading] = useState(false);
   const [searchCriteria, setSearchCriteria] = useRecoilState(workflowSearchCriteriaState);
@@ -67,7 +65,7 @@ export function useWorkflows() {
       .then((res) => {
         setTotalPages(res.total_pages);
         setTotalCount(res.total_count);
-        updateWorkflows(res.flows);
+        updateWorkflows(res.flows || []);
         setSearchCriteria(findCriteria);
         return res;
       }).catch(err => {

@@ -165,7 +165,7 @@ export const GeneralSettingsPage: FC = () => {
       <Field name="recordExecutions">
         {() => (
           <>
-            <Label htmlFor="recordExecutions" testId="recordExecutions">
+            <Label htmlFor="recordExecutions">
               Record local graph executions
             </Label>
             <div className="toggle-field">
@@ -182,7 +182,7 @@ export const GeneralSettingsPage: FC = () => {
       <Field name="previousDataPerNodeToKeep">
         {() => (
           <>
-            <Label htmlFor="previousDataPerNodeToKeep" testId="previousDataPerNodeToKeep">
+            <Label htmlFor="previousDataPerNodeToKeep">
               Previous data per node to keep
             </Label>
             <div className="toggle-field">
@@ -208,7 +208,7 @@ export const GeneralSettingsPage: FC = () => {
       <Field name="zoomSensitivity">
         {() => (
           <>
-            <Label htmlFor="zoomSensitivity" testId="zoomSensitivity">
+            <Label htmlFor="zoomSensitivity">
               Zoom sensitivity
             </Label>
             <div className="toggle-field">

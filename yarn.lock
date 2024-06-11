@@ -328,7 +328,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@atlaskit/button@npm:^17.17.0, @atlaskit/button@npm:^17.17.1":
+"@atlaskit/button@npm:^17.12.0, @atlaskit/button@npm:^17.17.0, @atlaskit/button@npm:^17.17.1":
   version: 17.17.1
   resolution: "@atlaskit/button@npm:17.17.1"
   dependencies:
@@ -493,6 +493,43 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ~18.2.0
   checksum: e6d93d7dbcd828f262775a5d9d054aad58a786c2ef1d62697d34ddaafd268c919104cba056dd2b354dd28a5cc11bc7ce6932471bd31f2bce5e1ae0b1c1af5bf3
+  languageName: node
+  linkType: hard
+
+"@atlaskit/dynamic-table@npm:^14.17.1":
+  version: 14.17.1
+  resolution: "@atlaskit/dynamic-table@npm:14.17.1"
+  dependencies:
+    "@atlaskit/analytics-next": "npm:^9.3.0"
+    "@atlaskit/ds-lib": "npm:^2.3.0"
+    "@atlaskit/pagination": "npm:^14.7.0"
+    "@atlaskit/platform-feature-flags": "npm:^0.2.5"
+    "@atlaskit/spinner": "npm:^16.1.0"
+    "@atlaskit/theme": "npm:^12.8.0"
+    "@atlaskit/tokens": "npm:^1.49.0"
+    "@babel/runtime": "npm:^7.0.0"
+    "@emotion/react": "npm:^11.7.1"
+    react-beautiful-dnd: "npm:^12.1.1"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ~18.2.0
+    react-dom: ^16.8.0
+  checksum: 6de807783dbbf6f628d8203855ddec61a9b851b67006a80b8c7c124c3bf7401e05d3c651e840aaeac0c0d5fe0168f9249abdca6e18dae5c9cb2419189343529f
+  languageName: node
+  linkType: hard
+
+"@atlaskit/empty-state@npm:^7.8.0":
+  version: 7.8.0
+  resolution: "@atlaskit/empty-state@npm:7.8.0"
+  dependencies:
+    "@atlaskit/button": "npm:^17.12.0"
+    "@atlaskit/spinner": "npm:^16.0.0"
+    "@atlaskit/theme": "npm:^12.7.0"
+    "@atlaskit/tokens": "npm:^1.43.0"
+    "@babel/runtime": "npm:^7.0.0"
+    "@emotion/react": "npm:^11.7.1"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ~18.2.0
+  checksum: 6fdd498777ed72e99614150bd4ac330f45b5483b48ef7b184e0d6cbcd907b53148060b9f3d38733addeedeb3189d9ec4b368ef948a1fbce7dd105194915e6fef
   languageName: node
   linkType: hard
 
@@ -900,6 +937,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@atlaskit/pagination@npm:^14.7.0":
+  version: 14.7.2
+  resolution: "@atlaskit/pagination@npm:14.7.2"
+  dependencies:
+    "@atlaskit/analytics-next": "npm:^9.3.0"
+    "@atlaskit/button": "npm:^17.17.0"
+    "@atlaskit/codemod-utils": "npm:^4.2.0"
+    "@atlaskit/ds-lib": "npm:^2.3.0"
+    "@atlaskit/icon": "npm:^22.3.0"
+    "@atlaskit/primitives": "npm:^7.0.0"
+    "@atlaskit/visually-hidden": "npm:^1.3.0"
+    "@babel/runtime": "npm:^7.0.0"
+    memoize-one: "npm:^6.0.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ~18.2.0
+  checksum: 671de60805dbb15cf45c4c98d1ebe59d93486de92048b9b8b1556f787647c192221dde530e18c33d5753735eb4cdc8ee0d4d03f39b34dbddaabafbdd7813e10d
+  languageName: node
+  linkType: hard
+
 "@atlaskit/platform-feature-flags@npm:^0.2.0, @atlaskit/platform-feature-flags@npm:^0.2.2":
   version: 0.2.4
   resolution: "@atlaskit/platform-feature-flags@npm:0.2.4"
@@ -1069,6 +1125,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@atlaskit/primitives@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@atlaskit/primitives@npm:7.0.0"
+  dependencies:
+    "@atlaskit/analytics-next": "npm:^9.3.0"
+    "@atlaskit/app-provider": "npm:^1.3.0"
+    "@atlaskit/css": "npm:^0.1.0"
+    "@atlaskit/ds-lib": "npm:^2.3.0"
+    "@atlaskit/interaction-context": "npm:^2.1.0"
+    "@atlaskit/tokens": "npm:^1.49.0"
+    "@atlaskit/visually-hidden": "npm:^1.3.0"
+    "@babel/runtime": "npm:^7.0.0"
+    "@emotion/react": "npm:^11.7.1"
+    "@emotion/serialize": "npm:^1.1.0"
+    bind-event-listener: "npm:^3.0.0"
+    tiny-invariant: "npm:^1.2.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 22faf8d7ccde38528fee2917a607f588bc43ba42760c9a377f745fb8b6b5279601b44c2da10f7062bbf3e1c239c693403821c18521828e485675526fb71c61dc
+  languageName: node
+  linkType: hard
+
 "@atlaskit/range@npm:^7.1.7":
   version: 7.1.7
   resolution: "@atlaskit/range@npm:7.1.7"
@@ -1198,7 +1276,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@atlaskit/spinner@npm:^16.1.0":
+"@atlaskit/spinner@npm:^16.0.0, @atlaskit/spinner@npm:^16.1.0":
   version: 16.1.0
   resolution: "@atlaskit/spinner@npm:16.1.0"
   dependencies:
@@ -3345,6 +3423,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime-corejs2@npm:^7.6.3":
+  version: 7.24.7
+  resolution: "@babel/runtime-corejs2@npm:7.24.7"
+  dependencies:
+    core-js: "npm:^2.6.12"
+    regenerator-runtime: "npm:^0.14.0"
+  checksum: 0ef353de1a802433c95349ecead7002922a0762657d6da92c7319ea4de5bac5caf5e9c93b66af2175d6116aabbea9473cd9b29b1c1d4002a7f62adae42578d16
+  languageName: node
+  linkType: hard
+
 "@babel/runtime-corejs3@npm:^7.18.6":
   version: 7.22.5
   resolution: "@babel/runtime-corejs3@npm:7.22.5"
@@ -3364,7 +3452,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.13.10":
+"@babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.15.4":
   version: 7.24.7
   resolution: "@babel/runtime@npm:7.24.7"
   dependencies:
@@ -5034,6 +5122,8 @@ __metadata:
     "@atlaskit/checkbox": "npm:^12.6.11"
     "@atlaskit/css-reset": "npm:^6.6.1"
     "@atlaskit/dropdown-menu": "npm:^12.11.0"
+    "@atlaskit/dynamic-table": "npm:^14.17.1"
+    "@atlaskit/empty-state": "npm:^7.8.0"
     "@atlaskit/form": "npm:^10.3.0"
     "@atlaskit/icon": "npm:^22.3.1"
     "@atlaskit/inline-edit": "npm:^13.4.0"
@@ -7783,6 +7873,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/hoist-non-react-statics@npm:^3.3.0":
+  version: 3.3.5
+  resolution: "@types/hoist-non-react-statics@npm:3.3.5"
+  dependencies:
+    "@types/react": "npm:*"
+    hoist-non-react-statics: "npm:^3.3.0"
+  checksum: b645b062a20cce6ab1245ada8274051d8e2e0b2ee5c6bd58215281d0ec6dae2f26631af4e2e7c8abe238cdcee73fcaededc429eef569e70908f82d0cc0ea31d7
+  languageName: node
+  linkType: hard
+
 "@types/html-minifier-terser@npm:^6.0.0":
   version: 6.1.0
   resolution: "@types/html-minifier-terser@npm:6.1.0"
@@ -8087,6 +8187,18 @@ __metadata:
   dependencies:
     "@types/react": "npm:*"
   checksum: c7feb6542dbeb3de18c9c03260229377e0a0d47a3d2c0bb91861996e2353375a45c57de7216edb8b88448584e363677244bd4355ddec45c243e70e777c2a150b
+  languageName: node
+  linkType: hard
+
+"@types/react-redux@npm:^7.1.20":
+  version: 7.1.33
+  resolution: "@types/react-redux@npm:7.1.33"
+  dependencies:
+    "@types/hoist-non-react-statics": "npm:^3.3.0"
+    "@types/react": "npm:*"
+    hoist-non-react-statics: "npm:^3.3.0"
+    redux: "npm:^4.0.0"
+  checksum: 65f4e0a3f0e532bbbe44ae6522d1fce91bfcb3bacc90904c35d3f819e77932cc489b6945988acb4a2320f6e78c57dd1c149556aa241a68efc51de15a2cd73fc0
   languageName: node
   linkType: hard
 
@@ -10975,6 +11087,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"core-js@npm:^2.6.12":
+  version: 2.6.12
+  resolution: "core-js@npm:2.6.12"
+  checksum: 7c624eb00a59c74c769d5d80f751f3bf1fc6201205b6562f27286ad5e00bbca1483f2f7eb0c2854b86f526ef5c7dc958b45f2ff536f8a31b8e9cb1a13a96efca
+  languageName: node
+  linkType: hard
+
 "core-js@npm:^3.23.3":
   version: 3.32.0
   resolution: "core-js@npm:3.32.0"
@@ -11079,6 +11198,15 @@ __metadata:
   version: 2.0.0
   resolution: "crypto-random-string@npm:2.0.0"
   checksum: 0283879f55e7c16fdceacc181f87a0a65c53bc16ffe1d58b9d19a6277adcd71900d02bb2c4843dd55e78c51e30e89b0fec618a7f170ebcc95b33182c28f05fd6
+  languageName: node
+  linkType: hard
+
+"css-box-model@npm:^1.2.0":
+  version: 1.2.1
+  resolution: "css-box-model@npm:1.2.1"
+  dependencies:
+    tiny-invariant: "npm:^1.0.6"
+  checksum: 54778883733e59058b5de983cf442b9db6c1494543d4d84a3defd05b51b991a1865f59e4ae424e733af2aa1fdb6e0bd905cb73db0e7e548fbd89853859fedc81
   languageName: node
   linkType: hard
 
@@ -14554,7 +14682,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hoist-non-react-statics@npm:^3.1.0, hoist-non-react-statics@npm:^3.3.1, hoist-non-react-statics@npm:^3.3.2":
+"hoist-non-react-statics@npm:^3.1.0, hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.1, hoist-non-react-statics@npm:^3.3.2":
   version: 3.3.2
   resolution: "hoist-non-react-statics@npm:3.3.2"
   dependencies:
@@ -16528,7 +16656,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"memoize-one@npm:>=3.1.1 <6":
+"memoize-one@npm:>=3.1.1 <6, memoize-one@npm:^5.1.1":
   version: 5.2.1
   resolution: "memoize-one@npm:5.2.1"
   checksum: b7141dc148b5c6fdd51e77ecf0421fd2581681eb8756e0b3dfbd4fe765b5e2b5a6bc90214bb6f19a96b6aed44de17eda3407142a7be9e24ccd0774bbd9874d1b
@@ -18852,7 +18980,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"raf-schd@npm:^4.0.3":
+"raf-schd@npm:^4.0.2, raf-schd@npm:^4.0.3":
   version: 4.0.3
   resolution: "raf-schd@npm:4.0.3"
   checksum: 45514041c5ad31fa96aef3bb3c572a843b92da2f2cd1cb4a47c9ad58e48761d3a4126e18daa32b2bfa0bc2551a42d8f324a0e40e536cb656969929602b4e8b58
@@ -18917,6 +19045,24 @@ __metadata:
     lodash.flow: "npm:^3.3.0"
     pure-color: "npm:^1.2.0"
   checksum: 5058257ce12a6406bfe64b5b9f6cbec89ea81ca49112f34b6fdc72638bc64ff8c46ed25bd08a54a3005d3784e867edfd96a41609c6984cbcb35fd8d85b0d4f8b
+  languageName: node
+  linkType: hard
+
+"react-beautiful-dnd@npm:^12.1.1":
+  version: 12.2.0
+  resolution: "react-beautiful-dnd@npm:12.2.0"
+  dependencies:
+    "@babel/runtime-corejs2": "npm:^7.6.3"
+    css-box-model: "npm:^1.2.0"
+    memoize-one: "npm:^5.1.1"
+    raf-schd: "npm:^4.0.2"
+    react-redux: "npm:^7.1.1"
+    redux: "npm:^4.0.4"
+    use-memo-one: "npm:^1.1.1"
+  peerDependencies:
+    react: ^16.8.5
+    react-dom: ^16.8.5
+  checksum: ee1f5d143b7057dc5abc8058fb46fe82c7ca2fc18aab076272a79ff122a526ae3308085ed4c208f55470f58fb48abeb992d0bbdaa2ffa583f16ddf11f4c54a0c
   languageName: node
   linkType: hard
 
@@ -19130,6 +19276,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-is@npm:^17.0.2":
+  version: 17.0.2
+  resolution: "react-is@npm:17.0.2"
+  checksum: 73b36281e58eeb27c9cc6031301b6ae19ecdc9f18ae2d518bdb39b0ac564e65c5779405d623f1df9abf378a13858b79442480244bd579968afc1faf9a2ce5e05
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^18.0.0":
   version: 18.2.0
   resolution: "react-is@npm:18.2.0"
@@ -19189,6 +19342,27 @@ __metadata:
     react: ^16.8.0 || ^17 || ^18
     react-dom: ^16.8.0 || ^17 || ^18
   checksum: 2afc495479ae4b9e67f9a1642debd7121947fe71a00c5b326301adb8288a18dca53ebd836fe9c3b7a4e2feb838df0abe8e044eb278e89b1c5d50978b0b93d0ac
+  languageName: node
+  linkType: hard
+
+"react-redux@npm:^7.1.1":
+  version: 7.2.9
+  resolution: "react-redux@npm:7.2.9"
+  dependencies:
+    "@babel/runtime": "npm:^7.15.4"
+    "@types/react-redux": "npm:^7.1.20"
+    hoist-non-react-statics: "npm:^3.3.2"
+    loose-envify: "npm:^1.4.0"
+    prop-types: "npm:^15.7.2"
+    react-is: "npm:^17.0.2"
+  peerDependencies:
+    react: ^16.8.3 || ^17 || ^18
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    react-native:
+      optional: true
+  checksum: 1c3018bd2601e6d18339281867910b583dcbb3d8856403086e08c00abf0dfe467a94c0d1356bafa8cdf107bf1e2c9899a28486e4778e85c8bc4dfed2076b116f
   languageName: node
   linkType: hard
 
@@ -19469,7 +19643,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redux@npm:^4.2.0":
+"redux@npm:^4.0.0, redux@npm:^4.0.4, redux@npm:^4.2.0":
   version: 4.2.1
   resolution: "redux@npm:4.2.1"
   dependencies:
@@ -21381,6 +21555,13 @@ __metadata:
   version: 1.3.1
   resolution: "tiny-invariant@npm:1.3.1"
   checksum: 872dbd1ff20a21303a2fd20ce3a15602cfa7fcf9b228bd694a52e2938224313b5385a1078cb667ed7375d1612194feaca81c4ecbe93121ca1baebe344de4f84c
+  languageName: node
+  linkType: hard
+
+"tiny-invariant@npm:^1.0.6":
+  version: 1.3.3
+  resolution: "tiny-invariant@npm:1.3.3"
+  checksum: 5e185c8cc2266967984ce3b352a4e57cb89dad5a8abb0dea21468a6ecaa67cd5bb47a3b7a85d08041008644af4f667fb8b6575ba38ba5fb00b3b5068306e59fe
   languageName: node
   linkType: hard
 

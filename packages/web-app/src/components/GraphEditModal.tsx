@@ -1,6 +1,6 @@
-import React, { type FC, useEffect, useState, Fragment, FormEvent } from 'react';
-import Modal, { ModalBody, ModalFooter, ModalHeader, ModalTitle, ModalTransition } from '@atlaskit/modal-dialog';
-import Form, { ErrorMessage, Field, FormFooter, FormHeader, HelperMessage, RequiredAsterisk } from '@atlaskit/form';
+import React, { type FC, useState, Fragment, FormEvent } from 'react';
+import Modal, { ModalBody, ModalHeader, ModalTitle, ModalTransition } from '@atlaskit/modal-dialog';
+import Form, { ErrorMessage, Field, FormFooter, FormHeader, RequiredAsterisk } from '@atlaskit/form';
 import Button from '@atlaskit/button/loading-button';
 import TextArea from '@atlaskit/textarea';
 import { css } from '@emotion/react';
@@ -18,10 +18,6 @@ const styles = css`
             width: 100%;
         }
     }
-
-    .question pre {
-        white-space: pre-wrap;
-    }
 `;
 
 type GraphEditModalProps = {
@@ -34,11 +30,9 @@ type GraphEditModalProps = {
 
 export const GraphEditModal: FC<GraphEditModalProps> =
   ({ open, onSubmit, name, description, onClose }) => {
-  const [fieldValue, setFieldValue] = useState('');
   const [fieldHasError, setFieldHasError] = useState(false);
   const [selectHasError, setSelectHasError] = useState(false);
   const [errorMessageText, setErrorMessageText] = useState('');
-  const [messageId, setMessageId] = useState('');
 
   const errorMessages = {
     shortName: 'Please enter a name longer than 4 characters',
@@ -67,7 +61,7 @@ export const GraphEditModal: FC<GraphEditModalProps> =
   return (
     <ModalTransition>
       {open && (
-        <Modal width="x-large" onClose={onClose}>
+        <Modal width="medium" onClose={onClose}>
           <ModalHeader>
             <ModalTitle>Edit Flow</ModalTitle>
           </ModalHeader>
@@ -76,7 +70,7 @@ export const GraphEditModal: FC<GraphEditModalProps> =
               <Form onSubmit={handleSubmit}>
                 {({ formProps, submitting }) => (
                   <form noValidate {...formProps}>
-                    <FormHeader title="Edit Flow">
+                    <FormHeader title="Edit Graph">
                       <p aria-hidden="true">
                         Required fields are marked with an asterisk{' '}
                         <RequiredAsterisk />
@@ -93,7 +87,7 @@ export const GraphEditModal: FC<GraphEditModalProps> =
                         <Fragment>
                           <TextField {...fieldProps} value={name} onChange={onNameChange}/>
                           {error && (
-                            <ErrorMessage testId="userSubmissionError">
+                            <ErrorMessage>
                               {error}
                             </ErrorMessage>
                           )}
@@ -109,12 +103,13 @@ export const GraphEditModal: FC<GraphEditModalProps> =
                       )}
                     </Field>
                     <FormFooter>
+                      <Button onClick={onClose}>Close</Button>
                       <Button
                         appearance="primary"
                         type="submit"
                         isLoading={submitting}
                       >
-                        Create Graph
+                        Submit
                       </Button>
                     </FormFooter>
                   </form>
@@ -122,10 +117,6 @@ export const GraphEditModal: FC<GraphEditModalProps> =
               </Form>
             </div>
           </ModalBody>
-          <ModalFooter>
-            <Button onClick={onClose}>Close</Button>
-            <Button type="submit">Submit</Button>
-          </ModalFooter>
         </Modal>
       )}
     </ModalTransition>

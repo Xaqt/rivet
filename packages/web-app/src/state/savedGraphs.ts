@@ -51,12 +51,6 @@ export const projectState = selector({
   },
 });
 
-export const openedGraphState = atom<string | undefined>({
-  key: 'openedGraphState',
-  default: undefined,
-  effects: [persistAtom],
-});
-
 export const projectDataState = atom<Record<DataId, string> | undefined>({
   key: 'projectDataState',
   default: undefined,

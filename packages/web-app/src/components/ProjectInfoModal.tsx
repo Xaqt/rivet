@@ -3,8 +3,8 @@ import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { ProjectPluginsConfiguration } from './ProjectPluginConfiguration';
 import { Field } from '@atlaskit/form';
 import Select from '@atlaskit/select';
-import { useRecoilState } from 'recoil';
-import { projectContextState, projectState, savedGraphsState } from '../state/savedGraphs';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { loadedProjectState, projectContextState, projectState, savedGraphsState } from '../state/savedGraphs';
 import Button from '@atlaskit/button';
 import Modal, { ModalTransition, ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@atlaskit/modal-dialog';
 import { useToggle } from 'ahooks';
@@ -73,6 +73,7 @@ export const ProjectInfoModal: FC = () => {
 
   const [projectEditContextModalOpen, toggleProjectEditContextModalOpen] = useToggle(false);
   const [editContextData, setEditContextData] = useState<ContextValue>();
+  const loadedState = useRecoilValue(loadedProjectState);
 
   const graphOptions = useMemo(
     () => [

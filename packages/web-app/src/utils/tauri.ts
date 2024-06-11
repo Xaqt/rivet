@@ -7,15 +7,22 @@ export function isInTauri(): boolean {
 
 const cachedEnvVars: Record<string, string> = {};
 
-export async function getEnvVar(name: string): Promise<string | undefined> {
+export function getEnvVar(name: string): string | undefined {
   if (cachedEnvVars[name]) {
     return cachedEnvVars[name];
   }
 
   // vite ???
-  if (typeof process !== 'undefined') {
+  if (typeof process !== 'undefined' && process?.env) {
     return process.env[name];
   }
+
+  try {
+    return import.meta?.env?.[name];
+  } catch (e) {
+
+  }
+
 
   return undefined;
 }
@@ -23,9 +30,9 @@ export async function getEnvVar(name: string): Promise<string | undefined> {
 export async function fillMissingSettingsFromEnvironmentVariables(settings: Partial<Settings>, plugins: RivetPlugin[]) {
   const fullSettings: Settings = {
     ...settings,
-    openAiKey: (settings.openAiKey || (await getEnvVar('OPENAI_API_KEY'))) ?? '',
-    openAiOrganization: (settings.openAiOrganization || (await getEnvVar('OPENAI_ORG_ID'))) ?? '',
-    openAiEndpoint: (settings.openAiEndpoint || (await getEnvVar('OPENAI_ENDPOINT'))) ?? '',
+    openAiKey: (settings.openAiKey || getEnvVar('OPENAI_API_KEY')) ?? '',
+    openAiOrganization: (settings.openAiOrganization || getEnvVar('OPENAI_ORG_ID')) ?? '',
+    openAiEndpoint: (settings.openAiEndpoint || getEnvVar('OPENAI_ENDPOINT')) ?? '',
     pluginSettings: settings.pluginSettings,
     pluginEnv: {},
   };
@@ -44,7 +51,7 @@ export async function fillMissingSettingsFromEnvironmentVariables(settings: Part
               ? configName
               : undefined;
         if (envVarName) {
-          const envVarValue = await getEnvVar(envVarName);
+          const envVarValue = getEnvVar(envVarName);
           if (envVarValue) {
             fullSettings.pluginEnv![envVarName] = envVarValue;
           }

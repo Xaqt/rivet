@@ -16,7 +16,6 @@ import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
 import { ActionBarMoreMenu } from './ActionBarMoreMenu';
 import { CopyAsTestCaseModal } from './CopyAsTestCaseModal';
 import { useToggle } from 'ahooks';
-import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { projectMetadataState } from '../state/savedGraphs';
 import { graphMetadataState } from '../state/graph';
 import { type GraphId } from '@ironclad/rivet-core';
@@ -148,8 +147,6 @@ export const ActionBar: FC<ActionBarProps> = ({ onRunGraph, onAbortGraph, onPaus
   const { remoteDebuggerState: remoteDebugger, disconnect } = useRemoteDebugger();
   const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;
   const [copyAsTestCaseModalOpen, toggleCopyAsTestCaseModalOpen] = useToggle();
-
-  const plugins = useDependsOnPlugins();
 
   const canRun = (remoteDebugger.started && !remoteDebugger.reconnecting) || selectedExecutor === 'browser';
   const hasMainGraph = projectMetadata.mainGraphId != null;

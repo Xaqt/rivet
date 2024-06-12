@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import type React from 'react';
-import { useMemo, type FC, useState, Fragment } from 'react';
+import { type FC, useState, Fragment } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import LeftIcon from 'majesticons/line/chevron-left-line.svg?react';
 import BlankFileIcon from 'majesticons/line/file-line.svg?react';
@@ -14,18 +14,23 @@ import EditIcon from '@atlaskit/icon/glyph/edit';
 import {
   projectState,
   loadedProjectState,
-  type OpenedProjectInfo,
   flowState,
 } from '../state/savedGraphs';
 import { useLoadProjectWithFileBrowser } from '../hooks/useLoadProjectWithFileBrowser';
-import { editProjectModalOpenState, newProjectModalOpenState, overlayOpenState } from '../state/ui';
+import {
+  deleteFlowModalOpenState,
+  editProjectModalOpenState,
+  newProjectModalOpenState,
+  overlayOpenState,
+} from '../state/ui';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { type MenuIds, useRunMenuCommand } from '../hooks/useMenuCommands';
 import { EditProjectModalRenderer } from './EditProjectModal';
 import { Asterisk } from '../assets/icons/asterisk';
 import { SaveIcon } from '../assets/icons/save-icon';
-import { useLoadFlow } from '../hooks/useLoadFlow';
+import FileImportIcon from '../assets/icons/file-import-icon';
+import { DeleteWorkflowModalRenderer } from '../pages/flows/DeleteWorkflowModal';
 
 export const styles = css`
     position: absolute;
@@ -202,16 +207,9 @@ export const ProjectSelector: FC = () => {
   const loadedState = useRecoilValue(loadedProjectState);
   const setEditProjectModalOpen = useSetRecoilState(editProjectModalOpenState);
   const [, setOpenOverlay] = useRecoilState(overlayOpenState);
+  const [deleteProjectModalOpen, setDeleteProjectModalOpen] = useRecoilState(deleteFlowModalOpenState);
 
   const runMenuCommandImpl = useRunMenuCommand();
-  const loadFlow = useLoadFlow();
-  const projectInfo: OpenedProjectInfo = useMemo(() => {
-    return {
-      workflow: flow,
-      openedGraph: flow.project.metadata?.mainGraphId,
-    };
-  }, [flow]);
-  // loadFlow(projectInfo).catch(console.error);
 
   const [fileMenuOpen, setFileMenuOpen] = useState(false);
 
@@ -243,6 +241,15 @@ export const ProjectSelector: FC = () => {
     setEditProjectModalOpen(true);
   }
 
+  function onFLowDeleted() {
+    setDeleteProjectModalOpen(false);
+    gotoList();
+  }
+
+  function handleDelete() {
+    setDeleteProjectModalOpen(true);
+  }
+
   const ProjectDropdownMenu = () => {
     function getHandler(cmd: MenuIds) {
       const handler = (e: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>) => {
@@ -264,9 +271,9 @@ export const ProjectSelector: FC = () => {
         <DropdownItemGroup>
           <DropdownItem elemBefore={<PlusIcon label="new"/>} onClick={handleNewFlow}>New Flow</DropdownItem>
           <DropdownItem elemBefore={<CopyIcon label="duplicate"/>} onClick={handleDuplicate}>Duplicate</DropdownItem>
-          <DropdownItem>Import</DropdownItem>
+          <DropdownItem elemBefore={<FileImportIcon width={24} height={24}/>}>Import</DropdownItem>
           <DropdownItem elemBefore={<ExportIcon label="export"/>}>Export</DropdownItem>
-          <DropdownItem elemBefore={<TrashIcon label="delete" />}>Delete</DropdownItem>
+          <DropdownItem elemBefore={<TrashIcon label="delete" />} onClick={handleDelete}>Delete</DropdownItem>
         </DropdownItemGroup>
       </DropdownMenu>
     );
@@ -293,6 +300,7 @@ export const ProjectSelector: FC = () => {
         </div>
       </div>
       <EditProjectModalRenderer />
+      <DeleteWorkflowModalRenderer onFlowDeleted={onFLowDeleted}/>
     </Fragment>
   );
 };

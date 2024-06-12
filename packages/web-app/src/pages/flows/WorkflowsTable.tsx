@@ -4,7 +4,6 @@ import React, { useState, useEffect, useMemo, Fragment } from 'react';
 import ShortcutIcon from '@atlaskit/icon/core/shortcut';
 import { type FindWorkflowsDto, type Workflow, WorkflowStatus } from '../../api/types';
 import { Pagination } from '../../components/common/Pagination';
-import { DeleteWorkflow } from './DeleteWorkflow';
 import { DownloadWorkflow } from './DownloadWorkflow';
 import { formatDate } from '../../utils/time';
 import { useDebounce } from 'ahooks';
@@ -307,22 +306,6 @@ const WorkflowTable = () => {
             <DownloadWorkflow
               workflow={selectedWorkflow}
               setOpenModal={setOpenDownloadModal}
-            />
-          </ModalBody>
-        </Modal>
-      </ModalTransition>
-      )}
-
-      {openDeleteModal && (
-      <ModalTransition>
-        <Modal onClose={handleCloseDeleteModal}>
-          <ModalHeader>
-            <ModalTitle>Delete</ModalTitle>
-          </ModalHeader>
-          <ModalBody>
-            <DeleteWorkflow
-              workflow={selectedWorkflow}
-              setOpenModal={setOpenDeleteModal}
             />
           </ModalBody>
         </Modal>

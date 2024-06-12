@@ -3,16 +3,16 @@ import { flowState, loadedProjectState, projectState } from '../state/savedGraph
 import { useSaveCurrentGraph } from './useSaveCurrentGraph.js';
 import { produce } from 'immer';
 import { toast } from 'react-toastify';
-import { useAuth } from './useAuth';
 import { useWorkflows } from './useWorkflows';
 import { type WorkflowCreateDto } from '../api/types';
+import { workspaceState } from '../state/auth';
 
 export function useSaveFlow() {
   const saveGraph = useSaveCurrentGraph();
+  const currentWorkspace = useRecoilValue(workspaceState);
   const [flow, setFlow] = useRecoilState(flowState);
   const project = useRecoilValue(projectState);
   const [loadedProject, setLoadedProject] = useRecoilState(loadedProjectState);
-  const { currentWorkspace } = useAuth();
   const { createWorkflow, updateWorkflow } = useWorkflows();
 
   async function saveFlow() {

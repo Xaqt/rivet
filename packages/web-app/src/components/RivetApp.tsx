@@ -1,6 +1,6 @@
 import { useWindowsHotkeysFix } from '../hooks/useWindowsHotkeysFix';
 import { GraphBuilder } from './GraphBuilder.js';
-import { type FC, Fragment, useEffect, useState } from 'react';
+import { type FC } from 'react';
 import { css } from '@emotion/react';
 import { SettingsModal } from './SettingsModal.js';
 import { setGlobalTheme } from '@atlaskit/tokens';
@@ -20,8 +20,7 @@ import { StatusBar } from './StatusBar';
 import { ProjectSelector } from './ProjectSelector';
 import { NewProjectModalRenderer } from './NewProjectModal';
 import WorkflowsTable from '../pages/flows/WorkflowsTable';
-import { loginDialogOpenState, overlayOpenState } from '../state/ui';
-import { useAuth } from '../hooks/useAuth';
+import { overlayOpenState } from '../state/ui';
 import { useEnsureLoggedIn } from '../hooks/useEnsureLoggedIn';
 
 const styles = css`

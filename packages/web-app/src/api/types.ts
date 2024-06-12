@@ -1,6 +1,7 @@
 // ORGANIZATION
 import { DataId, type Project, ProjectId } from '@ironclad/rivet-core';
 import { nanoid } from 'nanoid/non-secure';
+import { genId } from '../state/savedGraphs';
 
 export interface Organization {
   org_id: string;
@@ -518,7 +519,7 @@ export class WorkflowImpl implements Workflow {
       metadata: {
         id: id as ProjectId,
         description: '',
-        title: title,
+        title,
       },
       graphs: {},
       plugins: [],
@@ -533,14 +534,19 @@ export class WorkflowImpl implements Workflow {
 
   static copy(data: Workflow) {
     const flow = new WorkflowImpl();
+    const id = genId<ProjectId>();
+    const title = data.project.metadata.title + ' (Copy)';
+    flow.description = data.description;
     flow.created_at = data.created_at;
     flow.created_by = data.created_by;
-    flow.description = data.description;
-    flow.id = data.id;
+    flow.id = id;
     flow.labels = data.labels;
     flow.name = data.name;
-    // todo
-    flow.project = data.project;
+
+    flow.project = { ...data.project };
+    flow.project.metadata.id = id;
+    flow.project.metadata.title = title;
+
     flow.status = data.status;
     flow.updated_at = data.updated_at;
     flow.workspace_id = data.workspace_id;

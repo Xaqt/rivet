@@ -31,7 +31,7 @@ export const useWindowsHotkeysFix = () => {
         'CmdOrCtrl+Shift+O': 'load_recording',
         'CmdOrCtrl+N': 'new_project',
         'CmdOrCtrl+O': 'open_project',
-        'CmdOrCtrl+S': 'save_project',
+        'CmdOrCtrl+S': 'save_flow',
         'CmdOrCtrl+Shift+E': 'export_graph',
         'CmdOrCtrl+Shift+I': 'import_graph',
         'CmdOrCtrl+Shift+S': 'save_project_as',

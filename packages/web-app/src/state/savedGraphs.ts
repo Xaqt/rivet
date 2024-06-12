@@ -11,7 +11,8 @@ import {
 } from '@ironclad/rivet-core';
 import { recoilPersist } from 'recoil-persist';
 import { entries, values } from '../../../core/src/utils/typeSafety';
-import { type Workflow, WorkflowImpl } from '../api/types';
+// eslint-disable-next-line import/no-cycle
+import { WorkflowImpl, type Workflow } from '../api/types';
 
 const { persistAtom } = recoilPersist({ key: 'flows' });
 
@@ -91,16 +92,21 @@ export const projectGraphInfoState = selector({
   },
 });
 
-// Which project file was loaded last and where is it?
+export type OpenedProjectInfo = {
+  id?: ProjectId;
+  openedGraph?: GraphId;
+  workflow: Workflow;
+};
+
+// Which project was loaded last and where is it?
 export const loadedProjectState = atom<{
-  path: string;
   loaded: boolean;
   saved?: boolean;
   id?: string,
+  openedGraph?: string,
 }>({
   key: 'loadedProjectState',
   default: {
-    path: '',
     loaded: false,
     saved: false,
   },
@@ -150,58 +156,6 @@ export const projectPluginsState = selector({
       return {
         ...oldValue,
         plugins: newValue instanceof DefaultValue ? newProject().plugins : newValue,
-      };
-    });
-  },
-});
-
-export type OpenedProjectInfo = {
-  fsPath?: string | null,
-  id?: ProjectId;
-  openedGraph?: GraphId;
-  project: Project,
-  workflow?: Workflow;
-};
-
-export type OpenedProjectsInfo = {
-  openedProjects: Record<ProjectId, OpenedProjectInfo>;
-  openedProjectsSortedIds: ProjectId[];
-};
-
-export const projectsState = atom<OpenedProjectsInfo>({
-  key: 'projectsState',
-  default: {
-    openedProjects: {},
-    openedProjectsSortedIds: [],
-  },
-  effects: [persistAtom],
-});
-
-export const openedProjectsState = selector({
-  key: 'openedProjectsState',
-  get: ({ get }) => {
-    return get(projectsState).openedProjects;
-  },
-  set: ({ set }, newValue) => {
-    set(projectsState, (oldValue) => {
-      return {
-        ...oldValue,
-        openedProjects: newValue instanceof DefaultValue ? {} : newValue,
-      };
-    });
-  },
-});
-
-export const openedProjectsSortedIdsState = selector({
-  key: 'openedProjectsSortedIdsState',
-  get: ({ get }) => {
-    return get(projectsState).openedProjectsSortedIds;
-  },
-  set: ({ set }, newValue) => {
-    set(projectsState, (oldValue) => {
-      return {
-        ...oldValue,
-        openedProjectsSortedIds: newValue instanceof DefaultValue ? [] : newValue,
       };
     });
   },

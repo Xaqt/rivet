@@ -26,7 +26,7 @@ export function useNewProjectFromTemplate() {
       const newGraphs: NodeGraph[] = [];
       const oldNewGraphIdMapping: Record<GraphId, GraphId> = {};
 
-      // Duplicate each graph to get brand new IDs for all nodes and connections
+      // Duplicate each graph to get brand-new IDs for all nodes and connections
       for (const graph of Object.values(draft.graphs)) {
         const duplicated = duplicateGraph(graph);
         newGraphs.push(duplicated);
@@ -58,7 +58,7 @@ export function useNewProjectFromTemplate() {
       }
     });
 
-    setLoadedProject({ loaded: false, path: '' });
+    setLoadedProject({ loaded: false });
     setProject(project);
 
     const firstGraph = orderBy(Object.values(project.graphs), (g) => g.metadata!.name!)[0];

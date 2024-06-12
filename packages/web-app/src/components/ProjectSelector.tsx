@@ -1,11 +1,8 @@
 import { css } from '@emotion/react';
 import type React from 'react';
 import { useMemo, type FC, useState, Fragment } from 'react';
-import { DndContext, type DragEndEvent } from '@dnd-kit/core';
-import { type ProjectId } from '@ironclad/rivet-core';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import LeftIcon from 'majesticons/line/chevron-left-line.svg?react';
-import CloseIcon from 'majesticons/line/multiply-line.svg?react';
 import BlankFileIcon from 'majesticons/line/file-line.svg?react';
 import SettingsCogIcon from 'majesticons/line/settings-cog-line.svg?react';
 import ExportIcon from '@atlaskit/icon/glyph/export';
@@ -15,27 +12,20 @@ import PlusIcon from '@atlaskit/icon/glyph/add';
 import EditIcon from '@atlaskit/icon/glyph/edit';
 
 import {
-  openedProjectsSortedIdsState,
-  openedProjectsState,
   projectState,
-  projectsState,
   loadedProjectState,
+  type OpenedProjectInfo,
+  flowState,
 } from '../state/savedGraphs';
-import clsx from 'clsx';
-import { useLoadProject } from '../hooks/useLoadProject';
-import { useSyncCurrentStateIntoOpenedProjects } from '../hooks/useSyncCurrentStateIntoOpenedProjects';
-import { produce } from 'immer';
-import { type SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
-import { SortableContext, horizontalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
 import { useLoadProjectWithFileBrowser } from '../hooks/useLoadProjectWithFileBrowser';
 import { editProjectModalOpenState, newProjectModalOpenState, overlayOpenState } from '../state/ui';
-import { keys } from '../../../core/src/utils/typeSafety';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { type MenuIds, useRunMenuCommand } from '../hooks/useMenuCommands';
 import { EditProjectModalRenderer } from './EditProjectModal';
 import { Asterisk } from '../assets/icons/asterisk';
 import { SaveIcon } from '../assets/icons/save-icon';
+import { useLoadFlow } from '../hooks/useLoadFlow';
 
 export const styles = css`
     position: absolute;
@@ -51,6 +41,7 @@ export const styles = css`
 
     display: flex;
     justify-content: space-between;
+    align-items: center;
 
     .projects-container {
         display: flex;
@@ -89,6 +80,10 @@ export const styles = css`
     span.title-name {
         flex: 1;
         min-width: 220px;
+    }
+    
+    button {
+        cursor: pointer;
     }
 
     > .actions {
@@ -187,30 +182,6 @@ export const styles = css`
         &:hover .actions {
             visibility: visible;
         }
-
-        .close-project {
-            background: transparent;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--grey-light);
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-
-            svg {
-                width: 12px;
-                height: 12px;
-            }
-
-            &:hover {
-                color: var(--grey-lightest);
-                background-color: var(--grey);
-            }
-        }
     }
 
     .project::after {
@@ -225,16 +196,22 @@ export const styles = css`
 `;
 
 export const ProjectSelector: FC = () => {
+  const [flow, setFlow] = useRecoilState(flowState);
   const [project, setProject] = useRecoilState(projectState);
-  const setProjects = useSetRecoilState(projectsState);
-  const [openedProjects, setOpenedProjects] = useRecoilState(openedProjectsState);
-  const [openedProjectsSortedIds, setOpenedProjectsSortedIds] = useRecoilState(openedProjectsSortedIdsState);
   const [title, setTitle] = useState(project?.metadata.title);
   const loadedState = useRecoilValue(loadedProjectState);
   const setEditProjectModalOpen = useSetRecoilState(editProjectModalOpenState);
   const [, setOpenOverlay] = useRecoilState(overlayOpenState);
 
   const runMenuCommandImpl = useRunMenuCommand();
+  const loadFlow = useLoadFlow();
+  const projectInfo: OpenedProjectInfo = useMemo(() => {
+    return {
+      workflow: flow,
+      openedGraph: flow.project.metadata?.mainGraphId,
+    };
+  }, [flow]);
+  // loadFlow(projectInfo).catch(console.error);
 
   const [fileMenuOpen, setFileMenuOpen] = useState(false);
 
@@ -243,78 +220,16 @@ export const ProjectSelector: FC = () => {
     runMenuCommandImpl(command);
   };
 
-  const sortedOpenedProjects = useMemo(() => {
-    return openedProjectsSortedIds
-      .map((projectId) => ({
-        id: projectId,
-        project: openedProjects[projectId]!,
-      }))
-      .filter((item) => item.project != null);
-  }, [openedProjectsSortedIds, openedProjects]);
-
-  const loadProject = useLoadProject();
-
   const setNewProjectModalOpen = useSetRecoilState(newProjectModalOpenState);
   const loadProjectWithFileBrowser = useLoadProjectWithFileBrowser();
-
-  useSyncCurrentStateIntoOpenedProjects();
 
   function gotoList() {
     setOpenOverlay('flowList');
   }
 
-  const handleDragEnd = ({ active, over }: DragEndEvent) => {
-    if (over && active.id !== over.id) {
-      setOpenedProjectsSortedIds((openedProjectsSortedIds) => {
-        const oldIndex = openedProjectsSortedIds.indexOf(active?.id as ProjectId);
-        const newIndex = openedProjectsSortedIds.indexOf(over?.id as ProjectId);
-        return arrayMove(openedProjectsSortedIds, oldIndex, newIndex);
-      });
-    }
-  };
-
-  const handleCloseProject = (projectId: ProjectId) => {
-    const indexOfProject = openedProjectsSortedIds.indexOf(projectId);
-    if (indexOfProject === -1) {
-      return;
-    }
-
-    setProjects((projects) =>
-      produce(projects, (draft) => {
-        delete draft.openedProjects[projectId];
-        draft.openedProjectsSortedIds = draft.openedProjectsSortedIds.filter(
-          (id) => id !== projectId && draft.openedProjects[id] != null,
-        );
-
-        for (const projectId of keys(draft.openedProjects)) {
-          if (draft.openedProjectsSortedIds.includes(projectId) === false) {
-            delete draft.openedProjects[projectId];
-          }
-        }
-      }),
-    );
-
-    const closestProject = sortedOpenedProjects[indexOfProject + 1] || sortedOpenedProjects[indexOfProject - 1];
-    if (closestProject) {
-      loadProject(closestProject.project);
-    } else {
-      setNewProjectModalOpen(true);
-    }
-  };
-
-  const handleSelectProject = (projectId: ProjectId) => {
-    const projectInfo = openedProjects[projectId];
-    if (projectInfo) {
-      loadProject(projectInfo);
-    }
-  };
-
-  const validateName = (value: string) => {
-    if (value?.length <= 6) {
-      return 'Please enter a name longer than 6 characters';
-    }
-    return undefined;
-  };
+  function handleDuplicate() {
+    runMenuCommand('duplicate_flow');
+  }
 
   const openNewProjectModal = useStableCallback(() => setNewProjectModalOpen(true));
 
@@ -348,7 +263,7 @@ export const ProjectSelector: FC = () => {
         shouldRenderToParent>
         <DropdownItemGroup>
           <DropdownItem elemBefore={<PlusIcon label="new"/>} onClick={handleNewFlow}>New Flow</DropdownItem>
-          <DropdownItem elemBefore={<CopyIcon label="duplicate"/>}>Duplicate</DropdownItem>
+          <DropdownItem elemBefore={<CopyIcon label="duplicate"/>} onClick={handleDuplicate}>Duplicate</DropdownItem>
           <DropdownItem>Import</DropdownItem>
           <DropdownItem elemBefore={<ExportIcon label="export"/>}>Export</DropdownItem>
           <DropdownItem elemBefore={<TrashIcon label="delete" />}>Delete</DropdownItem>
@@ -372,95 +287,12 @@ export const ProjectSelector: FC = () => {
         </div>
         <div className="projects-container">
           <div className="projects">
-            <DndContext onDragEnd={handleDragEnd}>
-              <SortableContext items={sortedOpenedProjects} strategy={horizontalListSortingStrategy}>
-                {sortedOpenedProjects.map((project) => {
-                  return (
-                    <SortableProject
-                      key={project.id}
-                      projectId={project.project.project.metadata.id}
-                      onCloseProject={() => handleCloseProject(project.project.project.metadata.id)}
-                      onSelectProject={() => handleSelectProject(project.project.project.metadata.id)}
-                    />
-                  );
-                })}
-              </SortableContext>
-            </DndContext>
           </div>
-          <SaveIcon />
+          <SaveIcon onClick={() => runMenuCommand('save_flow')} />
           <ProjectDropdownMenu />
         </div>
       </div>
       <EditProjectModalRenderer />
     </Fragment>
-  );
-};
-
-export const SortableProject: FC<{
-  projectId: ProjectId;
-  onCloseProject?: () => void;
-  onSelectProject?: () => void;
-}> = ({ ...props }) => {
-  const { attributes, listeners, setNodeRef, transform, isDragging, transition } = useSortable({
-    id: props.projectId,
-  });
-
-  return (
-    <div
-      className="draggableProject"
-      ref={setNodeRef}
-      style={{
-        transform: `translate3d(${transform ? transform.x : 0}px, ${transform ? transform.y : 0}px, 0)`,
-        transition,
-      }}
-      {...attributes}
-    >
-      <ProjectTab {...props} dragListeners={listeners} isDragging={isDragging} />
-    </div>
-  );
-};
-
-export const ProjectTab: FC<{
-  projectId: ProjectId;
-  isDragging: boolean;
-  dragListeners?: SyntheticListenerMap;
-  onCloseProject?: () => void;
-  onSelectProject?: () => void;
-}> = ({ projectId, dragListeners, onCloseProject, onSelectProject }) => {
-  const openedProjects = useRecoilValue(openedProjectsState);
-  const currentProject = useRecoilValue(projectState);
-
-  const project = openedProjects[projectId];
-
-  const unsaved = !project?.fsPath;
-  const fileName = unsaved ? 'Unsaved' : project.fsPath!.split('/').pop();
-  const projectDisplayName = `${project?.project.metadata.title}${fileName ? ` [${fileName}]` : ''}`;
-
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.button === 0) {
-      onSelectProject?.();
-    }
-  };
-
-  const closeProject = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    onCloseProject?.();
-  };
-
-  return (
-    <div
-      className={clsx('project', { active: currentProject.metadata.id === projectId, unsaved })}
-      onMouseDown={handleMouseDown}
-    >
-      <BlankFileIcon />
-      <div className="project-name" {...dragListeners}>
-        <span>{projectDisplayName}</span>
-      </div>
-      <div className="actions">
-        <button className="close-project" onMouseDown={(e) => e.stopPropagation()} onClick={closeProject}>
-          <CloseIcon />
-        </button>
-      </div>
-    </div>
   );
 };

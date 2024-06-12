@@ -1,28 +1,27 @@
 import { useSetRecoilState } from 'recoil';
-import { type OpenedProjectInfo, loadedProjectState, projectState } from '../state/savedGraphs.js';
+import { type OpenedProjectInfo, loadedProjectState, flowState } from '../state/savedGraphs.js';
 import { emptyNodeGraph, getError } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph.js';
-import { trivetState } from '../state/trivet.js';
 import { useSetStaticData } from './useSetStaticData';
 import { toast } from 'react-toastify';
 import { graphNavigationStackState } from '../state/graphBuilder';
+import { WorkflowImpl } from '../api/types';
 
-export function useLoadProject() {
-  const setProject = useSetRecoilState(projectState);
+export function useLoadFlow() {
+  const setFlowState = useSetRecoilState(flowState);
   const setLoadedProjectState = useSetRecoilState(loadedProjectState);
   const setGraphData = useSetRecoilState(graphState);
-  const setTrivetState = useSetRecoilState(trivetState);
   const setStaticData = useSetStaticData();
   const setNavigationStack = useSetRecoilState(graphNavigationStackState);
 
   return async (projectInfo: OpenedProjectInfo) => {
     try {
-      setProject(projectInfo.project);
-
+      setFlowState(projectInfo.workflow || new WorkflowImpl());
       setNavigationStack({ stack: [], index: undefined });
+      const project = projectInfo.workflow.project;
 
       if (projectInfo.openedGraph) {
-        const graphData = projectInfo.project.graphs[projectInfo.openedGraph];
+        const graphData = project.graphs[projectInfo.openedGraph];
         if (graphData) {
           setGraphData(graphData);
         } else {
@@ -32,23 +31,13 @@ export function useLoadProject() {
         setGraphData(emptyNodeGraph());
       }
 
-      if (projectInfo.project.data) {
-        await setStaticData(projectInfo.project.data);
+      if (project.data) {
+        await setStaticData(project.data);
       }
 
       setLoadedProjectState({
-        path: projectInfo.fsPath ?? '',
-        id: projectInfo.project.metadata.id,
+        id: project.metadata.id,
         loaded: true,
-      });
-
-      // todo: !!!!
-      setTrivetState({
-        testSuites: [],
-        selectedTestSuiteId: undefined,
-        editingTestCaseId: undefined,
-        recentTestResults: undefined,
-        runningTests: false,
       });
     } catch (err) {
       toast.error(`Failed to load project: ${getError(err).message}`);

@@ -1,14 +1,9 @@
 import { atom } from 'recoil';
-import { type ExecutionRecorder, Recording } from '@ironclad/rivet-core';
+import { type ExecutionRecorder, type Recording } from '@ironclad/rivet-core';
 import { recoilPersist } from 'recoil-persist';
 import { defaultExecutorState } from './settings';
 
 const { persistAtom } = recoilPersist({ key: 'execution' });
-
-export const remoteUploadAllowedState = atom<boolean>({
-  key: 'remoteUploadAllowed',
-  default: false,
-});
 
 export const selectedExecutorState = atom<'browser' | 'nodejs'>({
   key: 'selectedExecutor',

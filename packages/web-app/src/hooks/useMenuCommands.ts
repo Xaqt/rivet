@@ -6,19 +6,20 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { settingsModalOpenState } from '../components/SettingsModal.js';
 import { graphState } from '../state/graph.js';
 import { useLoadRecording } from './useLoadRecording.js';
-import { helpModalOpenState, newProjectModalOpenState } from '../state/ui';
+import { newProjectModalOpenState } from '../state/ui';
 import { useToggleRemoteDebugger } from '../components/DebuggerConnectPanel';
 import { lastRunDataByNodeState } from '../state/dataFlow';
 import { useImportGraph } from './useImportGraph';
 import { toast } from 'react-toastify';
+import { getError } from '../utils/errors';
+import { useWorkflows } from './useWorkflows';
 
 export type MenuIds =
   | 'settings'
   | 'new_project'
   | 'open_project'
-  | 'save_project'
-  | 'duplicate_project'
-  | 'save_project_as'
+  | 'save_flow'
+  | 'duplicate_flow'
   | 'export_graph'
   | 'import_graph'
   | 'run'
@@ -54,7 +55,11 @@ export function useMenuCommands(
   const toggleRemoteDebugger = useToggleRemoteDebugger();
   const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
   const importGraph = useImportGraph();
-  const setHelpModalOpen = useSetRecoilState(helpModalOpenState);
+  const { duplicateFlow } = useWorkflows();
+
+  function handleDuplicate() {
+    duplicateFlow();
+  }
 
   useEffect(() => {
     const handler: (e: { payload: MenuIds }) => void = ({ payload }) => {
@@ -68,29 +73,22 @@ export function useMenuCommands(
         .with('open_project', () => {
           loadProject();
         })
-        .with('save_project', () => {
-          saveFlow();
+        .with('save_flow', () => {
+          saveFlow().catch((e) => {
+            const msg = getError(e).message;
+            toast.error(`Failed to save project: ${msg}`);
+          });
         })
-        .with('duplicate_project', () => {
-          toast.error('Not implemented yet');
-        })
-        .with('save_project_as', () => {
-          // saveProjectAs();
-          toast.error('Not implemented yet');
-        })
+        .with('duplicate_flow', () => handleDuplicate())
         .with('export_graph', () => {
           // importGraph();
           console.log('export_graph');
         })
-        .with('import_graph', () => {
-          importGraph();
-        })
+        .with('import_graph', () => importGraph())
         .with('run', () => {
           options.onRunGraph?.();
         })
-        .with('load_recording', () => {
-          loadRecording();
-        })
+        .with('load_recording', () => loadRecording())
         .with('remote_debugger', () => {
           toggleRemoteDebugger();
         })
@@ -99,7 +97,7 @@ export function useMenuCommands(
           setLastRunData({});
         })
         .with('get_help', () => {
-          setHelpModalOpen(true);
+          // setHelpModalOpen(true);
         })
         .exhaustive();
     };

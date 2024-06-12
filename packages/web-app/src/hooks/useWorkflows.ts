@@ -1,95 +1,40 @@
-import { getError } from '@ironclad/rivet-core';
+import { getError, type GraphId } from '@ironclad/rivet-core';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useRecoilState } from 'recoil';
-import { workflowListState, workflowSearchCriteriaState } from '../state/workflows';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { workflowListState } from '../state/workflows';
 import { workflowApi } from '../api/api-client';
-import { type FindWorkflowsDto, type Workflow, type WorkflowCreateDto } from '../api/types';
-import { useStableCallback } from './useStableCallback';
-import { useAuth } from './useAuth';
+import { type WorkflowCreateDto, WorkflowImpl } from '../api/types';
+import { workspaceState } from '../state/auth';
+import { flowState, type OpenedProjectInfo } from '../state/savedGraphs';
+import { useLoadFlow } from './useLoadFlow';
 
 export function useWorkflows() {
-
-  const { currentWorkspace } = useAuth();
+  const loadFlow = useLoadFlow();
+  const currentWorkspace = useRecoilValue(workspaceState);
+  const [currentFlow, setCurrentFlow] = useRecoilState(flowState);
   const [workflows, updateWorkflows] = useRecoilState(workflowListState);
   const [loading, setLoading] = useState(false);
-  const [searchCriteria, setSearchCriteria] = useRecoilState(workflowSearchCriteriaState);
-
-  const [pageIndex, setPageIndex] = useState(searchCriteria.page ?? 1);
-  const [pageSize, setPageSize] = useState(searchCriteria.page_size || 20);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalCount, setTotalCount] = useState(0);
   const [workspaceId, setWorkspaceId] = useState(currentWorkspace?.workspace_id || '');
 
   useEffect(() => {
     setWorkspaceId(currentWorkspace?.workspace_id || '');
   }, [currentWorkspace]);
 
-  function execLoading<T>(fn: () => Promise<T>, reload = true) {
+  function execLoading<T>(fn: () => Promise<T>) {
     setLoading(true);
-    return fn()
-      .then((res) => {
-        if (reload) {
-          reloadWorkflows();
-        }
-        return res;
-      }).catch(e => {
-        toast.error(getError(e).message);
-      }).finally(() => {
-        setLoading(false);
-      });
+    return fn().catch(e => {
+      toast.error(getError(e).message);
+    }).finally(() => {
+      setLoading(false);
+    });
   }
 
-  const initWorkflows = useStableCallback(() => {
-    if (searchCriteria.workspace_id !== workspaceId) {
-      setSearchCriteria({
-        ...searchCriteria,
-        workspace_id: workspaceId,
-        page: 1,
-      });
-    }
-    setLoading(true);
-    reloadWorkflows();
-    setLoading(false);
-  });
-
-  const reloadWorkflows = () => fetchWorkflows(searchCriteria);
-
-  const fetchWorkflows = (criteria?: Partial<FindWorkflowsDto>) => {
-    const findCriteria = {
-      ...searchCriteria,
-      ...(criteria || {}),
-    } as FindWorkflowsDto;
-
-    workflowApi.find(workspaceId, findCriteria)
-      .then((res) => {
-        setTotalPages(res.total_pages);
-        setTotalCount(res.total_count);
-        updateWorkflows(res.flows || []);
-        setSearchCriteria(findCriteria);
-        return res;
-      }).catch(err => {
-        toast.error(getError(err).message);
-      });
-  };
-
-  useEffect(initWorkflows, [workspaceId, initWorkflows]);
-
-  useEffect(() => {
-    setSearchCriteria({
-      ...searchCriteria,
-      workspace_id: workspaceId,
-      page: pageIndex,
-      page_size: pageSize,
-    });
-    // initWorkflows();
-  }, [pageIndex, pageSize, workspaceId]);
-
   const getWorkflowById = async (id: string) => {
-    return execLoading(() => workflowApi.getById(id), false);
+    return execLoading(() => workflowApi.getById(id));
   };
 
-  const updateWorkflow = async<Workflow>(id: string, workflow: Partial<Workflow>) => {
+  const updateWorkflow = async <Workflow>(id: string, workflow: Partial<Workflow>) => {
     setLoading(true);
     try {
       const res = await workflowApi.update(id, workflow);
@@ -104,14 +49,10 @@ export function useWorkflows() {
     }
   };
 
-  const createWorkflow = async (workflow: WorkflowCreateDto, reload = false) => {
+  const createWorkflow = async (workflow: WorkflowCreateDto) => {
     setLoading(true);
     try {
-      const res = await workflowApi.create(workspaceId, workflow);
-      if (reload) {
-        reloadWorkflows();
-      }
-      return res;
+      return await workflowApi.create(workspaceId, workflow);
     } finally {
       setLoading(false);
     }
@@ -129,23 +70,24 @@ export function useWorkflows() {
     return execLoading(() => workflowApi.removeLabel(flowId, labelId));
   };
 
+  function duplicateFlow(source?: WorkflowImpl, mainGraphId?: GraphId) {
+    const flow = WorkflowImpl.copy(source ?? currentFlow);
+    const project = flow.project;
+    const projectInfo: OpenedProjectInfo = {
+      workflow: flow,
+      openedGraph: mainGraphId ?? project.metadata?.mainGraphId,
+    };
+    loadFlow(projectInfo).catch(console.error);
+  }
+
   return {
-    workflows,
     addWorkflowLabels,
     removeWorkflowLabel,
     getWorkflowById,
-    fetchWorkflows,
     createWorkflow,
     updateWorkflow,
     deleteWorkflow,
     loading,
-    pageSize,
-    setPageSize,
-    pageIndex,
-    setPageIndex,
-    totalPages,
-    totalCount,
-    searchCriteria,
-    setSearchCriteria
+    duplicateFlow,
   };
 }

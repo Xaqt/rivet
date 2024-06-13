@@ -2,7 +2,6 @@ import { getError, type GraphId } from '@ironclad/rivet-core';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { workflowListState } from '../state/workflows';
 import { workflowApi } from '../api/api-client';
 import { type WorkflowCreateDto, WorkflowImpl } from '../api/types';
 import { workspaceState } from '../state/auth';
@@ -13,7 +12,6 @@ export function useWorkflows() {
   const loadFlow = useLoadFlow();
   const currentWorkspace = useRecoilValue(workspaceState);
   const [currentFlow, setCurrentFlow] = useRecoilState(flowState);
-  const [workflows, updateWorkflows] = useRecoilState(workflowListState);
   const [loading, setLoading] = useState(false);
   const [workspaceId, setWorkspaceId] = useState(currentWorkspace?.workspace_id || '');
 
@@ -37,13 +35,7 @@ export function useWorkflows() {
   const updateWorkflow = async <Workflow>(id: string, workflow: Partial<Workflow>) => {
     setLoading(true);
     try {
-      const res = await workflowApi.update(id, workflow);
-      const index = workflows.findIndex((w) => w.id === id);
-      if (index >= 0) {
-        workflows[index] = res;
-        updateWorkflows([...workflows]);
-      }
-      return res;
+      return workflowApi.update(id, workflow);
     } finally {
       setLoading(false);
     }
@@ -52,7 +44,8 @@ export function useWorkflows() {
   const createWorkflow = async (workflow: WorkflowCreateDto) => {
     setLoading(true);
     try {
-      return await workflowApi.create(workspaceId, workflow);
+      workflow.workspace_id = workspaceId;
+      return await workflowApi.create(workflow);
     } finally {
       setLoading(false);
     }

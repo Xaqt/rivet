@@ -6,9 +6,8 @@ import ExpandLeftIcon from 'majesticons/line/menu-expand-left-line.svg?react';
 import ExpandRightIcon from 'majesticons/line/menu-expand-right-line.svg?react';
 import { type GraphId } from '@ironclad/rivet-core';
 import { sidebarOpenState } from '../state/graphBuilder.js';
-import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import { GraphList } from './GraphList.js';
-import { GraphInfoSidebarTab } from './GraphInfoSidebarTab';
+import { Text } from '@atlaskit/primitives';
 
 const styles = css`
   position: fixed;
@@ -23,6 +22,10 @@ const styles = css`
   border-right: 1px solid var(--grey);
   height: 100vh;
 
+  .panel-header {
+    padding-left: 7px;   
+  }
+    
   .panel {
     display: flex;
     flex-direction: column;
@@ -33,12 +36,7 @@ const styles = css`
   label {
     font-size: 12px;
   }
-
-  .graph-info-section,
-  .project-info-section {
-    padding: 8px 12px;
-  }
-
+    
   .toggle-tab {
     position: absolute;
     top: 0;
@@ -56,10 +54,6 @@ const styles = css`
     justify-content: center;
     cursor: pointer;
     z-index: 100;
-  }
-
-  .toggle-tab:hover {
-    background-color: var(--grey-darkish);
   }
 
   .tabs,
@@ -83,17 +77,13 @@ export const LeftSidebar: FC<{
       <div className="toggle-tab" onClick={() => setSidebarOpen(!sidebarOpen)}>
         {sidebarOpen ? <ExpandLeftIcon /> : <ExpandRightIcon />}
       </div>
+      <div className="panel-header">
+        <Text size={"large"}>Graphs</Text>
+      </div>
       <div className="tabs">
-        <Tabs id="sidebar-tabs">
-          <TabList>
-            <Tab>Graphs</Tab>
-          </TabList>
-          <TabPanel>
-            <div className="panel" data-contextmenutype="graph-list">
-              <GraphList onRunGraph={onRunGraph} />
-            </div>
-          </TabPanel>
-        </Tabs>
+        <div className="panel" data-contextmenutype="graph-list">
+          <GraphList onRunGraph={onRunGraph} />
+        </div>
       </div>
     </div>
   );

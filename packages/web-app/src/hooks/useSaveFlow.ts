@@ -34,7 +34,6 @@ export function useSaveFlow() {
       project: newProject
     };
 
-    const toastId = toast.info('Saving project');
     try {
       const workflow = await createWorkflow(flowDto);
 
@@ -43,7 +42,6 @@ export function useSaveFlow() {
         loaded: true,
         saved: true,
         id: newProject.metadata.id,
-        path: '',
       });
       setFlow({
         ...flow,
@@ -51,10 +49,6 @@ export function useSaveFlow() {
       });
     } catch (cause) {
       toast.error('Failed to save project');
-    } finally {
-      if (toastId) {
-        toast.dismiss(toastId);
-      }
     }
   }
 
@@ -74,7 +68,6 @@ export function useSaveFlow() {
         loaded: true,
         saved: true,
         id: newProject.metadata.id,
-        path: '',
       });
       setFlow({
         ...flow,

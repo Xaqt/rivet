@@ -4,34 +4,35 @@ import { type Workflow } from '../../api/types';
 import { useWorkflows } from '../../hooks/useWorkflows';
 import Modal, { ModalBody, ModalFooter, ModalHeader, ModalTitle, ModalTransition } from '@atlaskit/modal-dialog';
 import Button, { IconButton } from '@atlaskit/button/new';
-import { deleteFlowModalOpenState } from '../../state/ui';
+import { deleteGraphModalOpenState } from '../../state/ui';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { flowState } from '../../state/savedGraphs';
 
 interface DeleteWorkflowProps {
-  onFlowDeleted?: () => void;
+  onGraphDeleted?: () => void;
   workflow?: Workflow | undefined;
 }
 
-export const DeleteWorkflowModalRenderer: React.FC<DeleteWorkflowProps> =
+export const DeleteGraphModalRenderer: React.FC<DeleteWorkflowProps> =
   ({
-     onFlowDeleted,
+     onGraphDeleted,
      workflow,
    }) => {
-    const deleteModalOpen = useRecoilValue(deleteFlowModalOpenState);
+    const deleteModalOpen = useRecoilValue(deleteGraphModalOpenState);
 
-  return deleteModalOpen && <DeleteWorkflowModal onFlowDeleted={onFlowDeleted} workflow={workflow}/>;
+  return deleteModalOpen && <DeleteGraphModal onGraphDeleted={onGraphDeleted} workflow={workflow}/>;
 };
 
-export const DeleteWorkflowModal: React.FC<DeleteWorkflowProps> = ({
-                                                  onFlowDeleted,
-                                                  workflow,
-                                                }) => {
+export const DeleteGraphModal: React.FC<DeleteWorkflowProps> =
+  ({
+    onGraphDeleted,
+    workflow,
+  }) => {
 
   const flow = useRecoilValue(flowState);
   workflow = workflow || flow;
 
-  const setDeleteProjectModalOpen = useSetRecoilState(deleteFlowModalOpenState);
+  const setDeleteProjectModalOpen = useSetRecoilState(deleteGraphModalOpenState);
   const { deleteWorkflow } = useWorkflows();
 
   function closeModal() {
@@ -42,7 +43,7 @@ export const DeleteWorkflowModal: React.FC<DeleteWorkflowProps> = ({
     await deleteWorkflow(
       workflow?.id!,
     );
-    onFlowDeleted?.();
+    onGraphDeleted?.();
     closeModal();
   };
 
@@ -59,7 +60,7 @@ export const DeleteWorkflowModal: React.FC<DeleteWorkflowProps> = ({
           />
         </ModalHeader>
         <ModalBody>
-          Are you sure you want to delete workflow &quot;{workflow.name}&quot;. &nbsp;
+          Are you sure you want to delete graph &quot;{workflow.name}&quot;. &nbsp;
           <p/>
           This Action cannot be undone and will delete the flow forever.
         </ModalBody>

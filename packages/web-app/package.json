@@ -51,6 +51,7 @@
     "@atlaskit/range": "^7.1.7",
     "@atlaskit/select": "^17.10.2",
     "@atlaskit/side-navigation": "^3.2.0",
+    "@atlaskit/spinner": "^16.1.0",
     "@atlaskit/tabs": "^16.1.1",
     "@atlaskit/tag": "^12.2.2",
     "@atlaskit/tag-group": "^10.3.0",

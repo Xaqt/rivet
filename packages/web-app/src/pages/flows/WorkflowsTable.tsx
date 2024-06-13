@@ -6,7 +6,7 @@ import { type FindWorkflowsDto, type Workflow, WorkflowStatus } from '../../api/
 import { Pagination } from '../../components/common/Pagination';
 import { DownloadWorkflow } from './DownloadWorkflow';
 import { formatDate } from '../../utils/time';
-import { useDebounce } from 'ahooks';
+import { useDebounce, useDebounceFn } from 'ahooks';
 import PageHeader from '@atlaskit/page-header';
 import { SimpleTag } from '@atlaskit/tag';
 import TagGroup from '@atlaskit/tag-group';
@@ -25,10 +25,13 @@ import EmptyState from '@atlaskit/empty-state';
 import { ButtonGroup } from '@atlaskit/button';
 import { Box, Inline, xcss } from '@atlaskit/primitives';
 import TextField from '@atlaskit/textfield';
-import Select from '@atlaskit/select';
 import PlusIcon from '@atlaskit/icon/glyph/add';
 import { newProjectModalOpenState, overlayOpenState } from '../../state/ui';
 import { type MenuIds, useRunMenuCommand } from '../../hooks/useMenuCommands';
+import { FlowContextMenu } from './FlowContextMenu';
+import PreferencesIcon from '@atlaskit/icon/glyph/preferences'
+import { settingsModalOpenState } from '../../components/SettingsModal';
+import { useRemoteDebugger } from '../../hooks/useRemoteDebugger';
 
 const WorkflowTable = () => {
   const [loading, setLoading] = useState(false);
@@ -38,13 +41,13 @@ const WorkflowTable = () => {
   const [workflows, updateWorkflows] = useRecoilState(workflowListState);
   const [pageIndex, setPageIndex] = useState(searchCriteria.page ?? 1);
   const [pageSize, setPageSize] = useState(searchCriteria.page_size || 20);
-  const [totalPages, setTotalPages] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [workspaceId, setWorkspaceId] = useState(currentWorkspace?.workspace_id || '');
   const [workspaceName, setWorkspaceName] = useState(currentWorkspace?.workspace_name || '');
   const [, setOpenOverlay] = useRecoilState(overlayOpenState);
   const [searchTerm, setSearchTerm] = useState<string>(searchCriteria.name || '');
   const debouncedSearchTerm = useDebounce(searchTerm, { wait: 500 });
+  const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
   
   const runMenuCommandImpl = useRunMenuCommand();
   
@@ -59,9 +62,28 @@ const WorkflowTable = () => {
 
   const [openDownloadModal, setOpenDownloadModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [openSidebar, setOpenSidebar] = useState(false);
   const [loadCounter, setLoadCounter] = useState<number>(0);
-  const [rowSelection, setRowSelection] = useState({});
+
+  const { run: runQuery, cancel: cancelQuery } = useDebounceFn((criteria?: FindWorkflowsDto) => {
+    const findCriteria = criteria ?? searchCriteria;
+    setLoading(true);
+    workflowApi.find(workspaceId, findCriteria)
+      .then((res) => {
+        setTotalCount(res.total_count);
+        updateWorkflows(res.flows || []);
+        setSearchCriteria(findCriteria);
+        return res;
+      }).catch(err => {
+      toast.error(getError(err).message);
+    }).finally(() => setLoading(false));
+  }, {
+    wait: 350
+  });
+
+  // cancel any running query on unmount
+  useEffect(() => {
+    return cancelQuery;
+  }, []);
 
   const fetchWorkflows = (criteria?: Partial<FindWorkflowsDto>) => {
     const findCriteria = {
@@ -69,16 +91,8 @@ const WorkflowTable = () => {
       ...(criteria || {}),
     } as FindWorkflowsDto;
 
-    workflowApi.find(workspaceId, findCriteria)
-      .then((res) => {
-        setTotalPages(res.total_pages);
-        setTotalCount(res.total_count);
-        updateWorkflows(res.flows || []);
-        setSearchCriteria(findCriteria);
-        return res;
-      }).catch(err => {
-        toast.error(getError(err).message);
-      });
+    setSearchCriteria(findCriteria);
+    return runQuery(findCriteria);
   };
 
   const handleRefresh = () => {
@@ -92,14 +106,15 @@ const WorkflowTable = () => {
     setOpenDownloadModal(false);
   };
 
-  const handleCloseDeleteModal = () => {
-    setOpenDeleteModal(false);
-  };
-
   const handleClearFilter = () => {
     setSearchTerm('');
     setClearTrigger((prevState) => prevState + 1);
   };
+
+  const openSettings = () => {
+    setSettingsOpen(true);
+    console.log('open settings');
+  }
 
   const handleDownloadWorkflow = (
     e: React.MouseEvent,
@@ -116,60 +131,16 @@ const WorkflowTable = () => {
     setOpenOverlay(undefined);
   };
 
-  function IndeterminateCheckbox({
-                                   indeterminate,
-                                   className = '',
-                                   ...rest
-                                 }: { indeterminate?: boolean } & React.HTMLProps<HTMLInputElement>) {
-    const ref = React.useRef<HTMLInputElement>(null!);
-
-    useEffect(() => {
-      if (typeof indeterminate === 'boolean') {
-        ref.current.indeterminate = !rest.checked && indeterminate;
-      }
-    }, [ref, indeterminate]);
-
-    return (
-      <input
-        onClick={(event) => {
-          event.stopPropagation();
-        }}
-        type="checkbox"
-        ref={ref}
-        className={className + ' cursor-pointer rounded-sm m-2'}
-        {...rest}
-      />
-    );
-  }
-
-  const selectContainerStyles = xcss({
-    flex: '0 0 200px',
-    marginInlineStart: 'space.100',
-  });
-
   const flexBoxStyles = xcss({
     flex: '0 0 20px',
   });
 
   const actionsContent = (
     <ButtonGroup label="Content actions">
+      <TextField isCompact placeholder="Filter" aria-label="Filter" />
       <Button appearance="primary" iconBefore={PlusIcon} onClick={handleNewFlow}>Add New</Button>
-      <Button>...</Button>
+      <Button appearance="subtle" iconBefore={PreferencesIcon} onClick={openSettings}>&nbsp;</Button>
     </ButtonGroup>
-  );
-  const barContent = (
-    <Inline>
-      <Box xcss={flexBoxStyles}>
-        <TextField isCompact placeholder="Filter" aria-label="Filter" />
-      </Box>
-      <Box xcss={selectContainerStyles}>
-        <Select
-          spacing="compact"
-          placeholder="Choose an option"
-          aria-label="Choose an option"
-        />
-      </Box>
-    </Inline>
   );
 
   const createHead = (withWidth: boolean) => {
@@ -205,6 +176,17 @@ const WorkflowTable = () => {
           content: 'Last Modified',
           shouldTruncate: true,
         },
+        {
+          key: 'status',
+          content: 'Status',
+          shouldTruncate: true,
+        },
+        {
+          key: 'actions',
+          content: 'Actions',
+          shouldTruncate: true,
+          width: withWidth ? 200 : undefined,
+        }
       ],
     };
   };
@@ -249,6 +231,24 @@ const WorkflowTable = () => {
           </div>
         ),
       },
+      {
+        key: `status-${flow.id}`,
+        content: (
+          <div className="flex flex-row items-center space-x-2 truncate">
+            <SimpleTag
+              appearance="rounded"
+              text={flow.status}
+              color={flow.status === WorkflowStatus.ACTIVE ? 'green' : 'standard'}
+            />
+          </div>
+        ),
+      },
+      {
+        key: `actions-${flow.id}`,
+        content: (
+          <FlowContextMenu flow={flow} />
+        ),
+      }
     ],
   })), [workflows]);
 
@@ -259,17 +259,19 @@ const WorkflowTable = () => {
     }
   };
 
-  useEffect(() => setLoadCounter(0), [currentWorkspace]);
+  useEffect(() => {
+    setLoadCounter(0);
+    runQuery();
+  }, [currentWorkspace]);
 
   const head = createHead(false);
   return (
     <Fragment>
       <PageHeader
         actions={actionsContent}
-        bottomBar={barContent}
       >
         <div>
-          Flows for Workspace {workspaceName}
+          Flows for Workspace: {workspaceName}
         </div>
       </PageHeader>
 
@@ -289,9 +291,8 @@ const WorkflowTable = () => {
         emptyView={
             <EmptyState
               header="No flows available for workspace"
-              description="Click below to add a flow."
+              description="Click above to add a flow."
               headingLevel={2}
-              primaryAction={<Button appearance="primary" onClick={handleNewFlow}>Add Flow</Button>}
             />
         }
       />

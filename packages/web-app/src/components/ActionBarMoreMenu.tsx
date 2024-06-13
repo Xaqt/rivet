@@ -4,9 +4,7 @@ import { type FC, useRef } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useLoadRecording } from '../hooks/useLoadRecording';
 import { debuggerPanelOpenState } from '../state/ui';
-import { settingsModalOpenState } from './SettingsModal';
 import LinkIcon from 'majesticons/line/link-circle-line.svg?react';
-import GearIcon from 'majesticons/line/settings-cog-line.svg?react';
 import ForwardCircleIcon from 'majesticons/line/forward-circle-line.svg?react';
 import CopyIcon from 'majesticons/line/clipboard-plus-line.svg?react';
 
@@ -48,7 +46,6 @@ export const ActionBarMoreMenu: FC<{
   onCopyAsTestCase: () => void;
 }> = ({ onClose, onCopyAsTestCase }) => {
   const dropdownTarget = useRef<HTMLDivElement>(null);
-  const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
   const setDebuggerPanelOpen = useSetRecoilState(debuggerPanelOpenState);
   const { loadRecording } = useLoadRecording();
 
@@ -59,11 +56,6 @@ export const ActionBarMoreMenu: FC<{
 
   const doLoadRecording = () => {
     loadRecording();
-    onClose();
-  };
-
-  const openSettings = () => {
-    setSettingsOpen(true);
     onClose();
   };
 
@@ -80,9 +72,6 @@ export const ActionBarMoreMenu: FC<{
       </div>
       <div className="menu-item menu-item-button copy-inputs-as-trivet-json" onClick={onCopyAsTestCase}>
         <CopyIcon /> Copy Inputs for Trivet
-      </div>
-      <div className="menu-item menu-item-button settings" onClick={openSettings}>
-        <GearIcon /> Settings
       </div>
     </div>
   );

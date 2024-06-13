@@ -2,8 +2,8 @@ import { css } from '@emotion/react';
 import type React from 'react';
 import { type FC, useState, Fragment } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import Spinner from '@atlaskit/spinner';
 import LeftIcon from 'majesticons/line/chevron-left-line.svg?react';
-import BlankFileIcon from 'majesticons/line/file-line.svg?react';
 import SettingsCogIcon from 'majesticons/line/settings-cog-line.svg?react';
 import ExportIcon from '@atlaskit/icon/glyph/export';
 import CopyIcon from '@atlaskit/icon/glyph/copy';
@@ -25,12 +25,16 @@ import {
 } from '../state/ui';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 import { useStableCallback } from '../hooks/useStableCallback';
-import { type MenuIds, useRunMenuCommand } from '../hooks/useMenuCommands';
+import { useRunMenuCommand } from '../hooks/useMenuCommands';
 import { EditProjectModalRenderer } from './EditProjectModal';
 import { Asterisk } from '../assets/icons/asterisk';
 import { SaveIcon } from '../assets/icons/save-icon';
 import FileImportIcon from '../assets/icons/file-import-icon';
 import { DeleteWorkflowModalRenderer } from '../pages/flows/DeleteWorkflowModal';
+import Button from '@atlaskit/button';
+import { useSaveFlow } from '../hooks/useSaveFlow';
+import { getError } from '../utils/errors';
+import { toast } from 'react-toastify';
 
 export const styles = css`
     position: absolute;
@@ -47,22 +51,6 @@ export const styles = css`
     display: flex;
     justify-content: space-between;
     align-items: center;
-
-    .projects-container {
-        display: flex;
-        flex: 1;
-        width: 100%;
-        overflow: hidden;
-    }
-
-    .projects {
-        display: flex;
-        align-items: stretch;
-        height: 100%;
-        gap: 1px;
-        padding-right: 1px;
-        width: 100%;
-    }
     
     .project-inputs {
         margin-right: auto;
@@ -75,16 +63,16 @@ export const styles = css`
     
     .title-name {
         padding-left: 10px;
-        font-size: 16px;
         color: var(--grey-light);
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
     }
     
     span.title-name {
         flex: 1;
-        min-width: 220px;
+        min-width: 260px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     
     button {
@@ -94,120 +82,28 @@ export const styles = css`
     > .actions {
         display: flex;
         align-items: center;
-        gap: 8px;
-        margin-right: 8px;
+        justify-content: center;
+        margin-right: 5px;
 
         button {
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            margin: 0;
-            border-radius: 5px;
-            background: transparent;
-            padding: 8px;
-            width: 32px;
-            height: 32px;
-            justify-content: center;
-
             svg {
-                width: 16px;
-                height: 16px;
+                width: 24px;
+                height: 24px;
             }
         }
 
-    }
-
-    .draggableProject {
-        display: flex;
-        min-width: 50px;
-        flex-shrink: 1;
-    }
-
-    .project {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0 6px 0 12px;
-        cursor: pointer;
-        user-select: none;
-        gap: 8px;
-        font-size: 12px;
-        height: calc(100% + 1px);
-        margin-bottom: -1px;
-        background: var(--grey-darkerish);
-        border-bottom: 1px solid var(--grey);
-        flex-shrink: 1;
-        min-width: 50px;
-        position: relative;
-
-        svg {
-            width: 12px;
-            height: 12px;
-        }
-
-        .project-name {
-            display: flex;
-            align-items: center;
-            align-self: stretch;
-            overflow: hidden;
-            gap: 8px;
-            min-width: 50px;
-            flex-shrink: 1;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-
-            > span {
-                min-width: 50px;
-                flex-shrink: 1;
-            }
-        }
-
-        &:hover {
-            background-color: var(--grey-darkish);
-            border-bottom: 1px solid var(--grey);
-        }
-
-        &.active {
-            background-color: var(--grey-darkish);
-            border-bottom: 1px solid var(--primary);
-        }
-
-        &.unsaved {
-            font-style: italic;
-        }
-
-        > .actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            visibility: hidden;
-        }
-
-        &:hover .actions {
-            visibility: visible;
-        }
-    }
-
-    .project::after {
-        content: '';
-        display: block;
-        position: absolute;
-        right: -1px;
-        width: 1px;
-        background-color: var(--grey-darkest);
-        height: 100%;
     }
 `;
 
 export const ProjectSelector: FC = () => {
-  const [flow, setFlow] = useRecoilState(flowState);
-  const [project, setProject] = useRecoilState(projectState);
+  const project= useRecoilValue(projectState);
   const [title, setTitle] = useState(project?.metadata.title);
   const loadedState = useRecoilValue(loadedProjectState);
   const setEditProjectModalOpen = useSetRecoilState(editProjectModalOpenState);
   const [, setOpenOverlay] = useRecoilState(overlayOpenState);
   const [deleteProjectModalOpen, setDeleteProjectModalOpen] = useRecoilState(deleteFlowModalOpenState);
+  const [saving, setSaving] = useState(false);
+  const { saveFlow, updateFlow } = useSaveFlow();
 
   const runMenuCommandImpl = useRunMenuCommand();
 
@@ -246,25 +142,27 @@ export const ProjectSelector: FC = () => {
     gotoList();
   }
 
+  function handleSave() {
+    setSaving(true);
+    saveFlow()
+      .catch((e) => {
+        const msg = getError(e).message;
+        toast.error(`Failed to save project: ${msg}`);
+      })
+      .finally(() => setSaving(false));
+  }
+
   function handleDelete() {
     setDeleteProjectModalOpen(true);
   }
 
   const ProjectDropdownMenu = () => {
-    function getHandler(cmd: MenuIds) {
-      const handler = (e: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>) => {
-        runMenuCommand(cmd);
-        e.preventDefault();
-      };
-      return handler;
-    }
-
     return (
       <DropdownMenu<HTMLButtonElement>
         trigger={({ triggerRef, ...props }) => (
-          <button {...props} ref={triggerRef}>
-            <SettingsCogIcon />
-          </button>
+          <Button {...props} ref={triggerRef} appearance="subtle" isDisabled={saving}>
+            <SettingsCogIcon width={24} height={24} />
+          </Button>
         )}
         shouldFlip={true}
         shouldRenderToParent>
@@ -288,14 +186,14 @@ export const ProjectSelector: FC = () => {
         <div className="project-inputs">
           {!loadedState.saved && <Asterisk />}
           <span className="title-name">{title}</span>
-          <button onClick={handleEditFlow}>
+          <Button onClick={handleEditFlow} appearance="subtle" isDisabled={saving}>
             <EditIcon label="edit" />
-          </button>
+          </Button>
         </div>
-        <div className="projects-container">
-          <div className="projects">
-          </div>
-          <SaveIcon onClick={() => runMenuCommand('save_flow')} />
+        <div className="actions">
+          <Button appearance="subtle">
+            {saving ? <Spinner size="small" /> : <SaveIcon onClick={handleSave} />}
+          </Button>
           <ProjectDropdownMenu />
         </div>
       </div>

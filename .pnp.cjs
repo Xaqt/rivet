@@ -667,7 +667,7 @@ const RAW_RUNTIME_STATE =
           ["@atlaskit/interaction-context", "virtual:2c83216130a5f722092487e81886f996df611690f14c323452aeaa5f7bae6e8347e8a39b4818fcdcd7bfce53e56e25ad6afc1956de9728b2a6abadcb3eee0a45#npm:2.1.0"],\
           ["@atlaskit/platform-feature-flags", "npm:0.2.5"],\
           ["@atlaskit/primitives", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:6.5.0"],\
-          ["@atlaskit/spinner", "virtual:dc335cdd71ec3bb40a5a99c2d6fdff7d48eb0a11af14bb5c9d5241821ff5aa8048cfbe21e6ca928506b99ea10ae8d162ae4c30db2a89f328408265c38190d7be#npm:16.1.0"],\
+          ["@atlaskit/spinner", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:16.1.0"],\
           ["@atlaskit/theme", "virtual:dc335cdd71ec3bb40a5a99c2d6fdff7d48eb0a11af14bb5c9d5241821ff5aa8048cfbe21e6ca928506b99ea10ae8d162ae4c30db2a89f328408265c38190d7be#npm:12.8.0"],\
           ["@atlaskit/tokens", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:1.49.1"],\
           ["@atlaskit/tooltip", "virtual:dc335cdd71ec3bb40a5a99c2d6fdff7d48eb0a11af14bb5c9d5241821ff5aa8048cfbe21e6ca928506b99ea10ae8d162ae4c30db2a89f328408265c38190d7be#npm:18.4.1"],\
@@ -850,7 +850,7 @@ const RAW_RUNTIME_STATE =
           ["@atlaskit/menu", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:2.4.0"],\
           ["@atlaskit/popup", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:1.17.2"],\
           ["@atlaskit/primitives", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:6.5.0"],\
-          ["@atlaskit/spinner", "virtual:dc335cdd71ec3bb40a5a99c2d6fdff7d48eb0a11af14bb5c9d5241821ff5aa8048cfbe21e6ca928506b99ea10ae8d162ae4c30db2a89f328408265c38190d7be#npm:16.1.0"],\
+          ["@atlaskit/spinner", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:16.1.0"],\
           ["@atlaskit/theme", "virtual:dc335cdd71ec3bb40a5a99c2d6fdff7d48eb0a11af14bb5c9d5241821ff5aa8048cfbe21e6ca928506b99ea10ae8d162ae4c30db2a89f328408265c38190d7be#npm:12.8.0"],\
           ["@atlaskit/tokens", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:1.49.1"],\
           ["@babel/runtime", "npm:7.22.5"],\
@@ -974,7 +974,7 @@ const RAW_RUNTIME_STATE =
           ["@atlaskit/ds-lib", "virtual:dc335cdd71ec3bb40a5a99c2d6fdff7d48eb0a11af14bb5c9d5241821ff5aa8048cfbe21e6ca928506b99ea10ae8d162ae4c30db2a89f328408265c38190d7be#npm:2.3.1"],\
           ["@atlaskit/pagination", "virtual:3cb51330f6adcfb34cbd0021d50d6882734f0827f2a0c10b29b899ece610bae7fd4f8ce543964640d67e21235c9de174ea86d4f6bba9b1232862cad56d7a757b#npm:14.7.2"],\
           ["@atlaskit/platform-feature-flags", "npm:0.2.5"],\
-          ["@atlaskit/spinner", "virtual:dc335cdd71ec3bb40a5a99c2d6fdff7d48eb0a11af14bb5c9d5241821ff5aa8048cfbe21e6ca928506b99ea10ae8d162ae4c30db2a89f328408265c38190d7be#npm:16.1.0"],\
+          ["@atlaskit/spinner", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:16.1.0"],\
           ["@atlaskit/theme", "virtual:dc335cdd71ec3bb40a5a99c2d6fdff7d48eb0a11af14bb5c9d5241821ff5aa8048cfbe21e6ca928506b99ea10ae8d162ae4c30db2a89f328408265c38190d7be#npm:12.8.0"],\
           ["@atlaskit/tokens", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:1.49.1"],\
           ["@babel/runtime", "npm:7.22.5"],\
@@ -1007,7 +1007,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@atlaskit/empty-state", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:7.8.0"],\
           ["@atlaskit/button", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:17.17.1"],\
-          ["@atlaskit/spinner", "virtual:dc335cdd71ec3bb40a5a99c2d6fdff7d48eb0a11af14bb5c9d5241821ff5aa8048cfbe21e6ca928506b99ea10ae8d162ae4c30db2a89f328408265c38190d7be#npm:16.1.0"],\
+          ["@atlaskit/spinner", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:16.1.0"],\
           ["@atlaskit/theme", "virtual:dc335cdd71ec3bb40a5a99c2d6fdff7d48eb0a11af14bb5c9d5241821ff5aa8048cfbe21e6ca928506b99ea10ae8d162ae4c30db2a89f328408265c38190d7be#npm:12.8.0"],\
           ["@atlaskit/tokens", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:1.49.1"],\
           ["@babel/runtime", "npm:7.22.5"],\
@@ -2261,7 +2261,7 @@ const RAW_RUNTIME_STATE =
           ["@atlaskit/icon", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:22.3.1"],\
           ["@atlaskit/platform-feature-flags", "npm:0.2.4"],\
           ["@atlaskit/primitives", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:6.5.0"],\
-          ["@atlaskit/spinner", "virtual:dc335cdd71ec3bb40a5a99c2d6fdff7d48eb0a11af14bb5c9d5241821ff5aa8048cfbe21e6ca928506b99ea10ae8d162ae4c30db2a89f328408265c38190d7be#npm:16.1.0"],\
+          ["@atlaskit/spinner", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:16.1.0"],\
           ["@atlaskit/theme", "virtual:dc335cdd71ec3bb40a5a99c2d6fdff7d48eb0a11af14bb5c9d5241821ff5aa8048cfbe21e6ca928506b99ea10ae8d162ae4c30db2a89f328408265c38190d7be#npm:12.8.0"],\
           ["@atlaskit/tokens", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:1.49.1"],\
           ["@atlaskit/visually-hidden", "virtual:dc335cdd71ec3bb40a5a99c2d6fdff7d48eb0a11af14bb5c9d5241821ff5aa8048cfbe21e6ca928506b99ea10ae8d162ae4c30db2a89f328408265c38190d7be#npm:1.3.0"],\
@@ -2384,10 +2384,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["virtual:dc335cdd71ec3bb40a5a99c2d6fdff7d48eb0a11af14bb5c9d5241821ff5aa8048cfbe21e6ca928506b99ea10ae8d162ae4c30db2a89f328408265c38190d7be#npm:16.1.0", {\
-        "packageLocation": "./.yarn/__virtual__/@atlaskit-spinner-virtual-fa79670471/0/cache/@atlaskit-spinner-npm-16.1.0-b7941e516e-35594b1a3d.zip/node_modules/@atlaskit/spinner/",\
+      ["virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:16.1.0", {\
+        "packageLocation": "./.yarn/__virtual__/@atlaskit-spinner-virtual-4d64c2fa93/0/cache/@atlaskit-spinner-npm-16.1.0-b7941e516e-35594b1a3d.zip/node_modules/@atlaskit/spinner/",\
         "packageDependencies": [\
-          ["@atlaskit/spinner", "virtual:dc335cdd71ec3bb40a5a99c2d6fdff7d48eb0a11af14bb5c9d5241821ff5aa8048cfbe21e6ca928506b99ea10ae8d162ae4c30db2a89f328408265c38190d7be#npm:16.1.0"],\
+          ["@atlaskit/spinner", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:16.1.0"],\
           ["@atlaskit/interaction-context", "virtual:2c83216130a5f722092487e81886f996df611690f14c323452aeaa5f7bae6e8347e8a39b4818fcdcd7bfce53e56e25ad6afc1956de9728b2a6abadcb3eee0a45#npm:2.1.0"],\
           ["@atlaskit/theme", "virtual:dc335cdd71ec3bb40a5a99c2d6fdff7d48eb0a11af14bb5c9d5241821ff5aa8048cfbe21e6ca928506b99ea10ae8d162ae4c30db2a89f328408265c38190d7be#npm:12.8.0"],\
           ["@atlaskit/tokens", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:1.49.1"],\
@@ -8853,6 +8853,7 @@ const RAW_RUNTIME_STATE =
           ["@atlaskit/range", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:7.1.7"],\
           ["@atlaskit/select", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:17.10.2"],\
           ["@atlaskit/side-navigation", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:3.2.0"],\
+          ["@atlaskit/spinner", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:16.1.0"],\
           ["@atlaskit/tabs", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:16.1.1"],\
           ["@atlaskit/tag", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:12.2.2"],\
           ["@atlaskit/tag-group", "virtual:978483cc68fa4d3b75a1fb8ba55579def3c4e5d9013051550c5ddde81e42555f625aa1ef3c4101efdffd3665234a56f83c8d63bd84734dc5956891d9a392b94e#npm:10.3.0"],\

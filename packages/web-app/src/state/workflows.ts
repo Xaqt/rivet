@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 import { recoilPersist } from "recoil-persist";
-import { type FindWorkflowsDto, type Workflow } from '../api/types';
+import { type FindWorkflowsDto, type Workflow, WorkflowImpl } from '../api/types';
 
 const { persistAtom: flowSearchPersistAtom } = recoilPersist({ key: 'flow-search' });
 

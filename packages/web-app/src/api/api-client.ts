@@ -394,8 +394,8 @@ export const workflowApi = {
       return api.get<Workflow>(`/workflows/${workflowId}`)
         .then(processResponse<Workflow>);
   },
-  create: async (workspaceId: string, body: WorkflowCreateDto): Promise<Workflow> => {
-      return await api.post<Workflow>(`/${workspaceId}/workflows`, body)
+  create: async (body: WorkflowCreateDto): Promise<Workflow> => {
+      return await api.post<Workflow>(`/workflows`, body)
         .then(processResponse<Workflow>);
   },
   delete: async (workflowId: string) => {

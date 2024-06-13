@@ -16,8 +16,8 @@ import { useWorkflows } from './useWorkflows';
 
 export type MenuIds =
   | 'settings'
-  | 'new_project'
-  | 'open_project'
+  | 'new_graph'
+  | 'open_flow'
   | 'save_flow'
   | 'duplicate_flow'
   | 'export_graph'
@@ -47,7 +47,7 @@ export function useMenuCommands(
   } = {},
 ) {
   const [graphData, setGraphData] = useRecoilState(graphState);
-  const { saveFlow, updateFlow } = useSaveFlow();
+  const { saveFlow } = useSaveFlow();
   const setNewProjectModalOpen = useSetRecoilState(newProjectModalOpenState);
   const loadProject = useLoadProjectWithFileBrowser();
   const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
@@ -67,10 +67,10 @@ export function useMenuCommands(
         .with('settings', () => {
           setSettingsOpen(true);
         })
-        .with('new_project', () => {
+        .with('new_graph', () => {
           setNewProjectModalOpen(true);
         })
-        .with('open_project', () => {
+        .with('open_flow', () => {
           loadProject();
         })
         .with('save_flow', () => {

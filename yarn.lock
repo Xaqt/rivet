@@ -5136,6 +5136,7 @@ __metadata:
     "@atlaskit/range": "npm:^7.1.7"
     "@atlaskit/select": "npm:^17.10.2"
     "@atlaskit/side-navigation": "npm:^3.2.0"
+    "@atlaskit/spinner": "npm:^16.1.0"
     "@atlaskit/tabs": "npm:^16.1.1"
     "@atlaskit/tag": "npm:^12.2.2"
     "@atlaskit/tag-group": "npm:^10.3.0"

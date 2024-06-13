@@ -1,9 +1,9 @@
-import { useState, type FC, useRef, useEffect } from 'react';
+import { type FC, useRef, useEffect } from 'react';
 import { css } from '@emotion/react';
 import { useTotalRunCost } from '../hooks/useTotalRunCost';
 import { useRecoilValue } from 'recoil';
 import { graphRunningState, graphStartTimeState } from '../state/dataFlow';
-import { useInterval, useLatest } from 'ahooks';
+import { useLatest } from 'ahooks';
 import prettyMs from 'pretty-ms';
 
 const styles = css`

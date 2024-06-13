@@ -49,6 +49,11 @@ export const deleteFlowModalOpenState = atom<boolean>({
   default: false,
 });
 
+export const deleteGraphModalOpenState = atom<boolean>({
+  key: 'deleteGraphModalOpenState',
+  default: false,
+});
+
 export const helpModalOpenState = atom<boolean>({
   key: 'helpModalOpenState',
   default: false,

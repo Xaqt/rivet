@@ -1,16 +1,16 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, Fragment } from 'react';
+import type React from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import ShortcutIcon from '@atlaskit/icon/core/shortcut';
 import { type FindWorkflowsDto, type Workflow, WorkflowStatus } from '../../api/types';
 import { Pagination } from '../../components/common/Pagination';
 import { DownloadWorkflow } from './DownloadWorkflow';
 import { formatDate } from '../../utils/time';
-import { useDebounce, useDebounceFn } from 'ahooks';
+import { useDebounceFn } from 'ahooks';
 import PageHeader from '@atlaskit/page-header';
 import { SimpleTag } from '@atlaskit/tag';
 import TagGroup from '@atlaskit/tag-group';
-import RefreshIcon from '@atlaskit/icon/glyph/refresh';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { workspaceState } from '../../state/auth';
 import { DynamicTableStateless } from '@atlaskit/dynamic-table';
@@ -19,7 +19,6 @@ import { workflowListState, workflowSearchCriteriaState } from '../../state/work
 import { workflowApi } from '../../api/api-client';
 import { toast } from 'react-toastify';
 import { getError } from '@ironclad/rivet-core';
-import ChildIssuesIcon from '@atlaskit/icon/glyph/child-issues';
 import Button from '@atlaskit/button/new';
 import EmptyState from '@atlaskit/empty-state';
 import { ButtonGroup } from '@atlaskit/button';
@@ -27,18 +26,48 @@ import { Box, Inline, xcss } from '@atlaskit/primitives';
 import TextField from '@atlaskit/textfield';
 import PlusIcon from '@atlaskit/icon/glyph/add';
 import { newProjectModalOpenState, overlayOpenState } from '../../state/ui';
-import { type MenuIds, useRunMenuCommand } from '../../hooks/useMenuCommands';
 import { FlowContextMenu } from './FlowContextMenu';
-import PreferencesIcon from '@atlaskit/icon/glyph/preferences'
+import PreferencesIcon from '@atlaskit/icon/glyph/preferences';
 import { settingsModalOpenState } from '../../components/SettingsModal';
-import { useRemoteDebugger } from '../../hooks/useRemoteDebugger';
+import { css } from '@emotion/react';
+import DeleteWorkflowModal from './DeleteWorkflowModal';
+import { EditFlowModal } from '../../components/EditProjectModal';
+
+const styles = css`
+  .context-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .context-list-item {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 8px;
+      border-bottom: 1px solid var(--grey-darkish);
+      border-left: 2px solid var(--grey-darkish);
+    }
+  }
+
+  .context-list-actions {
+    margin-top: 8px;
+  }
+    
+  .workflow-list-container {
+    display: flex;
+    min-height: 75vh;
+    flex-direction: column;
+  }  
+`;
 
 const WorkflowTable = () => {
   const [loading, setLoading] = useState(false);
   const currentWorkspace = useRecoilValue(workspaceState);
   const [searchCriteria, setSearchCriteria] = useRecoilState(workflowSearchCriteriaState);
   const setNewProjectModalOpen = useSetRecoilState(newProjectModalOpenState);
-  const [workflows, updateWorkflows] = useRecoilState(workflowListState);
+  const [workflows, setWorkflows] = useRecoilState(workflowListState);
   const [pageIndex, setPageIndex] = useState(searchCriteria.page ?? 1);
   const [pageSize, setPageSize] = useState(searchCriteria.page_size || 20);
   const [totalCount, setTotalCount] = useState(0);
@@ -46,14 +75,7 @@ const WorkflowTable = () => {
   const [workspaceName, setWorkspaceName] = useState(currentWorkspace?.workspace_name || '');
   const [, setOpenOverlay] = useRecoilState(overlayOpenState);
   const [searchTerm, setSearchTerm] = useState<string>(searchCriteria.name || '');
-  const debouncedSearchTerm = useDebounce(searchTerm, { wait: 500 });
   const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
-  
-  const runMenuCommandImpl = useRunMenuCommand();
-  
-  const runCommand = (cmd: MenuIds) => {
-    runMenuCommandImpl(cmd);
-  };
   
   const [selectedWorkflow, setSelectedWorkflow] =
     useState<Workflow>();
@@ -61,7 +83,8 @@ const WorkflowTable = () => {
   const [clearTrigger, setClearTrigger] = useState(0);
 
   const [openDownloadModal, setOpenDownloadModal] = useState(false);
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [loadCounter, setLoadCounter] = useState<number>(0);
 
   const { run: runQuery, cancel: cancelQuery } = useDebounceFn((criteria?: FindWorkflowsDto) => {
@@ -70,7 +93,7 @@ const WorkflowTable = () => {
     workflowApi.find(workspaceId, findCriteria)
       .then((res) => {
         setTotalCount(res.total_count);
-        updateWorkflows(res.flows || []);
+        setWorkflows(res.flows || []);
         setSearchCriteria(findCriteria);
         return res;
       }).catch(err => {
@@ -114,6 +137,29 @@ const WorkflowTable = () => {
   const openSettings = () => {
     setSettingsOpen(true);
     console.log('open settings');
+  };
+
+  function handleSetPage(page: number) {
+    setPageIndex(page);
+    fetchWorkflows({ page });
+  }
+
+  function handleSetPageSize(size: number) {
+    setPageSize(size);
+    fetchWorkflows({ page_size: size });
+  }
+
+  function gotoGraphEditor(flow: Workflow) {
+
+  }
+
+  function handleSort({ key, sortOrder }: any) {
+    const order = !sortOrder ? 'asc' : (sortOrder === 'ASC' ? 'asc' : 'desc');
+    fetchWorkflows({ order_by: key, order });
+  }
+
+  function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setSearchTerm(e.target.value);
   }
 
   const handleDownloadWorkflow = (
@@ -130,6 +176,59 @@ const WorkflowTable = () => {
     setNewProjectModalOpen(true);
     setOpenOverlay(undefined);
   };
+
+  function beginDeleteFlow(flow: Workflow) {
+    setSelectedWorkflow(flow);
+    setDeleteDialogOpen(true);
+  }
+
+  function beginEditFlow(flow: Workflow) {
+    setSelectedWorkflow(flow);
+    setEditDialogOpen(true);
+  }
+
+  function closeDeleteModal() {
+    setDeleteDialogOpen(false);
+  }
+
+  function onFLowDeleted() {
+    setDeleteDialogOpen(false);
+    fetchWorkflows();
+  }
+
+  function closeEditModal() {
+    setEditDialogOpen(false);
+  }
+
+  function onEditUpdate(update: Workflow) {
+    const id = selectedWorkflow?.id;
+    if (!id) {
+      return;
+    }
+    const existing = workflows.find((flow) => flow.id === id);
+    if (existing) {
+      const title = update.name;
+      const description = update.description;
+      const mainGraphId = update.project.metadata.mainGraphId;
+      existing.name = title;
+      existing.description = description;
+      existing.project.metadata.title = title;
+      existing.project.metadata.mainGraphId = mainGraphId;
+      setLoading(true);
+      workflowApi.update(id, existing).then((updated) => {
+        const idx = workflows.findIndex((flow) => flow.id === id);
+        if (idx >= 0) {
+          const flows = [...workflows];
+          flows[idx] = updated;
+          setWorkflows(flows);
+        }
+        toast.success('Flow updated');
+      }).catch((e) => {
+        const msg = getError(e).message;
+        toast.error(`Failed to update flow: ${msg}`);
+      }).finally(() => setLoading(false));
+    }
+  }
 
   const flexBoxStyles = xcss({
     flex: '0 0 20px',
@@ -198,14 +297,18 @@ const WorkflowTable = () => {
       {
         key: `name-${flow.id}`,
         content: (
-          <div className="flex flex-row items-center space-x-2 truncate">
+          <div className="flex flex-row items-center space-x-2 truncate" onClick={() => gotoGraphEditor(flow)}>
             <div className="">{flow.name}</div>
           </div>
         ),
       },
       {
         key: `desc-${flow.id}`,
-        content: flow.description,
+        content: (
+          <div className="workflow-description">
+            {flow.description}
+          </div>
+        )
       },
       {
         key: `tags-${flow.id}`,
@@ -246,18 +349,14 @@ const WorkflowTable = () => {
       {
         key: `actions-${flow.id}`,
         content: (
-          <FlowContextMenu flow={flow} />
+          <FlowContextMenu
+            flow={flow}
+            onStartEdit={beginEditFlow}
+            onStartDelete={beginDeleteFlow}/>
         ),
       }
     ],
   })), [workflows]);
-
-  const fetchWorkflowsWithFilter = () => {
-    if (currentWorkspace && !loading) {
-      fetchWorkflows();
-      setLoadCounter((prevCounter) => prevCounter + 1);
-    }
-  };
 
   useEffect(() => {
     setLoadCounter(0);
@@ -266,52 +365,38 @@ const WorkflowTable = () => {
 
   const head = createHead(false);
   return (
-    <Fragment>
+    <div css={styles}>
       <PageHeader
         actions={actionsContent}
       >
         <div>
-          Flows for Workspace: {workspaceName}
+          Flows: {workspaceName}
         </div>
       </PageHeader>
 
-      <DynamicTableStateless
-        rows={rows}
-        head={head}
-        rowsPerPage={pageSize}
-        page={pageIndex}
-        totalRows={totalCount}
-        loadingSpinnerSize="large"
-        isLoading={loading}
-        isFixedSize
-        sortKey="updated_at"
-        sortOrder="DESC"
-        onSort={() => console.log('onSort')}
-        onSetPage={() => console.log('onSetPage')}
-        emptyView={
+      <div className="workflow-list-container">
+        <DynamicTableStateless
+          rows={rows}
+          head={head}
+          rowsPerPage={pageSize}
+          page={pageIndex}
+          totalRows={totalCount}
+          loadingSpinnerSize="large"
+          isLoading={loading}
+          isFixedSize
+          sortKey="updated_at"
+          sortOrder="DESC"
+          onSort={handleSort}
+          onSetPage={handleSetPage}
+          emptyView={
             <EmptyState
               header="No flows available for workspace"
               description="Click above to add a flow."
               headingLevel={2}
             />
-        }
-      />
-
-      {openDownloadModal && (
-      <ModalTransition>
-        <Modal onClose={handleCloseDownloadModal}>
-          <ModalHeader>
-            <ModalTitle>Download</ModalTitle>
-          </ModalHeader>
-          <ModalBody>
-            <DownloadWorkflow
-              workflow={selectedWorkflow}
-              setOpenModal={setOpenDownloadModal}
-            />
-          </ModalBody>
-        </Modal>
-      </ModalTransition>
-      )}
+          }
+        />
+      </div>
 
       <div className="flex-grow">
         {/* Pagination */}
@@ -324,8 +409,40 @@ const WorkflowTable = () => {
           disabled={loading}
         />
       </div>
+      {openDownloadModal && (
+        <ModalTransition>
+          <Modal onClose={handleCloseDownloadModal}>
+            <ModalHeader>
+              <ModalTitle>Download</ModalTitle>
+            </ModalHeader>
+            <ModalBody>
+              <DownloadWorkflow
+                workflow={selectedWorkflow}
+                setOpenModal={setOpenDownloadModal}
+              />
+            </ModalBody>
+          </Modal>
+        </ModalTransition>
+      )}
 
-    </Fragment>
+      {selectedWorkflow &&
+        <DeleteWorkflowModal
+          workflow={selectedWorkflow}
+          isOpen={deleteDialogOpen}
+          onClose={closeDeleteModal}
+          onFlowDeleted={onFLowDeleted}/>
+      }
+
+      {selectedWorkflow &&
+        <EditFlowModal
+          flow={selectedWorkflow}
+          isOpen={editDialogOpen}
+          onClose={closeEditModal}
+          onSubmit={onEditUpdate}
+        />
+      }
+
+    </div>
   );
 };
 

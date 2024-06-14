@@ -18,23 +18,22 @@ import {
 } from '../state/savedGraphs';
 import { useLoadProjectWithFileBrowser } from '../hooks/useLoadProjectWithFileBrowser';
 import {
-  deleteFlowModalOpenState,
-  editProjectModalOpenState,
   newProjectModalOpenState,
   overlayOpenState,
 } from '../state/ui';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { useRunMenuCommand } from '../hooks/useMenuCommands';
-import { EditProjectModalRenderer } from './EditProjectModal';
+import { EditFlowModal } from './EditProjectModal';
 import { Asterisk } from '../assets/icons/asterisk';
 import { SaveIcon } from '../assets/icons/save-icon';
 import FileImportIcon from '../assets/icons/file-import-icon';
-import { DeleteWorkflowModalRenderer } from '../pages/flows/DeleteWorkflowModal';
+import DeleteWorkflowModal from '../pages/flows/DeleteWorkflowModal';
 import Button from '@atlaskit/button';
 import { useSaveFlow } from '../hooks/useSaveFlow';
 import { getError } from '../utils/errors';
 import { toast } from 'react-toastify';
+import { type Workflow } from '../api/types';
 
 export const styles = css`
     position: absolute;
@@ -69,6 +68,8 @@ export const styles = css`
     
     span.title-name {
         flex: 1;
+        font-weight: bold;
+        font-size: 18px;
         min-width: 260px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -77,6 +78,15 @@ export const styles = css`
     
     button {
         cursor: pointer;
+        svg {
+            width: 24px;
+            height: 24px;
+            opacity: 0.3;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
     }
 
     > .actions {
@@ -84,25 +94,19 @@ export const styles = css`
         align-items: center;
         justify-content: center;
         margin-right: 5px;
-
-        button {
-            svg {
-                width: 24px;
-                height: 24px;
-            }
-        }
-
     }
 `;
 
 export const ProjectSelector: FC = () => {
-  const project= useRecoilValue(projectState);
+  const [flow, setFlow] = useRecoilState(flowState);
+  const project = useRecoilValue(projectState);
   const [title, setTitle] = useState(project?.metadata.title);
-  const loadedState = useRecoilValue(loadedProjectState);
-  const setEditProjectModalOpen = useSetRecoilState(editProjectModalOpenState);
+  const [loadedState, setLoadedState] = useRecoilState(loadedProjectState);
   const [, setOpenOverlay] = useRecoilState(overlayOpenState);
-  const [deleteProjectModalOpen, setDeleteProjectModalOpen] = useRecoilState(deleteFlowModalOpenState);
   const [saving, setSaving] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
   const { saveFlow, updateFlow } = useSaveFlow();
 
   const runMenuCommandImpl = useRunMenuCommand();
@@ -134,11 +138,11 @@ export const ProjectSelector: FC = () => {
 
   function handleEditFlow(e: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>) {
     e.stopPropagation();
-    setEditProjectModalOpen(true);
+    setEditDialogOpen(true);
   }
 
   function onFLowDeleted() {
-    setDeleteProjectModalOpen(false);
+    setDeleteDialogOpen(false);
     gotoList();
   }
 
@@ -153,9 +157,48 @@ export const ProjectSelector: FC = () => {
   }
 
   function handleDelete() {
-    setDeleteProjectModalOpen(true);
+    setDeleteDialogOpen(true);
   }
 
+  function closeEditModal() {
+    setEditDialogOpen(false);
+  }
+
+  function closeDeleteModal() {
+    setDeleteDialogOpen(false);
+  }
+
+  function onFlowDeleted() {
+    setDeleteDialogOpen(false);
+    gotoList();
+  }
+
+  const handleEditUpdate = useStableCallback((update: Workflow) => {
+    // note!! only update title, description, and mainGraphId (todo: labels)
+    const title = update.name;
+    const description = update.description;
+    const mainGraphId = update.project.metadata.mainGraphId;
+    setFlow({
+      ...flow,
+      name: title,
+      description,
+      project: {
+        ...flow.project,
+        metadata: {
+          ...flow.project.metadata,
+          title,
+          description,
+          mainGraphId,
+        },
+      },
+    });
+    setTitle(title);
+    setLoadedState({
+      ...loadedState,
+      saved: false,
+    });
+  });
+  
   const ProjectDropdownMenu = () => {
     return (
       <DropdownMenu<HTMLButtonElement>
@@ -171,7 +214,9 @@ export const ProjectSelector: FC = () => {
           <DropdownItem elemBefore={<CopyIcon label="duplicate"/>} onClick={handleDuplicate}>Duplicate</DropdownItem>
           <DropdownItem elemBefore={<FileImportIcon width={24} height={24}/>}>Import</DropdownItem>
           <DropdownItem elemBefore={<ExportIcon label="export"/>}>Export</DropdownItem>
-          <DropdownItem elemBefore={<TrashIcon label="delete" />} onClick={handleDelete}>Delete</DropdownItem>
+          <DropdownItem elemBefore={<TrashIcon label="delete" />}
+                        isDisabled={saving || !loadedState.saved}
+                        onClick={handleDelete}>Delete</DropdownItem>
         </DropdownItemGroup>
       </DropdownMenu>
     );
@@ -180,9 +225,9 @@ export const ProjectSelector: FC = () => {
   return (
     <Fragment>
       <div css={styles}>
-        <button onClick={gotoList}>
+        <Button onClick={gotoList} appearance={"subtle"}>
           <LeftIcon />
-        </button>
+        </Button>
         <div className="project-inputs">
           {!loadedState.saved && <Asterisk />}
           <span className="title-name">{title}</span>
@@ -197,8 +242,10 @@ export const ProjectSelector: FC = () => {
           <ProjectDropdownMenu />
         </div>
       </div>
-      <EditProjectModalRenderer />
-      <DeleteWorkflowModalRenderer onFlowDeleted={onFLowDeleted}/>
+      <EditFlowModal flow={flow} isOpen={editDialogOpen} onClose={closeEditModal} onSubmit={handleEditUpdate}/>
+      {loadedState.saved &&
+        <DeleteWorkflowModal workflow={flow} isOpen={deleteDialogOpen} onClose={closeDeleteModal} onFlowDeleted={onFLowDeleted}/>
+      }
     </Fragment>
   );
 };

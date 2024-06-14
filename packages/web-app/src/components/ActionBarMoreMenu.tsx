@@ -6,7 +6,6 @@ import { useLoadRecording } from '../hooks/useLoadRecording';
 import { debuggerPanelOpenState } from '../state/ui';
 import LinkIcon from 'majesticons/line/link-circle-line.svg?react';
 import ForwardCircleIcon from 'majesticons/line/forward-circle-line.svg?react';
-import CopyIcon from 'majesticons/line/clipboard-plus-line.svg?react';
 
 const moreMenuStyles = css`
   background-color: var(--grey-darkish);
@@ -69,9 +68,6 @@ export const ActionBarMoreMenu: FC<{
       </div>
       <div className="menu-item menu-item-button load-recording" onClick={doLoadRecording}>
         <ForwardCircleIcon /> Load Recording
-      </div>
-      <div className="menu-item menu-item-button copy-inputs-as-trivet-json" onClick={onCopyAsTestCase}>
-        <CopyIcon /> Copy Inputs for Trivet
       </div>
     </div>
   );

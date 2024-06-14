@@ -24,6 +24,8 @@ import { overlayOpenState } from '../state/ui';
 import { useEnsureLoggedIn } from '../hooks/useEnsureLoggedIn';
 
 const styles = css`
+  padding-left: 5px;
+  padding-right: 5px;
   overflow: hidden;
 `;
 

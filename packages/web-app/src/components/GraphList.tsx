@@ -32,10 +32,13 @@ import { useDuplicateGraph } from '../hooks/useDuplicateGraph.js';
 import { useContextMenu } from '../hooks/useContextMenu.js';
 import Portal from '@atlaskit/portal';
 import EditLineIcon from 'majesticons/line/edit-pen-2-line.svg?react';
+import ChevronRightIcon from '@atlaskit/icon/glyph/chevron-right-large';
+import ChevronDownIcon from '@atlaskit/icon/glyph/chevron-down';
 import ArrowRightIcon from 'majesticons/line/arrow-right-line.svg?react';
 import ArrowDownIcon from 'majesticons/line/arrow-down-line.svg?react';
 import MenuLineIcon from 'majesticons/line/menu-line.svg?react';
 import CrossIcon from 'majesticons/line/multiply-line.svg?react';
+import SearchIcon from '@atlaskit/icon/glyph/search'
 import { toast } from 'react-toastify';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import TextField from '@atlaskit/textfield';
@@ -57,6 +60,7 @@ const styles = css`
   }
 
   .graph-list {
+    padding-left: 4px;
     overflow-y: auto;
     overflow-x: hidden;
     flex: 1 1 auto;
@@ -157,6 +161,13 @@ const styles = css`
       }
     }
 
+    .expander {
+        svg {
+            width: 18px;
+            height: 18px;
+        }        
+    }
+      
     .clear {
       position: absolute;
       right: 8px;
@@ -176,8 +187,8 @@ const styles = css`
       }
 
       svg {
-        width: 12px;
-        height: 12px;
+        width: 16px;
+        height: 16px;
       }
     }
   }
@@ -538,6 +549,11 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo((
             <CrossIcon />
           </button>
         )}
+        {searchText.length === 0 && (
+          <button className="clear">
+            <SearchIcon label={"search"} />
+          </button>
+        )}
       </div>
       <div className="graph-list-container" onContextMenu={handleSidebarContextMenu}>
         <div
@@ -828,7 +844,7 @@ export const FolderItem: FC<{
                   )}
                   {isExpander && (
                     <div className="expander" onClick={() => setExpanded(!isExpanded)}>
-                      {isExpanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
+                      {isExpanded ? <ChevronDownIcon label={"expand"} /> : <ChevronRightIcon label={"contract"} />}
                     </div>
                   )}
                 </div>

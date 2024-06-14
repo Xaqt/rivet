@@ -4,51 +4,53 @@ import { type Workflow } from '../../api/types';
 import { useWorkflows } from '../../hooks/useWorkflows';
 import Modal, { ModalBody, ModalFooter, ModalHeader, ModalTitle, ModalTransition } from '@atlaskit/modal-dialog';
 import Button, { IconButton } from '@atlaskit/button/new';
-import { deleteFlowModalOpenState } from '../../state/ui';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { flowState } from '../../state/savedGraphs';
+import { getError } from '../../utils/errors';
+import { toast } from 'react-toastify';
 
-interface DeleteWorkflowProps {
+export interface DeleteWorkflowProps {
+  isOpen: boolean;
+  onClose: () => void;
   onFlowDeleted?: () => void;
   workflow?: Workflow | undefined;
 }
 
-export const DeleteWorkflowModalRenderer: React.FC<DeleteWorkflowProps> =
-  ({
-     onFlowDeleted,
-     workflow,
-   }) => {
-    const deleteModalOpen = useRecoilValue(deleteFlowModalOpenState);
-
-  return deleteModalOpen && <DeleteWorkflowModal onFlowDeleted={onFlowDeleted} workflow={workflow}/>;
-};
-
-export const DeleteWorkflowModal: React.FC<DeleteWorkflowProps> = ({
-                                                  onFlowDeleted,
-                                                  workflow,
-                                                }) => {
-
+const DeleteWorkflowModal: React.FC<DeleteWorkflowProps> = ({
+  isOpen,
+  onClose,
+  onFlowDeleted,
+  workflow,
+}) => {
   const flow = useRecoilValue(flowState);
   workflow = workflow || flow;
 
-  const setDeleteProjectModalOpen = useSetRecoilState(deleteFlowModalOpenState);
   const { deleteWorkflow } = useWorkflows();
 
   function closeModal() {
-    setDeleteProjectModalOpen(false);
+    onClose();
   }
 
   const handleDelete = async () => {
-    await deleteWorkflow(
+    deleteWorkflow(
       workflow?.id!,
-    );
-    onFlowDeleted?.();
-    closeModal();
+    ).then(() => {
+      closeModal();
+      onFlowDeleted?.();
+      toast.success('Workflow deleted');
+    })
+    .then(closeModal)
+    .catch((e) => {
+      const msg = getError(e).message;
+      const text = `Failed to delete workflow: ${msg}`;
+      toast.error(text);
+    });
   };
 
   return (
     <ModalTransition>
-      <Modal>
+      {isOpen &&
+      <Modal onClose={closeModal}>
         <ModalHeader>
           <ModalTitle appearance="danger">Delete Workflow</ModalTitle>
           <IconButton
@@ -68,6 +70,9 @@ export const DeleteWorkflowModal: React.FC<DeleteWorkflowProps> = ({
           <Button appearance="primary" onClick={handleDelete}>Delete</Button>
         </ModalFooter>
       </Modal>
+      }
     </ModalTransition>
   );
 };
+
+export default DeleteWorkflowModal;

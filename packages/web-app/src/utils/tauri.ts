@@ -23,7 +23,6 @@ export function getEnvVar(name: string): string | undefined {
 
   }
 
-
   return undefined;
 }
 
@@ -62,4 +61,3 @@ export async function fillMissingSettingsFromEnvironmentVariables(settings: Part
 
   return fullSettings;
 }
-

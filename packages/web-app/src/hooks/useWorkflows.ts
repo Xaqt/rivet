@@ -1,17 +1,13 @@
-import { getError, type GraphId } from '@ironclad/rivet-core';
+import { getError } from '@ironclad/rivet-core';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { workflowApi } from '../api/api-client';
-import { type WorkflowCreateDto, WorkflowImpl } from '../api/types';
+import { type WorkflowCreateDto } from '../api/types';
 import { workspaceState } from '../state/auth';
-import { flowState, type OpenedProjectInfo } from '../state/savedGraphs';
-import { useLoadFlow } from './useLoadFlow';
 
 export function useWorkflows() {
-  const loadFlow = useLoadFlow();
   const currentWorkspace = useRecoilValue(workspaceState);
-  const [currentFlow, setCurrentFlow] = useRecoilState(flowState);
   const [loading, setLoading] = useState(false);
   const [workspaceId, setWorkspaceId] = useState(currentWorkspace?.workspace_id || '');
 
@@ -63,16 +59,6 @@ export function useWorkflows() {
     return execLoading(() => workflowApi.removeLabel(flowId, labelId));
   };
 
-  function duplicateFlow(source?: WorkflowImpl, mainGraphId?: GraphId) {
-    const flow = WorkflowImpl.copy(source ?? currentFlow);
-    const project = flow.project;
-    const projectInfo: OpenedProjectInfo = {
-      workflow: flow,
-      openedGraph: mainGraphId ?? project.metadata?.mainGraphId,
-    };
-    loadFlow(projectInfo).catch(console.error);
-  }
-
   return {
     addWorkflowLabels,
     removeWorkflowLabel,
@@ -81,6 +67,5 @@ export function useWorkflows() {
     updateWorkflow,
     deleteWorkflow,
     loading,
-    duplicateFlow,
   };
 }

@@ -7,8 +7,12 @@ import ExportIcon from '@atlaskit/icon/glyph/export';
 import EditLineIcon from 'majesticons/line/edit-pen-2-line.svg?react';
 import { type Workflow } from '../../api/types';
 import MoreHorizontalIcon from '@atlaskit/icon/glyph/more';
-
 import Button from '@atlaskit/button/new';
+
+import { useExportFlow } from '../../hooks/useExportFlow';
+import { useDuplicateFlow } from '../../hooks/useDuplicateFlow';
+import { overlayOpenState } from '../../state/ui';
+import { useRecoilState } from 'recoil';
 
 export type FlowContextMenuProps = {
   flow: Workflow;
@@ -23,20 +27,25 @@ export const FlowContextMenu: React.FC<FlowContextMenuProps> = ({
   onStartEdit,
   onFlowDeleted,
 }) => {
+  const [, setOpenOverlay] = useRecoilState(overlayOpenState);
+  const exporter = useExportFlow();
+  const duplicator = useDuplicateFlow();
 
   function handleEdit() {
     onStartEdit?.(flow);
   }
 
   function handleEditProperties() {
+    onStartEdit?.(flow);
   }
 
   function handleDuplicate() {
-
+    duplicator(flow);
+    setOpenOverlay(undefined);
   }
 
   function handleExport() {
-
+    exporter(flow);
   }
 
   function handleDelete() {

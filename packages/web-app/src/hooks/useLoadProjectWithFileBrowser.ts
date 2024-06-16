@@ -1,25 +1,30 @@
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { loadedProjectState, projectState } from '../state/savedGraphs.js';
-import { emptyNodeGraph, getError } from '@ironclad/rivet-core';
-import { graphState } from '../state/graph.js';
-import { ioProvider } from '../utils/globals.js';
+import { deserializeProject, getError } from '@ironclad/rivet-core';
 import { trivetState } from '../state/trivet.js';
-import { useSetStaticData } from './useSetStaticData';
 import { toast } from 'react-toastify';
 import { graphNavigationStackState } from '../state/graphBuilder';
+import { type FileUpload, useFileUpload } from 'use-file-upload';
+import { deserializeTrivetData, type SerializedTrivetData } from '@ironclad/trivet';
+import { WorkflowImpl } from '../api/types';
+import { useLoadFlow } from './useLoadFlow';
 
 export function useLoadProjectWithFileBrowser() {
   const [currentProject, setProject] = useRecoilState(projectState);
   const setLoadedProjectState = useSetRecoilState(loadedProjectState);
-  const setGraphData = useSetRecoilState(graphState);
   const setTrivetState = useSetRecoilState(trivetState);
-  const setStaticData = useSetStaticData();
   const setNavigationStack = useSetRecoilState(graphNavigationStackState);
+  const loadFlow = useLoadFlow();
+  const [file, selectFile] = useFileUpload();
 
-  return async () => {
+  async function onOpen(file: File) {
+    const text = await file.text();
     try {
-      await ioProvider.loadProjectData(({ project, testData, path }) => {
-        const { data, ...projectData } = project;
+      const [project, attachedData] = deserializeProject(text);
+
+      const testData = attachedData?.trivet
+        ? deserializeTrivetData(attachedData.trivet as SerializedTrivetData)
+        : { testSuites: [] };
 
         const alreadyOpenedProject = currentProject.metadata.id === project.metadata.id;
 
@@ -28,17 +33,19 @@ export function useLoadProjectWithFileBrowser() {
           return;
         }
 
-        setProject(projectData);
+        const flow = new WorkflowImpl();
+        flow.id = project.metadata.id;
+        flow.name = project.metadata.title;
+        flow.description = project.metadata.description;
+        flow.project = project;
+
         setNavigationStack({ stack: [], index: undefined });
 
-        if (data) {
-          setStaticData(data);
-        }
-
-        setGraphData(emptyNodeGraph());
+        await loadFlow({ workflow: flow });
 
         setLoadedProjectState({
           loaded: true,
+          saved: true,
         });
 
         setTrivetState({
@@ -48,9 +55,22 @@ export function useLoadProjectWithFileBrowser() {
           recentTestResults: undefined,
           runningTests: false,
         });
-      });
     } catch (err) {
       toast.error(`Failed to load project: ${getError(err).message}`);
     }
+  }
+
+  return () => {
+    // Single File Upload accepts only images
+    selectFile({ 
+      accept: 'application/x-yaml, text/yaml',
+      multiple: false,
+    }, (upload: FileUpload | FileUpload[]) => {
+      const item = Array.isArray(upload) ? upload[0] : upload;
+      if (!item) {
+        return;
+      }
+      onOpen(item.file);
+    });
   };
 }

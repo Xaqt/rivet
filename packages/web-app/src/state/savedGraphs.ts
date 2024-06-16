@@ -93,7 +93,6 @@ export const projectGraphInfoState = selector({
 });
 
 export type OpenedProjectInfo = {
-  id?: ProjectId;
   openedGraph?: GraphId;
   workflow: Workflow;
 };

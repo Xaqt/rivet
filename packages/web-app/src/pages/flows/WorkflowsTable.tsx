@@ -22,7 +22,6 @@ import { getError } from '@ironclad/rivet-core';
 import Button from '@atlaskit/button/new';
 import EmptyState from '@atlaskit/empty-state';
 import { ButtonGroup } from '@atlaskit/button';
-import { Box, Inline, xcss } from '@atlaskit/primitives';
 import TextField from '@atlaskit/textfield';
 import PlusIcon from '@atlaskit/icon/glyph/add';
 import { newProjectModalOpenState, overlayOpenState } from '../../state/ui';
@@ -32,6 +31,9 @@ import { settingsModalOpenState } from '../../components/SettingsModal';
 import { css } from '@emotion/react';
 import DeleteWorkflowModal from './DeleteWorkflowModal';
 import { EditFlowModal } from '../../components/EditProjectModal';
+import { useLoadFlow } from '../../hooks/useLoadFlow';
+import { loadedProjectState } from '../../state/savedGraphs';
+import FileImportIcon from '../../assets/icons/file-import-icon';
 
 const styles = css`
   .context-list {
@@ -86,6 +88,9 @@ const WorkflowTable = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [loadCounter, setLoadCounter] = useState<number>(0);
+  const setLoadedProjectState = useSetRecoilState(loadedProjectState);
+
+  const loadFlow = useLoadFlow();
 
   const { run: runQuery, cancel: cancelQuery } = useDebounceFn((criteria?: FindWorkflowsDto) => {
     const findCriteria = criteria ?? searchCriteria;
@@ -150,7 +155,19 @@ const WorkflowTable = () => {
   }
 
   function gotoGraphEditor(flow: Workflow) {
-
+    console.log('goto graph editor', flow);
+    const project = flow.project;
+    loadFlow({
+      workflow: flow,
+      openedGraph: project.metadata.mainGraphId
+    }).then(() => {
+      setLoadedProjectState({
+        loaded: true,
+      });
+      setOpenOverlay(undefined);
+    }).catch((err) => {
+      toast.error(getError(err).message);
+    });
   }
 
   function handleSort({ key, sortOrder }: any) {
@@ -176,6 +193,11 @@ const WorkflowTable = () => {
     setNewProjectModalOpen(true);
     setOpenOverlay(undefined);
   };
+
+  function handleImport() {
+    // todo
+    console.log('import');
+  }
 
   function beginDeleteFlow(flow: Workflow) {
     setSelectedWorkflow(flow);
@@ -230,14 +252,12 @@ const WorkflowTable = () => {
     }
   }
 
-  const flexBoxStyles = xcss({
-    flex: '0 0 20px',
-  });
-
   const actionsContent = (
     <ButtonGroup label="Content actions">
       <TextField isCompact placeholder="Filter" aria-label="Filter" />
       <Button appearance="primary" iconBefore={PlusIcon} onClick={handleNewFlow}>Add New</Button>
+      <Button appearance="primary"
+              onClick={handleImport}>Import</Button>
       <Button appearance="subtle" iconBefore={PreferencesIcon} onClick={openSettings}>&nbsp;</Button>
     </ButtonGroup>
   );
@@ -305,7 +325,7 @@ const WorkflowTable = () => {
       {
         key: `desc-${flow.id}`,
         content: (
-          <div className="workflow-description">
+          <div className="workflow-description" onClick={() => gotoGraphEditor(flow)}>
             {flow.description}
           </div>
         )

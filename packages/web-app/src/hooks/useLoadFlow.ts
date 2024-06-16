@@ -40,7 +40,7 @@ export function useLoadFlow() {
         loaded: true,
       });
     } catch (err) {
-      toast.error(`Failed to load project: ${getError(err).message}`);
+      toast.error(`Failed to load flow: ${getError(err).message}`);
     }
   };
 }

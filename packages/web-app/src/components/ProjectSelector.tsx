@@ -34,6 +34,9 @@ import { useSaveFlow } from '../hooks/useSaveFlow';
 import { getError } from '../utils/errors';
 import { toast } from 'react-toastify';
 import { type Workflow } from '../api/types';
+import { useFileUpload } from 'use-file-upload';
+import { useExportFlow } from '../hooks/useExportFlow';
+
 
 export const styles = css`
     position: absolute;
@@ -108,6 +111,9 @@ export const ProjectSelector: FC = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const { saveFlow, updateFlow } = useSaveFlow();
+  const exportFlow = useExportFlow();
+
+  const [file, selectFile] = useFileUpload();
 
   const runMenuCommandImpl = useRunMenuCommand();
 
@@ -158,6 +164,14 @@ export const ProjectSelector: FC = () => {
 
   function handleDelete() {
     setDeleteDialogOpen(true);
+  }
+
+  function handleImport() {
+    loadProjectWithFileBrowser();
+  }
+
+  function handleExport() {
+    exportFlow(flow);
   }
 
   function closeEditModal() {
@@ -212,8 +226,8 @@ export const ProjectSelector: FC = () => {
         <DropdownItemGroup>
           <DropdownItem elemBefore={<PlusIcon label="new"/>} onClick={handleNewFlow}>New Flow</DropdownItem>
           <DropdownItem elemBefore={<CopyIcon label="duplicate"/>} onClick={handleDuplicate}>Duplicate</DropdownItem>
-          <DropdownItem elemBefore={<FileImportIcon width={24} height={24}/>}>Import</DropdownItem>
-          <DropdownItem elemBefore={<ExportIcon label="export"/>}>Export</DropdownItem>
+          <DropdownItem elemBefore={<FileImportIcon width={24} height={24}/>} onClick={handleImport}>Import</DropdownItem>
+          <DropdownItem elemBefore={<ExportIcon label="export"/>} onClick={handleExport}>Export</DropdownItem>
           <DropdownItem elemBefore={<TrashIcon label="delete" />}
                         isDisabled={saving || !loadedState.saved}
                         onClick={handleDelete}>Delete</DropdownItem>

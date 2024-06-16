@@ -1,6 +1,4 @@
 import { useState, type FC, type FormEvent, useEffect } from 'react';
-import { useRecoilState } from 'recoil';
-import { editProjectModalOpenState } from '../state/ui';
 import Modal, { ModalTransition, ModalBody, ModalHeader, ModalTitle, ModalFooter } from '@atlaskit/modal-dialog';
 import { Field } from '@atlaskit/form';
 import TextField from '@atlaskit/textfield';

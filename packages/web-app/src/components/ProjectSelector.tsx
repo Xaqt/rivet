@@ -34,9 +34,7 @@ import { useSaveFlow } from '../hooks/useSaveFlow';
 import { getError } from '../utils/errors';
 import { toast } from 'react-toastify';
 import { type Workflow } from '../api/types';
-import { useFileUpload } from 'use-file-upload';
 import { useExportFlow } from '../hooks/useExportFlow';
-
 
 export const styles = css`
     position: absolute;
@@ -112,8 +110,6 @@ export const ProjectSelector: FC = () => {
 
   const { saveFlow, updateFlow } = useSaveFlow();
   const exportFlow = useExportFlow();
-
-  const [file, selectFile] = useFileUpload();
 
   const runMenuCommandImpl = useRunMenuCommand();
 

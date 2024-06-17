@@ -34,6 +34,7 @@ import { EditFlowModal } from '../../components/EditProjectModal';
 import { useLoadFlow } from '../../hooks/useLoadFlow';
 import { loadedProjectState } from '../../state/savedGraphs';
 import FileImportIcon from '../../assets/icons/file-import-icon';
+import { useLoadProjectWithFileBrowser } from '../../hooks/useLoadProjectWithFileBrowser';
 
 const styles = css`
   .context-list {
@@ -59,7 +60,7 @@ const styles = css`
     
   .workflow-list-container {
     display: flex;
-    min-height: 75vh;
+    min-height: 25vh;
     flex-direction: column;
   }  
 `;
@@ -91,6 +92,7 @@ const WorkflowTable = () => {
   const setLoadedProjectState = useSetRecoilState(loadedProjectState);
 
   const loadFlow = useLoadFlow();
+  const loadProjectWithFileBrowser = useLoadProjectWithFileBrowser();
 
   const { run: runQuery, cancel: cancelQuery } = useDebounceFn((criteria?: FindWorkflowsDto) => {
     const findCriteria = criteria ?? searchCriteria;
@@ -196,6 +198,7 @@ const WorkflowTable = () => {
 
   function handleImport() {
     // todo
+    loadProjectWithFileBrowser();
     console.log('import');
   }
 
@@ -256,8 +259,9 @@ const WorkflowTable = () => {
     <ButtonGroup label="Content actions">
       <TextField isCompact placeholder="Filter" aria-label="Filter" />
       <Button appearance="primary" iconBefore={PlusIcon} onClick={handleNewFlow}>Add New</Button>
-      <Button appearance="primary"
-              onClick={handleImport}>Import</Button>
+      <Button appearance="primary" onClick={handleImport}>
+        <FileImportIcon width={24} height={24}/>&nbsp;Import
+      </Button>
       <Button appearance="subtle" iconBefore={PreferencesIcon} onClick={openSettings}>&nbsp;</Button>
     </ButtonGroup>
   );

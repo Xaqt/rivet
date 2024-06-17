@@ -8,14 +8,16 @@ import { type FileUpload, useFileUpload } from 'use-file-upload';
 import { deserializeTrivetData, type SerializedTrivetData } from '@ironclad/trivet';
 import { WorkflowImpl } from '../api/types';
 import { useLoadFlow } from './useLoadFlow';
+import { overlayOpenState } from '../state/ui';
 
 export function useLoadProjectWithFileBrowser() {
   const [currentProject, setProject] = useRecoilState(projectState);
   const setLoadedProjectState = useSetRecoilState(loadedProjectState);
   const setTrivetState = useSetRecoilState(trivetState);
   const setNavigationStack = useSetRecoilState(graphNavigationStackState);
+  const [, setOpenOverlay] = useRecoilState(overlayOpenState);
   const loadFlow = useLoadFlow();
-  const [file, selectFile] = useFileUpload();
+  const [, selectFile] = useFileUpload();
 
   async function onOpen(file: File) {
     const text = await file.text();
@@ -55,6 +57,8 @@ export function useLoadProjectWithFileBrowser() {
           recentTestResults: undefined,
           runningTests: false,
         });
+
+      setOpenOverlay(undefined);
     } catch (err) {
       toast.error(`Failed to load project: ${getError(err).message}`);
     }
@@ -70,7 +74,7 @@ export function useLoadProjectWithFileBrowser() {
       if (!item) {
         return;
       }
-      onOpen(item.file);
+      onOpen(item.file).catch(console.log);
     });
   };
 }

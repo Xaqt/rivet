@@ -12,7 +12,9 @@ import { lastRunDataByNodeState } from '../state/dataFlow';
 import { useImportGraph } from './useImportGraph';
 import { toast } from 'react-toastify';
 import { getError } from '../utils/errors';
-import { useWorkflows } from './useWorkflows';
+import { useDuplicateFlow } from './useDuplicateFlow';
+import { useExportFlow } from './useExportFlow';
+import { flowState } from '../state/savedGraphs';
 
 export type MenuIds =
   | 'settings'
@@ -47,6 +49,7 @@ export function useMenuCommands(
   } = {},
 ) {
   const [graphData, setGraphData] = useRecoilState(graphState);
+  const [flow, setFlow] = useRecoilState(flowState);
   const { saveFlow } = useSaveFlow();
   const setNewProjectModalOpen = useSetRecoilState(newProjectModalOpenState);
   const loadProject = useLoadProjectWithFileBrowser();
@@ -55,7 +58,8 @@ export function useMenuCommands(
   const toggleRemoteDebugger = useToggleRemoteDebugger();
   const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
   const importGraph = useImportGraph();
-  const { duplicateFlow } = useWorkflows();
+  const duplicateFlow = useDuplicateFlow();
+  const exportFlow = useExportFlow();
 
   function handleDuplicate() {
     duplicateFlow();

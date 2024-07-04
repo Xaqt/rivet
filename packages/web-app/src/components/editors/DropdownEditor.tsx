@@ -1,7 +1,7 @@
 import { Field, HelperMessage } from '@atlaskit/form';
 import Select from '@atlaskit/select';
-import { type DropdownEditorDefinition, type ChartNode } from '@ironclad/rivet-core';
-import { type FC, useState } from 'react';
+import { type DropdownEditorDefinition, type ChartNode, type DropdownOption } from '@ironclad/rivet-core';
+import { type FC, useEffect, useState } from 'react';
 import { type SharedEditorProps } from './SharedEditorProps';
 import { getHelperMessage } from './editorUtils';
 import Portal from '@atlaskit/portal';
@@ -33,6 +33,7 @@ export const DefaultDropdownEditor: FC<
       helperMessage={helperMessage}
       options={editor.options}
       defaultValue={editor.defaultValue}
+      data={data}
     />
   );
 };
@@ -47,7 +48,8 @@ export const DropdownEditor: FC<{
   name?: string;
   helperMessage?: string;
   onClose?: () => void;
-  options: { label: string; value: string }[];
+  options: DropdownOption[] | ((data: any) => DropdownOption[] | Promise<DropdownOption[]>);
+  data?: Record<string, unknown>;
   defaultValue?: string;
 }> = ({
   value,
@@ -61,13 +63,28 @@ export const DropdownEditor: FC<{
   onClose,
   options,
   defaultValue,
+  data
 }) => {
   const [menuPortalTarget, setMenuPortalTarget] = useState<HTMLDivElement | null>(null);
+  const [optValues, setOptValues] = useState<DropdownOption[]>([]);
+  const [selectedValue, setSelectedValue] = useState<DropdownOption | undefined>(undefined);
 
-  const selectedValue =
-    value == null
-      ? options.find((option) => option.value === defaultValue)
-      : options.find((option) => option.value === value);
+  useEffect(() => {
+    if (Array.isArray(options)) {
+      setOptValues(options);
+    } else if (typeof options === 'function') {
+      const res = Promise.resolve(options(data || {}));
+      res.then((opts) => setOptValues(opts));
+    }
+  }, [options]);
+
+  useEffect(() => {
+    const selected =
+      value == null
+        ? optValues.find((option) => option.value === defaultValue)
+        : optValues.find((option) => option.value === value);
+    setSelectedValue(selected);
+  }, [optValues, value, defaultValue]);
 
   return (
     <Field name={name ?? label} label={label} isDisabled={isReadonly || isDisabled}>
@@ -75,7 +92,7 @@ export const DropdownEditor: FC<{
         <>
           <Select
             {...fieldProps}
-            options={options}
+            options={optValues}
             value={selectedValue}
             menuPortalTarget={menuPortalTarget}
             autoFocus={autoFocus}

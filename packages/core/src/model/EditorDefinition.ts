@@ -1,4 +1,5 @@
 import { type ChartNode, type DataRef, type DataType, type DataValue, type DatasetId } from '../index.js';
+import type { Drop } from 'esbuild';
 
 type ExcludeNeverValues<T> = Pick<
   T,
@@ -60,14 +61,16 @@ export type AnyDataEditorDefinition<T extends ChartNode> = SharedEditorDefinitio
   useInputToggleDataKey?: DataOfType<T, boolean>;
 };
 
+export type DropdownOption = {
+  value: string;
+  label: string;
+};
+
 export type DropdownEditorDefinition<T extends ChartNode> = SharedEditorDefinitionProps<T> & {
   type: 'dropdown';
 
   dataKey: DataOfType<T, string>;
-  options: {
-    value: string;
-    label: string;
-  }[];
+  options: DropdownOption[] | ((data: T['data']) => DropdownOption[] | Promise<DropdownOption[]>)
   defaultValue?: string;
 
   useInputToggleDataKey?: DataOfType<T, boolean>;

@@ -1,7 +1,7 @@
 import { Field, HelperMessage } from '@atlaskit/form';
 import Select from '@atlaskit/select';
 import { type DropdownEditorDefinition, type ChartNode } from '@ironclad/rivet-core';
-import { useRef, type FC, useState } from 'react';
+import { type FC, useState } from 'react';
 import { type SharedEditorProps } from './SharedEditorProps';
 import { getHelperMessage } from './editorUtils';
 import Portal from '@atlaskit/portal';
